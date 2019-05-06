@@ -65,6 +65,10 @@
         </div>
 
         <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-primary btn-balance-scale disabled" onclick="transferQuestionOrder()"
+               shiro:hasPermission="busi:groundTaskOrder:unFinished:remove">
+                <i class="fa fa-remove"></i> 转移至问题订单
+            </a>
             <a class="btn btn-danger btn-del disabled" onclick="$.operate.removeAll()"
                shiro:hasPermission="busi:groundTaskOrder:historyFinish:remove">
                 <i class="fa fa-remove"></i> 删除
@@ -77,6 +81,7 @@
         <div class="col-sm-12 select-table table-striped">
             <table id="bootstrap-table" data-mobile-responsive="true"></table>
         </div>
+        <input id="selectIds" type="hidden"/>
     </div>
 </div>
 <div th:include="include :: footer"></div>
@@ -185,6 +190,25 @@
                     }
                 },
                 {
+                    field: 'buyerNick',
+                    title: '买家ID'
+                },
+                {
+                    field: 'orderNo',
+                    title: '订单编号'
+                },
+                {
+                    field: 'payment',
+                    title: '实际支付金额',
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(value);
+                    }
+                },
+                {
+                    field: 'keyWordName',
+                    title: '错误识别'
+                },
+                {
                     field: 'allotType,realTimeStart',
                     title: '分配方式',
                     sortable: true,
@@ -248,34 +272,21 @@
         layer.full(index);
     }
 
-    var distributionTeam = function () {
-        var rows = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
-        console.log(rows);
+    //转移到问题订单
+    var transferQuestionOrder = function(){
+        var rows = $('#bootstrap-table').bootstrapTable('getSelections');
         if (rows.length == 0) {
             $.modal.alertWarning("请至少选择一条记录");
             return;
-        } else if (rows.length > 1) {
-            $.modal.alertWarning("分配给合作团队一次只能选择一个订单");
-            return;
-        } else {
-            $.ajax({
-                cache: true,
-                type: "GET",
-                url: prefix + "/judgeIsDistribution/" + rows[0],
-                async: false,
-                error: function (request) {
-                    $.modal.alertError("系统错误");
-                },
-                success: function (data) {
-                    if (data.code != 0) {
-                        $.modal.alertWarning("该订单是别人分给您的，您不能再分配给其他团队");
-                        return;
-                    }
-                    var url = prefix + '/distributionTeam/' + rows[0];
-                    $.modal.open("请确认是否要将选中订单分配给合作团队？", url, "600", "320");
-                }
-            });
         }
+        var ids = new Array();
+        for (i = 0; i < rows.length; i++) {
+            ids.push(rows[i].id);
+        }
+        $("#selectIds").val(ids.join(","));
+        console.log(ids.join(","));
+        var url = ctx + "busi/tbTransactionQuestionOrder/transferQuestionOrder";
+        $.modal.open("转移至问题订单", url, "600", "320");
     };
 
     var showRemark = function (id) {

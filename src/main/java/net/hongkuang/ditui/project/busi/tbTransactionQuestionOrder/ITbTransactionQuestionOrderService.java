@@ -25,11 +25,25 @@ public interface ITbTransactionQuestionOrderService {
     /**
      * 保存问题订单列表
      *
-     * @param orderIds 订单信息
+     * @param ids 订单信息
      * @return 订单集合
      */
-    int saveTbTransactionQuestionOrderList(String[] orderIds,String questionOrderRemark);
+    int saveTbTransactionQuestionOrderList(String[] ids,String role,String questionOrderRemark);
 
+    /**
+     * 查询问题订单信息
+     *
+     * @param id 问题订单ID
+     * @return 任务订单信息
+     */
+    public TbTransactionQuestionOrder selectTbTransactionQuestionOrderById(Long id);
 
+    /**
+     * 保存订单状态
+     *
+     * @param tbTransactionQuestionOrder 信息
+     * @return 结果
+     */
+    int updateTbTransactionQuestionOrder(TbTransactionQuestionOrder tbTransactionQuestionOrder);
 
 }

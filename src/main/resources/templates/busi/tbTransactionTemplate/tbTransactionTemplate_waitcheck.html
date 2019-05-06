@@ -78,9 +78,9 @@
     var removeFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:remove')}]];
     var prefix = ctx + "busi/tbTransactionTemplate";
     var shopPlatformDatas = [[${@dict.getType('shop_platform')}]];
-    var goShopWay = [[${@dict.getType('go_shop_way')}]];
     var status = [[${status}]];
     var role = [[${@userSubject.getLoginUserRoles()}]];
+    var managerEdit = ctx + "busi/tbTransactionTemplate/edit/{id}";
     $(function () {
         var options = {
             url: prefix + "/list",
@@ -114,14 +114,6 @@
                     field: 'platform',
                     title: '平台',
                     sortable: true
-                },
-                {
-                    field: 'goShopWay',
-                    title: '入店方式',
-                    sortable: true,
-                    formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(goShopWay, value);
-                    }
                 },
                 {
                     field: 'managerUserName',
@@ -185,8 +177,9 @@
                     align: 'center',
                     formatter: function (value, row, index) {
                         var actions = [];
+
                         actions.push('<a class="btn btn-success btn-xs ' + checkFlag + '" href="#" onclick="$.operate.executeCheck(\'' + row.id + '\')"><i class="fa fa-edit"></i>审核</a> ');
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        role.indexOf("team") != -1 ? actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ') : actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.editUrl(\'' + row.id + '\',\'\' + managerEdit + \'\')"><i class="fa fa-edit"></i>编辑</a> ');
                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }

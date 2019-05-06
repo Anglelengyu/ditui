@@ -75,7 +75,7 @@ public class ${className}Controller extends BaseController {
     /**
      * 新增保存${tableComment}
      */
-    @requirespermissions("${moduleName}:${classname}:add")
+    @RequiresPermissions("${moduleName}:${classname}:add")
     @Log(title = "${tableComment}", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody

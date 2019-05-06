@@ -119,16 +119,16 @@
                 AND tt.shop_id = #{shopId}
             </if>
             <if test="orTeamRemark == 0">
-                AND tt.team_remark = ""
+                AND tt.team_remark = "" or tt.team_remark is null
             </if>
             <if test="orTeamRemark == 1">
-                AND tt.team_remark != ""
+                AND tt.team_remark <![CDATA[ <> ]]> ""
             </if>
             <if test="orManagerRemark == 0">
-                AND tt.manager_remark = ""
+                AND tt.manager_remark = "" or tt.manager_remark is null
             </if>
             <if test="orManagerRemark == 1">
-                AND tt.manager_remark != ""
+                AND tt.manager_remark <![CDATA[ <> ]]> ""
             </if>
             <if test="shopName != null  and shopName != ''">
                 AND tt.shop_name like concat('%', #{shopName}, '%')

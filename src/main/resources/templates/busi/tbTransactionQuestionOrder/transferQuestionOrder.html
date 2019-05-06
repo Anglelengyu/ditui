@@ -5,19 +5,20 @@
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
     <form class="form-horizontal m" id="form-user-add">
-        <input id="orderIds" name="orderIds" type="hidden"/>
+        <input id="ids" name="ids" type="hidden"/>
         <div class="form-group">
             <label class="col-sm-3 control-label " style="color: red;">注：团队和员工都可以看到该内容。</label>
             <div class="col-sm-6">
-                <textarea rows="6" name="questionOrderRemark" placeholder="请描述一下该订单有什么问题" class="form-control"></textarea>
+                <textarea rows="6" id="questionOrderRemark" name="questionOrderRemark" placeholder="请描述一下该订单有什么问题" class="form-control"></textarea>
             </div>
         </div>
     </form>
 </div>
 <div th:include="include :: footer"></div>
 <script type="text/javascript">
-    var selectOrderIds = parent.$("#orderIds").val();
-    $("#orderIds").val(selectOrderIds);
+    var selectIds = parent.$("#selectIds").val();
+    $("#ids").val(selectIds);
+    console.log(selectIds);
 
     $('.ui.fluid.dropdown').dropdown({});
 
@@ -27,7 +28,7 @@
     });
 
     function submitHandler() {
-        $.operate.save(prefix + "/transferQuestionOrder", $('#form-user-add').serialize());
+        $.operate.save(prefix + "/transferQuestionOrder", {ids: selectIds, questionOrderRemark: $("#questionOrderRemark").val()});
     }
 </script>
 </body>

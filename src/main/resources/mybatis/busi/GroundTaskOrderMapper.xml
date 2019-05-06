@@ -250,6 +250,14 @@
     <select id="selectGroundTaskOrderVoByTaskIds" resultMap="GroundTaskOrderVoResult">
         <include refid="selectGroundTaskOrderVo"/>
         <where>
+            <choose>
+                <when test="questionOrderId != null and questionOrderId !=''">
+                    AND tto.question_order_id = #{questionOrderId}
+                </when>
+                <otherwise>
+                    AND (tto.question_order_id is null or tto.question_order_id = 0 )
+                </otherwise>
+            </choose>
             <if test="goodsName != null and goodsName != ''">
                 AND tto.goods_name like concat('%', #{goodsName}, '%')
             </if>

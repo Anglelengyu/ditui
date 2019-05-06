@@ -45,6 +45,7 @@
         <result property="teamRemark" column="teamRemark"/>
         <result property="managerRemark" column="managerRemark"/>
         <result property="allocatStatus" column="allocatStatus"/>
+        <result property="questionOrderId" column="questionOrderId"/>
         <result property="payment" column="payment"/>
         <result property="paymentYuan" column="paymentYuan"/>
         <result property="orderNo" column="orderNo"/>
@@ -97,7 +98,7 @@
         tto.goods_img as goodsImg, tto.key_word_name as keyWordName, tto.has_app as hasApp, tto.has_pc as hasPc,
         tto.has_collection as hasCollection, tto.has_cart as hasCart, tto.has_collection_cart as hasCollectionCart,
         tto.order_require as orderRequire, tto.unit_price as unitPrice, tto.unit_price_yuan as unitPriceYuan,
-        tto.commission_price as commissionPrice, tto.commission_price_yuan as commissionPriceYuan,
+        tto.commission_price as commissionPrice, tto.commission_price_yuan as commissionPriceYuan,tto.question_order_id as questionOrderId,
         tto.manager_require as managerRequire,tto.team_to_manager_require as teamToManagerRequire,tto.team_require as teamRequire, tto.execute_method as executeMethod, tto.status as status, tto.question
         as question, tto.question_id as questionId, tto.order_track as orderTrack, tto.order_rebate as orderRebate,
         tto.group_classifys as groupClassifys, tto.go_shop_way as goShopWay, tto.settlement_way as settlementWay,
@@ -118,6 +119,14 @@
     <select id="selectTbTransactionOrderList" resultMap="TbTransactionOrderResult">
         <include refid="selectUserVo"/>
         <where>
+            <choose>
+                <when test="questionOrderId != null and questionOrderId !=''">
+                    AND tto.question_order_id = #{questionOrderId}
+                </when>
+                <otherwise>
+                    AND (tto.question_order_id is null or tto.question_order_id = 0 )
+                </otherwise>
+            </choose>
             <if test="goodsName != null and goodsName != ''">
                 AND tto.goods_name like concat('%', #{goodsName}, '%')
             </if>
@@ -357,6 +366,15 @@
         where id = #{id}
     </update>
 
+    <update id="updateTbTransactionOrderForQuestionOrderId" parameterType="TbTransactionOrder">
+        update busi_tb_transaction_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionOrderId != null and questionOrderId != ''">question_order_id = #{questionOrderId},</if>
+            update_time = sysdate(),
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
     <update id="distributionTeam">
         update busi_tb_transaction_order
         <trim prefix="SET" suffixOverrides=",">
@@ -417,6 +435,7 @@
             <if test="teamRequire != null and teamRequire != ''">team_require = #{teamRequire},</if>
             <if test="executeMethod != null and executeMethod != ''">execute_method = #{executeMethod},</if>
             <if test="status != null and status != ''">status = #{status},</if>
+            <if test="questionOrderId != null and questionOrderId != ''">question_order_id = #{questionOrderId},</if>
             <if test="question != null">question = #{question},</if>
             <if test="questionId != null">question_id = #{questionId},</if>
             <if test="orderTrack != null and orderTrack != ''">order_track = #{orderTrack},</if>
@@ -688,5 +707,12 @@
         </foreach>
         and bo.status = #{preStatus}
     </update>
+
+    <select id="selectTbTransactionOrderListByOrderIds" resultMap="TbTransactionOrderResult">
+        select id,order_id as orderId, unit_price as unitPrice, commission_price as commissionPrice, `status`,receipt_team_id as receiptTeamId from busi_tb_transaction_order where order_id in
+        <foreach item="orderId" collection="array" open="(" separator="," close=")">
+            #{orderId}
+        </foreach>
+    </select>
 
 </mapper>

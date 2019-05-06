@@ -465,6 +465,54 @@
                 });
             },
             // 弹出层指定宽度
+            openQuestion: function (title, url, width, height) {
+                //如果是移动端，就使用自适应大小弹窗
+                if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+                    width = 'auto';
+                    height = 'auto';
+                }
+                if ($.common.isEmpty(title)) {
+                    title = false;
+                }
+                ;
+                if ($.common.isEmpty(url)) {
+                    url = "/404.html";
+                }
+                ;
+                if ($.common.isEmpty(width)) {
+                    width = 800;
+                }
+                ;
+                if ($.common.isEmpty(height)) {
+                    height = ($(window).height() - 50);
+                }
+                ;
+                layer.open({
+                    type: 2,
+                    area: [width + 'px', height + 'px'],
+                    fix: false,
+                    //不固定
+                    maxmin: true,
+                    shade: 0.3,
+                    title: title,
+                    content: url,
+                    btn: ['问题已纠正','保存', '关闭'],
+                    // 弹层外区域关闭
+                    shadeClose: true,
+                    yes: function (index, layero) {
+                        var iframeWin = layero.find('iframe')[0];
+                        iframeWin.contentWindow.editQuestionOrderStatus();
+                    },
+                    btn2: function(index, layero){
+                        var iframeWin = layero.find('iframe')[0];
+                        iframeWin.contentWindow.submitHandler();
+                    },
+                    btn3: function(index, layero){
+                        return true;
+                    }
+                });
+            },
+            // 弹出层指定宽度
             openRefer: function (title, url, width, height) {
                 //如果是移动端，就使用自适应大小弹窗
                 if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
@@ -833,6 +881,19 @@
             addTbTransactionTemplate: function (param,model) {
                 var url = $.common.isEmpty(param) ? $.table._option.createUrl : $.table._option.createUrl.replace("{param}", param);
                 $.modal.open("添加" + model, url);
+            },
+            editUrl: function (id,url) {
+                if ($.common.isNotEmpty(id)) {
+                    url = url.replace("{id}", id);
+                } else {
+                    var id = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+                    if (id.length == 0) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    url = url.replace("{id}", id);
+                }
+                $.modal.open("修改" + $.table._option.modalName, url);
             },
             // 修改信息
             edit: function (id) {

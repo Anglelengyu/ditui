@@ -58,6 +58,14 @@ public interface TbTransactionOrderMapper {
     int updateTbTransactionOrder(TbTransactionOrder tbTransactionOrder);
 
     /**
+     * 更新订单 问题订单ID
+     *
+     * @param tbTransactionOrder
+     * @return 淘宝信息
+     */
+    int updateTbTransactionOrderForQuestionOrderId(TbTransactionOrder tbTransactionOrder);
+
+    /**
      * 分配给合作团队
      *
      * @param ids
@@ -148,6 +156,8 @@ public interface TbTransactionOrderMapper {
      * @return 订单集合
      */
     List<TbTransactionOrder> selectTbTransactionOrderByTaskIds(String[] taskIds);
+
+    List<TbTransactionOrder> selectTbTransactionOrderListByOrderIds(String[] orderIds);
 
     /**
      * 任务分配给合作团队

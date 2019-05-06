@@ -183,6 +183,11 @@ public class TbTransactionOrder extends BaseEntity {
     private Integer reckonAllocatStatus;
 
     /**
+     * 关联问题订单ID
+     */
+    private Long questionOrderId;
+
+    /**
      * 是否向买家提问 0-否 1-是
      */
     private Integer question;
@@ -271,6 +276,13 @@ public class TbTransactionOrder extends BaseEntity {
     @Excel(name = "任务ID")
     private String taskId;
 
+    public Long getQuestionOrderId() {
+        return questionOrderId;
+    }
+
+    public void setQuestionOrderId(Long questionOrderId) {
+        this.questionOrderId = questionOrderId;
+    }
 
     public String getExecuteMethodRemark() {
         return executeMethodRemark;

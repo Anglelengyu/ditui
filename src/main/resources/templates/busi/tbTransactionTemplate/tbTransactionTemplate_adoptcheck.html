@@ -80,11 +80,9 @@
     var editFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:edit')}]];
     var splitOrderFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:adoptcheck:splitOrder')}]];
     var splitTemplateFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:adoptcheck:splitTemplate')}]];
-    var distributionTeamFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:adoptcheck:distributionTeam')}]];
     var removeFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:remove')}]];
     var prefix = ctx + "busi/tbTransactionTemplate";
     var shopPlatformDatas = [[${@dict.getType('shop_platform')}]];
-    var goShopWay = [[${@dict.getType('go_shop_way')}]];
     var status = [[${status}]];
     var role = [[${@userSubject.getLoginUserRoles()}]];
     $(function () {
@@ -120,14 +118,6 @@
                     field: 'platform',
                     title: '平台',
                     sortable: true
-                },
-                {
-                    field: 'goShopWay',
-                    title: '入店方式',
-                    sortable: true,
-                    formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(goShopWay, value);
-                    }
                 },
                 {
                     field: 'managerUserName',

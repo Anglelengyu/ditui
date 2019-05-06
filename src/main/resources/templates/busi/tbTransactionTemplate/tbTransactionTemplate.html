@@ -74,8 +74,9 @@
     var removeFlag = [[${@permission.hasPermi('busi:tbTransactionTemplate:remove')}]];
     var prefix = ctx + "busi/tbTransactionTemplate";
     var shopPlatformDatas = [[${@dict.getType('shop_platform')}]];
-    var goShopWay = [[${@dict.getType('go_shop_way')}]];
+    var executeMethod = [[${@dict.getType('execute_method')}]];
     var status = [[${status}]];
+    var role = [[${@userSubject.getLoginUserRoles()}]];
     $(function () {
         var options = {
             url: prefix + "/list",
@@ -101,11 +102,11 @@
                     visible: true
                 },
                 {
-                    field: 'goShopWay',
-                    title: '入店方式',
+                    field: 'executeMethod',
+                    title: '返惠方式',
                     sortable: true,
                     formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(goShopWay, value);
+                        return $.table.selectDictLabel(executeMethod, value);
                     }
                 },
                 {
@@ -121,8 +122,7 @@
                 {
                     field: 'goodsName',
                     title: '商品简称',
-                    sortable: true,
-                    width: 200
+                    sortable: true
                 },
                 {
                     field: 'id',
@@ -160,10 +160,10 @@
                     }
                 },
                 {
-                    field: 'remarks',
-                    title: '备注',
+                    field: role.indexOf("team") != -1 ? 'teamRemark' : 'managerRemark',
+                    title: role.indexOf("team") != -1 ? '团队备注' : '掌柜备注',
                     formatter: function (value, row, index) {
-
+                        return '<a href="#" onclick="showRemark(\'' + row.id + '\')" orderTemplateId="' + value + '">查看备注</a>';
                     }
                 },
                 {
@@ -189,11 +189,37 @@
         var url = prefix + '/keyWordsList/' + id;
         $.modal.open("查看关键词列表", url);
     };
+    var showRemark = function (id) {
+        var me = $(this);
+        var url = prefix + '/showRemark/' + id;
+        $.modal.open("", url, '600', '370');
+    };
     $("input[type=text]").keypress(function (e) {
         if (e.keyCode == 13) {
             $.table.search();
         }
     });
+
+    $(document).on("click", ".preview", function () {
+        var me = $(this);
+        var previewJson = {
+            "title": "商品主图", //相册标题
+            "id": 123, //相册id
+            "start": 0, //初始显示的图片序号，默认0
+            "data": [   //相册包含的图片，数组格式
+                {
+                    "alt": "商品主图",
+                    "pid": 666, //图片id
+                    "src": me.attr("src"), //原图地址
+                    "thumb": me.attr("src") //缩略图地址
+                }
+            ]
+        }
+        layer.photos({
+            photos: previewJson
+            , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        });
+    })
 
 </script>
 </body>

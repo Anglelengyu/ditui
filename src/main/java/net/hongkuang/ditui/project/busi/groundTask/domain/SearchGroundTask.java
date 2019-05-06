@@ -13,6 +13,19 @@ public class SearchGroundTask extends GroundTask {
     private String userName;
     private Long teamId;
 
+    /**
+     * 团队是否已备注 0-否 1-是
+     */
+    private Integer orTeamRemark;
+
+    public Integer getOrTeamRemark() {
+        return orTeamRemark;
+    }
+
+    public void setOrTeamRemark(Integer orTeamRemark) {
+        this.orTeamRemark = orTeamRemark;
+    }
+
     public Long getTeamId() {
         return teamId;
     }

@@ -83,6 +83,11 @@ public class GroundTaskOrderVo extends BaseEntity {
     private String goodsName;
 
     /**
+     * 问题订单ID
+     */
+    private Long questionOrderId;
+
+    /**
      * 商品ID
      */
     @Excel(name = "商品ID")
@@ -283,6 +288,14 @@ public class GroundTaskOrderVo extends BaseEntity {
      * 资料提交时间
      */
     private String referTime;
+
+    public Long getQuestionOrderId() {
+        return questionOrderId;
+    }
+
+    public void setQuestionOrderId(Long questionOrderId) {
+        this.questionOrderId = questionOrderId;
+    }
 
     public String getReferTime() {
         return referTime;

@@ -67,11 +67,17 @@
         <if test="teamId != null  and teamId != ''  ">
             and ((bo.team_id = #{teamId} and bo.receipt_team_id is null) OR (bo.team_id != #{teamId} and bo.receipt_team_id = #{teamId}))
         </if>
+        <if test="orTeamRemark == 0">
+            AND (task.team_remark = "" or task.team_remark is null)
+        </if>
+        <if test="orTeamRemark == 1">
+            AND task.team_remark != ""
+        </if>
         <if test="startTime != null and startTime != ''">
-            and completion_time >= #{startTime}
+            and task.create_time >= #{startTime}
         </if>
         <if test="endTime != null  and endTime != ''">
-            and completion_time &lt;= #{endTime}
+            and task.create_time &lt;= #{endTime}
         </if>
         <if test="userName != null  and userName != ''  ">and su.`userName` like concat(#{userName},'%')</if>
         group by task.task_id

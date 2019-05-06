@@ -78,7 +78,7 @@
             <input hidden="hidden" name="shopName" th:value="*{shopName}" id="shopName">
             <div class="col-sm-3">
                 <select id="shop" name="shopId" class="form-control m-b"
-                        th:with="shopList=${@shopkeeper.getShopList(null)}">
+                        th:with="shopList=${@shopkeeper.getShopList(managerId)}">
                     <option value="">请选择店铺</option>
                     <option th:each="shop : ${shopList}" th:text="${shop.name}"
                             th:value="${shop.shopId}" th:field="*{shopId}"></option>
@@ -195,8 +195,7 @@
         <div class="form-group">
             <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">下单要求：</label>
             <div class="col-sm-10">
-                <input id="orderRequire" name="orderRequire" th:value="*{orderRequire}" class="form-control"
-                       type="text">
+                <input id="orderRequire" name="orderRequire" th:value="*{orderRequire}" class="form-control" type="text" placeholder="先领券10元再下单，拍【银灰色 3722版 送擦拭无尘巾+清洗液】">
             </div>
         </div>
 

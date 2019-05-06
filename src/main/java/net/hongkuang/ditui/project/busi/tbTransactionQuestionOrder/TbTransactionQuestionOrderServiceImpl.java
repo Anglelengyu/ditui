@@ -1,11 +1,16 @@
 package net.hongkuang.ditui.project.busi.tbTransactionQuestionOrder;
 
 import net.hongkuang.ditui.common.utils.StringUtils;
+import net.hongkuang.ditui.project.busi.order.domain.TbTransactionOrder;
+import net.hongkuang.ditui.project.busi.order.mapper.TbTransactionOrderMapper;
 import net.hongkuang.ditui.project.busi.tbTransactionQuestionOrder.domain.SearchTbTransactionQuestionOrder;
 import net.hongkuang.ditui.project.busi.tbTransactionQuestionOrder.domain.TbTransactionQuestionOrder;
 import net.hongkuang.ditui.project.busi.tbTransactionQuestionOrder.mapper.TbTransactionQuestionOrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +24,10 @@ public class TbTransactionQuestionOrderServiceImpl implements ITbTransactionQues
 
     @Autowired
     private TbTransactionQuestionOrderMapper tbTransactionQuestionOrderMapper;
+    @Autowired
+    private TbTransactionOrderMapper tbTransactionOrderMapper;
+
+
     @Override
     public List<TbTransactionQuestionOrder> selectTbTransactionQuestionOrderList(SearchTbTransactionQuestionOrder searchTbTransactionQuestionOrder) {
 
@@ -32,10 +41,37 @@ public class TbTransactionQuestionOrderServiceImpl implements ITbTransactionQues
     }
 
     @Override
-    public int saveTbTransactionQuestionOrderList(String[] orderIds,String questionOrderRemark) {
+    @Transactional
+    public int saveTbTransactionQuestionOrderList(String[] ids,String role,String questionOrderRemark) {
+        List<TbTransactionQuestionOrder> tbTransactionQuestionOrderList = new ArrayList<>();
+        tbTransactionOrderMapper.selectTbTransactionOrderListByIds(ids).forEach(tbTransactionOrder -> {
+            TbTransactionQuestionOrder tbTransactionQuestionOrder = new TbTransactionQuestionOrder();
+            tbTransactionQuestionOrder.setOrderId(tbTransactionOrder.getOrderId());
+            tbTransactionQuestionOrder.setQuestionOrderRemark(questionOrderRemark);
+            tbTransactionQuestionOrder.setQuestionOrderRole(role);
+            tbTransactionQuestionOrder.setQuestionOrderStatus(0);
+            tbTransactionQuestionOrderList.add(tbTransactionQuestionOrder);
+        });
+        int i = tbTransactionQuestionOrderMapper.saveBatchTbTransactionQuestionOrder(tbTransactionQuestionOrderList);
+        tbTransactionQuestionOrderList.forEach(tbTransactionQuestionOrder -> {
+            TbTransactionOrder tbTransactionOrder = new TbTransactionOrder();
+            tbTransactionOrder.setOrderId(tbTransactionQuestionOrder.getOrderId());
+            tbTransactionOrder.setQuestionOrderId(tbTransactionQuestionOrder.getQuestionOrderId());
+            tbTransactionOrderMapper.updateTbTransactionOrderForQuestionOrderId(tbTransactionOrder);
+        });
+        return i;
+    }
 
+    @Override
+    public TbTransactionQuestionOrder selectTbTransactionQuestionOrderById(Long id) {
+        return tbTransactionQuestionOrderMapper.selectTbTransactionQuestionOrderById(id);
+    }
 
-
-        return 0;
+    @Override
+    public int updateTbTransactionQuestionOrder(TbTransactionQuestionOrder tbTransactionQuestionOrder) {
+        if(tbTransactionQuestionOrder.getQuestionOrderStatus()!=null && tbTransactionQuestionOrder.getQuestionOrderStatus()!=1){
+            tbTransactionQuestionOrder.setQuestionOrderRole(null);
+        }
+        return tbTransactionQuestionOrderMapper.updateTbTransactionQuestionOrder(tbTransactionQuestionOrder);
     }
 }

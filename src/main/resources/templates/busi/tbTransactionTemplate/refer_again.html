@@ -21,6 +21,9 @@
     .re {
         width: 103% !important;
     }
+    .w-e-text-container{
+        height: 150px !important;
+    }
 </style>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -193,8 +196,7 @@
         <div class="form-group">
             <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">下单要求：</label>
             <div class="col-sm-10">
-                <input id="orderRequire" name="orderRequire" th:value="*{orderRequire}" class="form-control"
-                       type="text">
+                <input id="orderRequire" name="orderRequire" th:value="*{orderRequire}" class="form-control" type="text" placeholder="先领券10元再下单，拍【银灰色 3722版 送擦拭无尘巾+清洗液】">
             </div>
         </div>
 
@@ -212,13 +214,13 @@
         </div>
         <div class="form-group">
             <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">掌柜要求：</label>
-            <div class="col-sm-10">
-                <textarea id="managerRequire" name="managerRequire" th:text="*{managerRequire}" class="form-control"
-                          placeholder="例如：麻烦收藏关注一下我们的网站和商品，以后还有0元购或者试用活动，首先，通知您。"></textarea>
+            <input id="managerRequire" name="managerRequire" type="hidden">
+            <div class="col-sm-10" id="managerRequire2" name="managerRequire2" th:utext="*{managerRequire}" min-height="200" style="min-height: 200px;">
+                <p>例如：麻烦收藏关注一下我们的网站和商品，以后还有0元购或者试用活动，首先，通知您。</p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label" style="text-align: left;width:16.3%">放单方式：</label>
+            <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">放单方式：</label>
             <div class="col-sm-3">
                 <select id="executeMethod" class="form-control m-b" name="executeMethod"
                         th:with="type=${@dict.getType('execute_method')}">
@@ -297,6 +299,20 @@
 <script th:src="@{/js/plugins/quploader/Q.Uploader.UI.File.js}"></script>
 <script th:src="@{/ajax/libs/select/select2.js}"></script>
 <script type="text/javascript">
+    var E = window.wangEditor;
+    var editor = new E('#managerRequire2');
+    // 关闭粘贴样式的过滤
+    editor.customConfig.pasteFilterStyle = false;
+    // 忽略粘贴内容中的图片
+    editor.customConfig.pasteIgnoreImg = false;
+    editor.customConfig.uploadImgShowBase64 = true;
+    // 自定义菜单配置
+    editor.customConfig.menus = [
+        'head',
+        'bold',
+        'image'
+    ];
+    editor.create();
     $(function () {
         var id = "";
         var name = "tbTransactionKeyWords";
@@ -471,6 +487,7 @@
                 $.modal.alertWarning("请选择店铺");
                 return;
             }
+            $("#managerRequire").val(editor.txt.html());
             $("#teamName").val($('#teamId').find("option:selected").text());
             $("#shopName").val($('#shop').find("option:selected").text());
             $.operate.save(prefix + "/againRefer", $('#form-tb-template-refer').serialize());

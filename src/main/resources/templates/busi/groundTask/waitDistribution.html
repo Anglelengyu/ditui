@@ -24,6 +24,21 @@
                             <input type="text" name="goodsName" style="width: 170px;">
                         </li>
                         <li>
+                            团队备注：<select name="orTeamRemark" style="width: 100px;">
+                            <option value="">所有</option>
+                            <option th:value="0">未备注</option>
+                            <option th:value="1">已备注</option>
+                        </select>
+                        </li>
+                        <li class="select-time">
+                            <label>创建时间： </label>
+                            <input type="text" class="time-input" id="startTime" th:name="startTime" placeholder="开始时间"
+                                   name="startTime"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" th:name="endTime" placeholder="结束时间"
+                                   name="endTime"/>
+                        </li>
+                        <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
                                     class="fa fa-search"></i>&nbsp;搜索</a>
                             <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
@@ -119,20 +134,6 @@
                     }
                 },
                 {
-                    field: 'groupClassifys',
-                    title: '组单分类',
-                    sortable: true,
-                    formatter: function (value, row, index) {
-                        var groupClassifys = value.split(",");
-                        var groupClassifysCon = '<ul>';
-                        for (i = 0; i < groupClassifys.length; i++) {
-                            groupClassifysCon += '<li style="margin-bottom: 5px;">' + groupClassifys[i] + '</li>';
-                            groupClassifysCon += '<hr style="margin-bottom: 5px;margin-top: 0px;">';
-                        }
-                        return groupClassifysCon;
-                    }
-                },
-                {
                     field: 'goodsName',
                     title: '商品名称',
                     sortable: true,
@@ -170,7 +171,10 @@
                 {
                     field: 'status',
                     title: '任务状态',
-                    sortable: true
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(datas, value);
+                    }
                 },
                 {
                     field: 'teamRemark',

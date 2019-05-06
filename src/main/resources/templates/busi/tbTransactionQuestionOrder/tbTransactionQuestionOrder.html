@@ -239,11 +239,18 @@
                     }
                 },
                 {
-                    field: 'status',
+                    field: 'questionOrderStatus',
                     title: '问题备注',
                     sortable: true,
                     formatter: function (value, row, index) {
-                        return $.table.selectDictLabel(datas, value);
+                        console.log(value);
+                        var actions = [];
+                        if(value == 0){
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="showQuestion(\'' + row.questionOrderId + '\')">查看问题</a> ');
+                        }else{
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="showQuestion(\'' + row.questionOrderId + '\')">问题已纠正</a> ');
+                        }
+                        return actions.join('');
                     }
                 },
                 {
@@ -265,40 +272,16 @@
         $.table.init(options);
     });
 
-    var distributionTeam = function () {
-        var rows = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
-        console.log(rows);
-        if (rows.length == 0) {
-            $.modal.alertWarning("请至少选择一条记录");
-            return;
-        } else if (rows.length > 1) {
-            $.modal.alertWarning("分配给合作团队一次只能选择一个订单");
-            return;
-        } else {
-            $.ajax({
-                cache: true,
-                type: "GET",
-                url: prefix + "/judgeIsDistribution/" + rows[0],
-                async: false,
-                error: function (request) {
-                    $.modal.alertError("系统错误");
-                },
-                success: function (data) {
-                    if (data.code != 0) {
-                        $.modal.alertWarning("该订单是别人分给您的，您不能再分配给其他团队");
-                        return;
-                    }
-                    var url = prefix + '/distributionTeam/' + rows[0];
-                    $.modal.open("请确认是否要将选中订单分配给合作团队？", url, "600", "320");
-                }
-            });
-        }
-    };
-
     var showRemark = function (id) {
         var me = $(this);
         var url = prefix + '/showRemark/' + id;
-        $.modal.open("", url, '600', '350');
+        $.modal.open("", url, '600', '370');
+    };
+
+    var showQuestion = function (id) {
+        var me = $(this);
+        var url = prefix + '/showQuestion/' + id;
+        $.modal.openQuestion("", url, '600', '400');
     };
     $("input[type=text]").keypress(function (e) {
         if (e.keyCode == 13) {

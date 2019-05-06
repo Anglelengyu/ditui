@@ -7,9 +7,15 @@
     <form class="form-horizontal m" id="form-user-add" th:object="${tbTransactionTemplate}">
         <input id="id" name="id" type="hidden" th:value="*{id}"/>
         <div class="form-group">
-            <label class="col-sm-3 control-label ">备注：</label>
+            <label class="col-sm-3 control-label ">注：此处备注信息只有你自己可以看见。</label>
             <div class="col-sm-6">
                 <textarea rows="9" name="managerRemark" th:text="*{managerRemark}" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="float: left;margin-top: 7px;">更新时间：</label>
+            <div class="col-sm-4" style="float: left;">
+                <input type="text" id="updateTime" name="updateTime" readonly="true" th:value="*{#dates.format(updateTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control">
             </div>
         </div>
     </form>

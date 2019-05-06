@@ -16,6 +16,8 @@ import net.hongkuang.ditui.project.busi.groundTaskOrder.domain.SearchGroundTaskO
 import net.hongkuang.ditui.project.busi.groundTaskOrder.service.IGroundTaskOrderService;
 import net.hongkuang.ditui.project.busi.img.domain.Img;
 import net.hongkuang.ditui.project.busi.img.service.IImgService;
+import net.hongkuang.ditui.project.busi.manager.domain.Manager;
+import net.hongkuang.ditui.project.busi.manager.service.IManagerService;
 import net.hongkuang.ditui.project.busi.order.domain.TbTransactionOrder;
 import net.hongkuang.ditui.project.busi.order.domain.TbTransactionOrderDto;
 import net.hongkuang.ditui.project.busi.order.service.ITbTransactionOrderService;
@@ -48,6 +50,8 @@ public class GroundTaskOrderController extends BaseController {
     @Autowired
     private ITeamService teamService;
     @Autowired
+    private IManagerService managerService;
+    @Autowired
     private IGroundTaskService groundTaskService;
     @Autowired
     private IGroundTaskOrderService groundTaskOrderService;
@@ -64,6 +68,10 @@ public class GroundTaskOrderController extends BaseController {
         if (ShiroUtils.getSubject().hasRole(UserConstants.UserRoles.ROLE_TEAM)) {
             Team team = teamService.getTeamByUserId(ShiroUtils.getUserId());
             searchGroundTaskOrderVo.setTeamId(team.getTeamId());
+        }
+        if (ShiroUtils.getSubject().hasRole(UserConstants.UserRoles.ROLE_SHOP_MANAGER)) {
+            Manager manager = managerService.selectManagerByUserId(ShiroUtils.getUserId());
+            searchGroundTaskOrderVo.setManagerId(manager.getUserId());
         }
         startPage();
         List<GroundTaskOrderVo> list = groundTaskOrderService.selectGroundTaskOrderVoByTaskIds(searchGroundTaskOrderVo);

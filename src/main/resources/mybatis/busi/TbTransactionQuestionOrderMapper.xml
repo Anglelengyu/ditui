@@ -9,6 +9,7 @@
         <result property="questionOrderRemark" column="questionOrderRemark"/>
         <result property="questionOrderRole" column="questionOrderRole"/>
         <result property="questionOrderStatus" column="questionOrderStatus"/>
+        <result property="id" column="id"/>
         <result property="orderId" column="orderId"/>
         <result property="managerId" column="managerId"/>
         <result property="managerUserName" column="managerUserName"/>
@@ -56,6 +57,7 @@
         <result property="updateBy" column="updateBy"/>
         <result property="createTime" column="createTime"/>
         <result property="updateTime" column="updateTime"/>
+        <result property="questionOrderUpdateTime" column="questionOrderUpdateTime"/>
         <result property="taskId" column="taskId"/>
         <association property="tbTransactionQuestion" javaType="TbTransactionQuestion"
                      resultMap="TbTransactionQuestionResult"/>
@@ -105,7 +107,7 @@
         ttbr.category as ttbrCategory, ttbr.monthly_sales_quota as ttbrMonthlySalesQuota, ttbr.naughty_value as
         ttbrNaughtyValue, ttbr.region as ttbrRegion,
         ttq.id as ttqQuestionId, ttq.main_video as mainVideo, ttq.main_browse as mainBrowse, ttq.detail_video as
-        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse,bttqo.id as questionOrderId,bttqo.remark as questionOrderRemark,bttqo.role as questionOrderRole,bttqo.status as questionOrderStatus
+        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse,bttqo.id as questionOrderId,bttqo.remark as questionOrderRemark,bttqo.role as questionOrderRole,bttqo.status as questionOrderStatus,bttqo.update_time as questionOrderUpdateTime
         from busi_tb_transaction_question_order bttqo
         left join busi_tb_transaction_order tto on tto.order_id = bttqo.order_id
         left join busi_tb_transaction_buyer_require ttbr on ttbr.id = tto.buyer_require_id
@@ -166,6 +168,11 @@
         </where>
     </select>
 
+    <select id="selectTbTransactionQuestionOrderById" parameterType="Long" resultMap="TbTransactionQuestionOrderResult">
+        <include refid="selectUserVo"/>
+        where bttqo.id = #{id}
+    </select>
+
     <insert id="saveTbTransactionQuestionOrder" parameterType="TbTransactionQuestionOrder" useGeneratedKeys="true" keyProperty="id">
         insert into busi_tb_transaction_question_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -186,20 +193,31 @@
         </trim>
     </insert>
 
-
-    <insert id="saveBatchTbTransactionOrder" parameterType="TbTransactionQuestionOrder">
+    <insert id="saveBatchTbTransactionQuestionOrder" parameterType="TbTransactionQuestionOrder" useGeneratedKeys="true" keyProperty="questionOrderId">
         insert into
         busi_tb_transaction_question_order(order_id,remark,role,status,create_time,update_time)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.orderId},
-            #{item.remark},
-            #{item.role},
-            #{item.status},
+            (
+            #{item.orderId},
+            #{item.questionOrderRemark},
+            #{item.questionOrderRole},
+            #{item.questionOrderStatus},
             sysdate(),
             sysdate()
             )
         </foreach>
     </insert>
+
+    <update id="updateTbTransactionQuestionOrder" parameterType="TbTransactionQuestionOrder">
+        update busi_tb_transaction_question_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="questionOrderRemark != null and questionOrderRemark != ''">remark = #{questionOrderRemark},</if>
+            <if test="questionOrderRole != null and questionOrderRole != ''">role = #{questionOrderRole},</if>
+            <if test="questionOrderStatus != null and questionOrderStatus != ''">status = #{questionOrderStatus},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{questionOrderId}
+    </update>
 
 </mapper>
