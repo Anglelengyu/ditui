@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-packageTemplate-edit" th:object="${packageTemplate}">
+        <input id="id" name="id" th:field="*{id}"
+               type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">套餐名称：</label>
+            <div class="col-sm-8">
+                <input id="name" name="name" class="form-control" type="text" th:field="*{name}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">充值金额：</label>
+            <div class="col-sm-8">
+                <input id="price" name="price" th:field="*{price}"
+                       class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">基础币量：</label>
+            <div class="col-sm-8">
+                <input id="baseCoin" name="baseCoin" th:field="*{baseCoin}"
+                       class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">赠送币量：</label>
+            <div class="col-sm-8">
+                <input id="giveCoin" name="giveCoin" th:field="*{giveCoin}"
+                       class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">描述：</label>
+            <div class="col-sm-8">
+                <input id="packageDesc" name="packageDesc" th:field="*{packageDesc}"
+                       class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">排序值：</label>
+            <div class="col-sm-8">
+                <input id="idx" name="idx" th:field="*{idx}"
+                       class="form-control" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属角色：</label>
+            <div class="col-sm-8">
+                <label class="check-box">
+                    <div class="icheckbox-blue">
+                        <input type="checkbox"
+                               th:each="role,roleInfo:${roleList}" th:text="${role.roleName}"
+                               th:value="${role.roleId}" th:name="|joinRoleList[${roleInfo.index}].roleId|"
+                               style="position: absolute; opacity: 0;">
+                    </div>
+                    掌柜
+                </label>
+
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "busi/packageTemplate"
+    $("#form-packageTemplate-edit").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-packageTemplate-edit').serialize());
+        }
+    }
+</script>
+</body>
+</html>

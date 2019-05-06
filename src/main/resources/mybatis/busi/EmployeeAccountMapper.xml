@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.userCenter.employeeAccount.mapper.EmployeeAccountMapper">
+
+    <resultMap type="EmployeeAccount" id="EmployeeAccountResult">
+                    <result property="id" column="id"/>
+                    <result property="currentPrice" column="current_price"/>
+                    <result property="rechargePrice" column="recharge_price"/>
+                    <result property="countPrice" column="count_price"/>
+                    <result property="empId" column="emp_id"/>
+                    <result property="createBy" column="createBy"/>
+                    <result property="updateBy" column="updateBy"/>
+                    <result property="createTime" column="create_time"/>
+                    <result property="updateTime" column="update_time"/>
+            </resultMap>
+
+    <sql id="selectEmployeeAccountVo">
+        select id, current_price, recharge_price, count_price, emp_id, createBy, updateBy, create_time, update_time        from sys_employee_account
+    </sql>
+
+    <select id="selectEmployeeAccountList" parameterType="EmployeeAccount" resultMap="EmployeeAccountResult">
+        <include refid="selectEmployeeAccountVo"/>
+        <where>
+                            <if test="id != null ">and id = #{id}
+                </if>
+                            <if test="currentPrice != null ">and current_price = #{currentPrice}
+                </if>
+                            <if test="rechargePrice != null ">and recharge_price = #{rechargePrice}
+                </if>
+                            <if test="countPrice != null ">and count_price = #{countPrice}
+                </if>
+                            <if test="empId != null ">and emp_id = #{empId}
+                </if>
+                            <if test="createBy != null ">and createBy = #{createBy}
+                </if>
+                            <if test="updateBy != null ">and updateBy = #{updateBy}
+                </if>
+                            <if test="createTime != null ">and create_time = #{createTime}
+                </if>
+                            <if test="updateTime != null ">and update_time = #{updateTime}
+                </if>
+                    </where>
+    </select>
+
+    <select id="selectEmployeeAccountById" parameterType="Integer" resultMap="EmployeeAccountResult">
+        <include refid="selectEmployeeAccountVo"/>
+        where id = #{id}
+    </select>
+
+
+    <select id="selectEmployeeAccountByUserId" parameterType="Integer" resultMap="EmployeeAccountResult">
+        <include refid="selectEmployeeAccountVo"/>
+        where emp_id = #{userId}
+    </select>
+
+
+    <insert id="insertEmployeeAccount" parameterType="EmployeeAccount">
+        insert into sys_employee_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                                                <if test="id != null  ">id,
+                    </if>
+                                                                <if test="currentPrice != null  ">current_price,
+                    </if>
+                                                                <if test="rechargePrice != null  ">recharge_price,
+                    </if>
+                                                                <if test="countPrice != null  ">count_price,
+                    </if>
+                                                                <if test="empId != null  ">emp_id,
+                    </if>
+                                                                <if test="createBy != null  ">createBy,
+                    </if>
+                                                                <if test="updateBy != null  ">updateBy,
+                    </if>
+                                                                <if test="createTime != null  ">create_time,
+                    </if>
+                                                                <if test="updateTime != null  ">update_time,
+                    </if>
+                                    </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                                                <if test="id != null  ">#{id},
+                    </if>
+                                                                <if test="currentPrice != null  ">#{currentPrice},
+                    </if>
+                                                                <if test="rechargePrice != null  ">#{rechargePrice},
+                    </if>
+                                                                <if test="countPrice != null  ">#{countPrice},
+                    </if>
+                                                                <if test="empId != null  ">#{empId},
+                    </if>
+                                                                <if test="createBy != null  ">#{createBy},
+                    </if>
+                                                                <if test="updateBy != null  ">#{updateBy},
+                    </if>
+                                                                <if test="createTime != null  ">#{createTime},
+                    </if>
+                                                                <if test="updateTime != null  ">#{updateTime},
+                    </if>
+                                    </trim>
+    </insert>
+
+    <update id="updateEmployeeAccount" parameterType="EmployeeAccount">
+        update sys_employee_account
+        <trim prefix="SET" suffixOverrides=",">
+                                                                            <if test="currentPrice != null  ">current_price = #{currentPrice},
+                    </if>
+                                                                <if test="rechargePrice != null  ">recharge_price = #{rechargePrice},
+                    </if>
+                                                                <if test="countPrice != null  ">count_price = #{countPrice},
+                    </if>
+                                                                <if test="empId != null  ">emp_id = #{empId},
+                    </if>
+                                                                <if test="createBy != null  ">createBy = #{createBy},
+                    </if>
+                                                                <if test="updateBy != null  ">updateBy = #{updateBy},
+                    </if>
+                                                                <if test="createTime != null  ">create_time = #{createTime},
+                    </if>
+                                                                <if test="updateTime != null  ">update_time = #{updateTime},
+                    </if>
+                                    </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEmployeeAccountById" parameterType="Integer">
+        delete from sys_employee_account where id = #{id}
+    </delete>
+
+    <delete id="deleteEmployeeAccountByIds" parameterType="String">
+        delete from sys_employee_account where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-salesman-edit" th:object="${salesman}">
+        <input id="id" name="id" th:field="*{id}" type="hidden">
+        <input id="salt" name="salt" th:field="*{salt}" type="hidden">
+        <input id="password" name="password" th:field="*{password}" type="hidden">
+        <!--<input id="commission" name="commission" th:field="*{commission}"  type="hidden">-->
+        <div class="form-group">
+            <label class="col-sm-3 control-label">业务组长：</label>
+            <div class="col-sm-8">
+                <select id="groupLeaderId" name="groupLeaderId" class="form-control m-b"
+                        th:with="shopkeeper=${@shopkeeper.getGroupLeader()}">
+                    <option th:each="shopkeep : ${shopkeeper}" th:text="${shopkeep.userName}"
+                            th:value="${shopkeep.userId}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">业务员姓名：</label>
+            <div class="col-sm-8">
+                <input id="name" name="name" th:field="*{name}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">每日接单量上限：</label>
+            <div class="col-sm-8">
+                <input id="orderLimit" name="orderLimit" th:field="*{orderLimit}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">手机号：</label>
+            <div class="col-sm-8">
+                <input id="phone" name="phone" th:field="*{phone}" class="form-control" type="text">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所在地区：</label>
+            <div class="col-sm-8">
+                <input id="area" name="area" th:value="*{area}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">业务员佣金：</label>
+            <div class="col-sm-8">
+                <input id="commission" name="commission" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">业务员状态：</label>
+            <div class="col-sm-8">
+                <div class="onoffswitch">
+                    <input type="checkbox" th:checked="${salesman.status == 0 ? true : false}"
+                           class="onoffswitch-checkbox" id="status" name="status">
+                    <label class="onoffswitch-label" for="status">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:inline="javascript">
+    var commission = [[${salesman.commission}]];
+    $("#commission").val($.unit.fen2yuan(commission))
+    var prefix = ctx + "busi/salesman"
+    $("#form-salesman-edit").validate({
+        rules: {
+            name: {
+                required: true,
+                minlength: 2,
+                maxlength: 20
+            },
+
+            phone: {
+                required: true,
+                isPhone: true,
+                remote: {
+                    url: prefix + "/checkPhoneUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        id: function () {
+                            return $("#id").val();
+                        },
+                        phone: function () {
+                            return $.common.trim($("#phone").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            area: {
+                required: true,
+                minlength: 2,
+                maxlength: 20
+            }
+        },
+        messages: {
+            phone: {
+                remote: "业务员手机号不能重复"
+            }
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            edit();
+        }
+    }
+
+    function edit() {
+        var groupLeader = $("#groupLeaderId  option:selected");
+        var groupLeaderName = groupLeader.text();
+        var groupLeaderId = groupLeader.val();
+        var name = $("#name").val();
+        var phone = $("#phone").val();
+        var area = $("#area").val();
+        var password = $("#password").val();
+        var salt = $("#salt").val();
+        var orderLimit = $("#orderLimit").val();
+        var id = $("#id").val();
+        var commission = $("#commission").val();
+        var status = $("input[name='status']").is(':checked') == true ? 0 : 1;
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/edit",
+            data: {
+                id: id,
+                groupLeaderName: groupLeaderName,
+                groupLeaderId: groupLeaderId,
+                name: name,
+                password: password,
+                salt: salt,
+                orderLimit: orderLimit,
+                phone: phone,
+                area: area,
+                commission: commission * 100,
+                status: status
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                $.operate.successCallback(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

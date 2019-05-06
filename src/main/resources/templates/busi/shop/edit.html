@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-shop-edit" th:object="${shop}">
+        <input id="id" name="id" th:field="*{id}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">店铺名称：</label>
+            <div class="col-sm-8">
+                <input id="name" name="name" readonly="true" th:field="*{name}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">旺旺名称：</label>
+            <div class="col-sm-8">
+                <input id="wangwang" name="wangwang" readonly="true" th:field="*{wangwang}" class="form-control"
+                       type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">店铺掌柜：</label>
+            <input id="managerId" name="managerId" class="form-control" th:value="*{managerId}" type="hidden">
+            <div class="col-sm-8">
+                <input id="managerName" name="managerName" th:disabled="true" class="form-control"
+                       th:value="*{managerName}" type="text">
+            </div>
+        </div>
+
+        <!--<div class="form-group">-->
+        <!--<label class="col-sm-3 control-label">介绍人：</label>-->
+        <!--<div class="col-sm-8">-->
+        <!--<select id="referUserId" name="referUserId" class="form-control m-b"-->
+        <!--th:with="shopkeeper=${@shopkeeper.getShopRefer()}">-->
+        <!--<option th:each="shopkeep : ${shopkeeper}" th:text="${shopkeep.userName}"-->
+        <!--th:value="${shopkeep.userId}"></option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">类目：</label>
+            <div class="col-sm-8">
+                <input id="category" name="category" class="form-control" th:field="*{category}" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">状态：</label>
+            <div class="col-sm-8">
+                <div class="onoffswitch">
+                    <input type="checkbox" th:checked="${shop.status == 0 ? true : false}" class="onoffswitch-checkbox"
+                           id="status" data-on-label="启用"
+                           data-off-label="禁用" name="status">
+                    <label class="onoffswitch-label" for="status">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "busi/shop"
+    $("#form-shop-edit").validate({
+        rules: {
+            referUser: {
+                required: true,
+                minlength: 2,
+                maxlength: 20
+            },
+            managerId: {
+                required: true
+            }
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            edit();
+        }
+    }
+
+    function edit() {
+        var id = $("#id").val();
+        var managerName = $("#managerName").val();
+        var managerId = $("#managerId").val();
+//            var referUser = $("#referUserId  option:selected");
+//            var referUserName = referUser.text();
+//            var referUserId = referUser.val();
+        var category = $("#category").val();
+        var status = $("input[name='status']").is(':checked') == true ? 0 : 1;
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: ctx + "busi/shop/edit",
+            data: {
+                id: id,
+                "managerName": managerName,
+                "managerId": managerId,
+//                    "referUserId": referUserId,
+//                    "referUserName": referUserName,
+                "category": category,
+                "status": status
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                $.operate.successCallback(data);
+            }
+        });
+    }
+</script>
+</body>
+</html>

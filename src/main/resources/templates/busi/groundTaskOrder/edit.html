@@ -1,0 +1,516 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/js/plugins/quploader/uploader.css}" rel="stylesheet"/>
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0;
+    }
+    .w-e-text-container{
+        height: 150px !important;
+    }
+</style>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal" style="margin-left: 25px;" id="form-tb-template-edit"
+          th:object="${tbTransactionOrder}">
+        <input id="id" name="id" th:value="*{id}" type="hidden">
+        <input id="managerId" name="managerId" th:value="*{managerId}" type="hidden">
+        <input id="managerUserName" name="managerUserName" th:value="*{managerUserName}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: left;width:13.3%">掌柜昵称：</label>
+            <div class="col-sm-3">
+                <input id="managerUserName2" name="managerUserName2" th:disabled="true" class="form-control"
+                       th:value="*{managerUserName}" type="text">
+            </div>
+            <label class="col-sm-4 control-label">指定团队：</label>
+            <input hidden="hidden" name="teamName" th:value="*{teamName}" id="teamName">
+            <div class="col-sm-3">
+                <select id="teamId" name="teamId" th:disabled="true" class="form-control m-b"
+                        th:with="teamList=${@shopkeeper.getTeamList(null)}">
+                    <option value="">请选择团队</option>
+                    <option th:each="team : ${teamList}" th:text="${team.userName}"
+                            th:value="${team.teamId}" th:field="*{teamId}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: left;width:13.3%">电商平台：</label>
+            <div class="col-sm-3">
+                <input id="platform" name="platform" readonly="true" class="form-control" th:value="淘宝" type="text">
+            </div>
+        </div>
+        <div class="ui divider" style="margin-right: 25px;"></div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: left;width:13.3%">商品ID：</label>
+            <div class="col-sm-8" style="width: 73.5%;">
+                <input id="goodsId" name="goodsId" th:value="*{goodsId}" class="form-control"
+                       placeholder="可以输入商品ID一键获取店铺名称和商品主图" style="display:block"/>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-edit" style="margin-left: -10px; height: 34px"
+                   onclick="searchGoodsDetail(this)">
+                    <i class="fa fa-search"></i> 获取
+                </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: left;width:13.3%">店铺名称：</label>
+            <input hidden="hidden" name="shopName" th:value="*{shopName}" id="shopName">
+            <div class="col-sm-3">
+                <select id="shop" name="shopId" class="form-control m-b"
+                        th:with="shopList=${@shopkeeper.getShopList(managerId)}">
+                    <option value="">请选择店铺</option>
+                    <option th:each="shop : ${shopList}" th:text="${shop.name}"
+                            th:value="${shop.shopId}" th:field="*{shopId}"></option>
+                </select>
+            </div>
+            <label class="col-sm-4 control-label">商品简称：</label>
+            <div class="col-sm-3">
+                <input id="goodsName" name="goodsName" th:value="*{goodsName}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="text-align: left;width:13.3%">商品主图：</label>
+            <div class="col-sm-5">
+                <img th:src="${@uploadfile.getFileUrl({tbTransactionOrder.goodsImg})}" th:height="160" th:width="160"
+                     id="goodsImgPreview"/>
+                <input type="hidden" name="goodsImg" th:field="*{goodsImg}" id="goodsImg"/>
+                <a class="btn btn-primary btn-edit" id="goodsImgUpload">
+                    <i class="fa fa-edit"></i> 上传
+                </a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">关键词：</label>
+            <div class="col-sm-4">
+                <input id="keyWordName" name="keyWordName" th:value="*{keyWordName}"
+                       class="form-control" onchange="inputChange()" type="number">
+            </div>
+            <label class="col-sm-1 control-label" style="width: 12%" th:if="${tbTransactionOrder.hasApp==1}">✔ 手机端</label>
+            <label class="col-sm-1 control-label" style="width: 12%" th:if="${tbTransactionOrder.hasPc==1}">✔ 电脑端</label>
+            <label class="col-sm-1 control-label" style="width: 10%" th:if="${tbTransactionOrder.hasCollection==1}">✔ 收藏</label>
+            <label class="col-sm-1 control-label" style="width: 10%" th:if="${tbTransactionOrder.hasCart==1}">✔ 加购</label>
+            <label class="col-sm-1 control-label" style="width: 15%" th:if="${tbTransactionOrder.hasCollectionCart==1}">✔ 收藏+加购</label>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">下单要求：</label>
+            <div class="col-sm-10">
+                <input id="orderRequire" name="orderRequire" th:value="*{orderRequire}" class="form-control"
+                       type="text">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">商品本金：</label>
+            <div class="col-sm-3">
+                <input id="unitPrice" name="unitPrice" placeholder="单位：元" th:value="*{unitPriceYuan}"
+                       class="form-control" onchange="inputChange()" type="number">
+            </div>
+            <label class="col-sm-4 control-label">商品佣金：</label>
+            <div class="col-sm-3">
+                <input id="commissionPrice" name="commissionPrice" placeholder="单位：元" th:value="*{commissionPriceYuan}"
+                       class="form-control" onchange="inputChange()" type="number">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">掌柜要求：</label>
+            <input id="managerRequire" name="managerRequire" type="hidden">
+            <div class="col-sm-10" id="managerRequire2" name="managerRequire2" th:utext="*{managerRequire}" min-height="200" style="min-height: 200px;">
+                <p>例如：麻烦收藏关注一下我们的网站和商品，以后还有0元购或者试用活动，首先，通知您。</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <input hidden="hidden" id="question" name="question">
+            <input hidden="hidden" id="questionId" name="questionId" th:value="*{questionId}">
+            <input hidden="hidden" id="tbTransactionQuestion.id" name="tbTransactionQuestion.id" th:value="*{questionId}">
+            <div class="ui checkbox">
+                <input id="checkQuestion" style="width: 120px;" type="checkbox">
+                <label>向买家提问</label>
+            </div>
+            <div class="col-sm-12 re" style="margin-top: 5px;">
+                <label class="col-sm-2 control-label">主图视频：</label>
+                <div class="col-sm-8" style="width: 82%"><input name="tbTransactionQuestion.mainVideo"
+                                                                th:value="${tbTransactionOrder.tbTransactionQuestion.mainVideo}"
+                                                                id="mainVideo" placeholder="例：第三次出现的人物衣服是什么颜色？"
+                                                                class="form-control" type="text"></div>
+            </div>
+            <div class="col-sm-12 re" style="margin-top: 5px;">
+                <label class="col-sm-2 control-label">主图浏览：</label>
+                <div class="col-sm-8" style="width: 82%"><input name="tbTransactionQuestion.mainBrowse"
+                                                                th:value="${tbTransactionOrder.tbTransactionQuestion.mainBrowse}"
+                                                                id="mainBrowse" placeholder="例：第5张主图有多少个人？"
+                                                                class="form-control" type="text"></div>
+            </div>
+            <div class="col-sm-12 re" style="margin-top: 5px;">
+                <label class="col-sm-2 control-label">详情视频：</label>
+                <div class="col-sm-8" style="width: 82%"><input name="tbTransactionQuestion.detailVideo"
+                                                                th:value="${tbTransactionOrder.tbTransactionQuestion.detailVideo}"
+                                                                id="detailVideo" placeholder="例：商品参数中版型是什么版型？"
+                                                                class="form-control" type="text"></div>
+            </div>
+            <div class="col-sm-12 re" style="margin-top: 5px;">
+                <label class="col-sm-2 control-label">详情浏览：</label>
+                <div class="col-sm-8" style="width: 82%"><input name="tbTransactionQuestion.detailBrowse"
+                                                                th:value="${tbTransactionOrder.tbTransactionQuestion.detailBrowse}"
+                                                                id="detailBrowse" placeholder="例：商品参数中版型是什么版型？"
+                                                                class="form-control" type="text"></div>
+            </div>
+            <div class="col-sm-12 re" style="margin-top: 5px;">
+                <label class="col-sm-2 control-label">评价浏览：</label>
+                <div class="col-sm-8" style="width: 82%"><input name="tbTransactionQuestion.evaluateBrowse"
+                                                                th:value="${tbTransactionOrder.tbTransactionQuestion.evaluateBrowse}"
+                                                                id="evaluateBrowse" placeholder="例：差评有多少个？"
+                                                                class="form-control" type="text"></div>
+            </div>
+        </div>
+        <div style="border:1px solid #a7a7a7;margin-left: -24px;padding-left: 25px;padding-top: 15px;background-color: #efefef">
+            <div class="form-group">
+                <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">放单方式：</label>
+                <div class="col-sm-3">
+                    <select id="executeMethod" class="form-control m-b" name="executeMethod"
+                            th:with="type=${@dict.getType('execute_method')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group executeMethodRemark" >
+                <label class="col-sm-3 control-label" style="text-align: left;width:13.3%"></label>
+                <div class="col-sm-10 control-label">
+                    <textarea id="executeMethodRemark" name="executeMethodRemark" th:text="*{executeMethodRemark}" class="form-control" placeholder="下单后，本金佣金立马反(可编辑)"></textarea>
+                </div>
+            </div>
+            <div class="form-group executeMethodRe">
+                <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">组单分类：</label>
+                <div class="col-sm-3">
+                    <input name="groupClassifys" id="groupClassifys" th:value="${tbTransactionOrder.groupClassifys}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group executeMethodRe">
+                <label class="col-sm-2 control-label" style="text-align: right;width:13.3%;color: #60b8ef">&nbsp;&nbsp;注意：</label>
+                <label class="col-sm-10 control-label" style="text-align: left;color: #60b8ef;">地推如果需要组单，请在这里填写【组单分类】，系统进行自动组单时，
+                    <lable style="color: #ff4d4d">默认【模版组单分类输入的文字相同的商品不会被组到一起】</lable></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">掌柜要求：</label>
+                <div class="col-sm-10">
+                    <textarea id="teamToManagerRequire" name="teamToManagerRequire" th:text="*{teamToManagerRequire}"
+                              class="form-control"
+                              placeholder="团队可以把掌柜要求输入到这里，这里的内容会显示到每个订单的底部，方便员工查看要求。（掌自己输入的要求不会显示，必须团队复制到这里才可以显示）"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" style="text-align: left;width:13.3%">团队要求：</label>
+                <div class="col-sm-10">
+                    <textarea id="teamRequire" name="teamRequire" th:text="*{teamRequire}" class="form-control"
+                              placeholder="团队可以把对员工的要求输入到这里，这里面输入的内容会在单独的任务页面显示出来。例如：团队可以输入创客照妖镜的手机端链接，业务员就可以用链接先验号再下单。"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui divider" style="margin-right: 25px;"></div>
+        <div class="form-group" style="text-align: center;">
+            <input type="checkbox"/> 启用订单跟踪系统 </label>
+            &nbsp;&nbsp;
+            <input type="checkbox"/> 启用返利识别系统 </label>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <input id="hiddenTotalNumber" name="totalNumber" type="hidden">
+            <input id="hiddenTotalUnitPrice" name="totalUnitPrice" type="hidden">
+            <input id="hiddenTotalCommissionPrice" name="totalCommissionPrice" type="hidden">
+            总单量：<label id="totalNumber">0</label></label>&nbsp;&nbsp;
+            总本金：<label id="unitPriceTotal">0</label></label>&nbsp;&nbsp;
+            总佣金：<label id="commissionPriceTotal">0</label></label>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:src="@{/js/plugins/quploader/Q.js}"></script>
+<script th:src="@{/js/plugins/quploader/Q.Uploader.js}"></script>
+<script th:src="@{/js/plugins/quploader/Q.Uploader.UI.File.js}"></script>
+<script th:src="@{/ajax/libs/select/select2.js}"></script>
+<script type="text/javascript">
+    var E = window.wangEditor;
+    var editor = new E('#managerRequire2');
+    // 关闭粘贴样式的过滤
+    editor.customConfig.pasteFilterStyle = false;
+    // 忽略粘贴内容中的图片
+    editor.customConfig.pasteIgnoreImg = false;
+    editor.customConfig.uploadImgShowBase64 = true;
+    // 自定义菜单配置
+    editor.customConfig.menus = [
+        'head',
+        'bold',
+        'image'
+    ];
+    editor.create();
+
+    if ($('#executeMethod').find("option:selected").val() != null && $('#executeMethod').find("option:selected").val() == 1) {
+        $("#executeMethodRemark").attr("placeholder","下单后，本金佣金立马反（可编辑）");
+        $(".executeMethodRe").hide();
+        $(".executeMethodRemark").show();
+    }else if ($('#executeMethod').find("option:selected").val() != null && $('#executeMethod').find("option:selected").val() == 2){
+        $("#executeMethodRemark").attr("placeholder","下单后，佣金立返，本金收货好评返。（可自己编辑）");
+        $(".executeMethodRe").hide();
+        $(".executeMethodRemark").show();
+    }else{
+        $(".executeMethodRemark").hide();
+        $(".executeMethodRe").show();
+    }
+
+    if ($("#questionId").val() != null && $("#questionId").val() != 0) {
+        $("#checkQuestion").attr("checked", "checked");
+        $(".re").show();
+        $("#question").val("1");
+    } else {
+        $(".re").hide();
+        $("#question").val("0");
+    }
+
+    $("#executeMethod").change(function () {
+        if ($('#executeMethod').find("option:selected").val() != null && $('#executeMethod').find("option:selected").val() == 1) {
+            $("#executeMethodRemark").attr("placeholder","下单后，本金佣金立马反（可编辑）");
+            $(".executeMethodRe").hide();
+            $(".executeMethodRemark").show();
+        }else if ($('#executeMethod').find("option:selected").val() != null && $('#executeMethod').find("option:selected").val() == 2){
+            $("#executeMethodRemark").attr("placeholder","下单后，佣金立返，本金收货好评返。（可自己编辑）");
+            $(".executeMethodRe").hide();
+            $(".executeMethodRemark").show();
+        }else{
+            $(".executeMethodRemark").hide();
+            $(".executeMethodRe").show();
+        }
+    });
+
+    $("#checkQuestion").change(function () {
+        if ($(this).is(':checked') == true) {
+            $(".re").show();
+            $("#question").val("1");
+        } else {
+            $(".re").hide();
+            $("#question").val("0");
+        }
+    });
+
+    $("#shop").change(function () {
+        $("#shopName").val($('#shop').find("option:selected").text());
+        $("#shopId").val($('#shop').find("option:selected").val());
+    });
+
+    $("#teamId").change(function () {
+        $("#teamName").val($('#teamId').find("option:selected").text());
+        $("#teamId").val($('#teamId').find("option:selected").val());
+    });
+
+    var prefix = ctx + "busi/groundTaskOrder";
+    window.UPLOAD_URL = "/common/upload";
+
+    $("#form-tb-template-edit").validate({
+        rules: {
+            templateName: {
+                required: true,
+                minlength: 1,
+                maxlength: 20
+            },
+            teamName: {
+                required: true,
+                minlength: 1,
+                maxlength: 20
+            },
+            goodsName: {
+                required: true
+            },
+            orderImg: {
+                required: true
+            },
+            unitPrice: {
+                required: true,
+                min: 0
+            },
+            commissionPrice: {
+                required: true,
+                min: 0
+            }
+        }
+    });
+
+    var uploader = new Q.Uploader({
+        url: UPLOAD_URL,
+        target: document.getElementById("goodsImgUpload"),
+        view: document.getElementById("goodsImgPreview"),
+        multiple: false,    //选择文件时是否允许多选
+        auto: true,
+        allows: ".jpg,.png,.gif,.bmp",
+        on: {
+            //添加之前触发
+            add: function (task) {
+                if (task.disabled) {
+                    $.modal.alertWarning("允许上传的文件格式为：" + this.ops.allows);
+                    return false;
+                }
+                this.ops.view.innerHTML = '';
+                this.list = [];
+                this.map = {};
+                this.index = 0;
+                this.workerIdle = 1;
+            },
+            complete: function (task) {
+                if (task.json && task.json.files) {
+                    var files = task.json.files;
+                    $("#goodsImgPreview").attr("src", accessFileUrl + "/" + files[0]);
+                    $("#goodsImg").val(files[0]);
+                } else {
+                    $.modal.alertWarning("上传图片失败，请重新上传");
+                }
+            }
+        }
+    });
+
+    function submitHandler() {
+        inputChange();
+        if ($.validate.form()) {
+            if ($("#goodsImg").val() == "") {
+                $.modal.alertWarning("请上传图片");
+                return false;
+            }
+            if ($('#teamId').find("option:selected").val() == null || $('#teamId').find("option:selected").val() == "") {
+                $.modal.alertWarning("请选择指定团队");
+                return;
+            }
+            if ($('#shop').find("option:selected").val() == null || $('#shop').find("option:selected").val() == "") {
+                $.modal.alertWarning("请选择店铺");
+                return;
+            }
+            $("#managerRequire").val(editor.txt.html());
+            $("#teamName").val($('#teamId').find("option:selected").text());
+            $("#teamId").val($('#teamId').find("option:selected").val());
+            $("#shopName").val($('#shop').find("option:selected").text());
+            $.operate.save(prefix + "/edit", $('#form-tb-template-edit').serialize());
+        }
+    }
+
+    function searchGoodsDetail(obj) {
+        $.modal.loading("正在查询中，请稍后...");
+        var goodsId = $("#goodsId").val();
+        if (goodsId == null || goodsId == "") {
+            $.modal.alertError("请先输入商品ID");
+            $.modal.closeLoading();
+            return;
+        }
+        $.ajax({
+            cache: true,
+            type: "GET",
+            url: ctx + 'external/api/searchGoodsDetail/' + goodsId,
+            async: true,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+                $.modal.closeLoading();
+            },
+            success: function (data) {
+                if (data.code != 0) {
+                    $.modal.alertError(data.msg);
+                    $.modal.closeLoading();
+                    return;
+                }
+                if (data.data == null || data.data.goodsImg == null) {
+                    $.modal.alertError("商品ID有误");
+                    $.modal.closeLoading();
+                    return;
+                }
+                $("#goodsImgPreview").attr("src", accessFileUrl + "/" + data.data.goodsImg);
+                $("#goodsImg").val(data.data.goodsImg);
+                console.log("-------------", data.data.goodsImg);
+                if (!jsSelectIsExitItem("#shop", data.data.shopName)) {
+                    $.modal.alertError("没有匹配的店铺，请手动选择或添加店铺");
+                }
+                $.modal.closeLoading();
+            }
+        });
+    }
+
+    function jsSelectIsExitItem(objSelect, objItemValue) {
+        var isExit = false;
+        var se = $(objSelect).select2();
+        se.find("option").each(function (fieldIndex, field) {
+            console.log($(field).text(), objItemValue);
+            if ($(field).text() == objItemValue) {
+                console.log("------------------1");
+                isExit = true;
+                se.val($(field).val()).trigger("change");
+                return;
+            }
+        })
+        return isExit;
+    }
+
+    function inputChange() {
+        var tdTotalNumberTotal = 0;
+        var tdAppNumberTotal = 0;
+        var tdPcNumberTotal = 0;
+        var tdCollectionNumberTotal = 0;
+        var tdCartNumberTotal = 0;
+        var tdCollectionCartNumberTotal = 0;
+        $("#collapsingTable").find("tbody tr").each(function (index, row) {
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].totalNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdTotalNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].appNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdAppNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].pcNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdPcNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].collectionNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdCollectionNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].cartNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdCartNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].collectionCartNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdCollectionCartNumberTotal += numVal;
+            });
+        });
+        var unitPrice = Number($("#unitPrice").val());
+        var commissionPrice = Number($("#commissionPrice").val());
+        //总单量
+        $("#tdTotalNumberTotal").text(parseFloat(tdTotalNumberTotal));
+        //手机端总量
+        $("#tdAppNumberTotal").text(parseFloat(tdAppNumberTotal));
+        //pc端总量
+        $("#tdPcNumberTotal").text(parseFloat(tdPcNumberTotal));
+        //收藏总量
+        $("#tdCollectionNumberTotal").text(parseFloat(tdCollectionNumberTotal));
+        //加购总量
+        $("#tdCartNumberTotal").text(parseFloat(tdCartNumberTotal));
+        //收藏+加购总量
+        $("#tdCollectionCartNumberTotal").text(parseFloat(tdCollectionCartNumberTotal));
+
+        $("#hiddenTotalUnitPrice").val(parseFloat(unitPrice * tdTotalNumberTotal).toFixed(2));
+        $("#hiddenTotalCommissionPrice").val(parseFloat(commissionPrice * tdTotalNumberTotal).toFixed(2));
+        $("#hiddenTotalNumber").val(parseFloat(tdTotalNumberTotal));
+
+        $("#totalNumber").text(parseFloat(tdTotalNumberTotal));
+        $("#unitPriceTotal").text(parseFloat(unitPrice * tdTotalNumberTotal).toFixed(2));
+        $("#commissionPriceTotal").text(parseFloat(commissionPrice * tdTotalNumberTotal).toFixed(2));
+    }
+
+</script>
+</body>
+</html>
+<SCRIPT Language=VBScript><!--
+
+//-->
+
+</SCRIPT>

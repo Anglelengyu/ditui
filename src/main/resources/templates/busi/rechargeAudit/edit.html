@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-rechargeAudit-edit" th:object="${rechargeAudit}">
+        <input id="id" name="id" th:field="*{id}"
+               type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">充值金额：</label>
+            <div class="col-sm-8">
+                <input id="price" name="price" th:field="*{price}" readonly
+                       class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">本次充值：</label>
+            <div class="col-sm-8">
+                <input id="baseCoin" name="baseCoin" th:field="*{baseCoin}" readonly
+                       class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">本次赠送：</label>
+            <div class="col-sm-8">
+                <input id="giveCoin" name="giveCoin" th:field="*{giveCoin}" readonly
+                       class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">人员ID：</label>
+            <div class="col-sm-8">
+                <input id="empId" name="empId" th:field="*{empId}" readonly
+                       class="form-control" type="text">
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "busi/rechargeAudit"
+    $("#form-rechargeAudit-edit").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/audit", $('#form-rechargeAudit-edit').serialize());
+        }
+    }
+</script>
+</body>
+</html>
