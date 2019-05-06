@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-user-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">对方云关联码：</label>
+            <div class="col-sm-5">
+                <input class="form-control" type="text" id="num" name="num"/>
+            </div>
+            <a class="btn btn-success" onclick="query()">
+                <i class="fa fa-search"></i> 查询
+            </a>
+        </div>
+        <div id="data" th:hidden="true">
+            <div class="form-group" th:disabled="true">
+                <input id="passiveApplyApplicant" name="passiveApplyApplicant" type="hidden"/>
+                <label class="col-sm-3 control-label ">对方角色：</label>
+                <div class="col-sm-6">
+                    <lable class="form-control" th:disabled="true" id="userTypeName"></lable>
+                </div>
+            </div>
+            <div class="form-group">
+                <input id="passiveApplyId" name="passiveApplyId" type="hidden"/>
+                <input id="passiveApplyUserName" name="passiveApplyUserName" type="hidden"/>
+                <label class="col-sm-3 control-label ">对方昵称：</label>
+                <div class="col-sm-6">
+                    <lable class="form-control" th:disabled="true" id="passiveApplyUserNames"></lable>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label ">申请备注：</label>
+                <div class="col-sm-6">
+                    <input class="form-control" type="text" id="applyRemark" name="applyRemark"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-13 control-label"
+                   style="color:#F00">注：申请关联后，需要对方确认【同意关联】，双方才能关联成功。查看云关联码，请点击头像打开【个人信息】</label>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "busi/roleApplyRelation";
+    $("#form-user-add").validate({
+        rules: {
+            employeeNum: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            if ($("#passiveApplyId").val() == null || $("#passiveApplyId").val() == "") {
+                $.modal.alertError("请先输入正确的云关联码");
+                return;
+            }
+            $.operate.save(prefix + "/add", $('#form-user-add').serialize());
+        }
+    }
+
+    function query() {
+        if ($.validate.form()) {
+            $.modal.loading("正在处理中，请稍后...");
+            var num = $("input[name='num']").val();
+            $.ajax({
+                cache: true,
+                type: "GET",
+                url: prefix + '/queryUser/' + num,
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                    $.modal.closeLoading();
+                },
+                success: function (data) {
+                    if (data.code != 0) {
+                        $.modal.alertError(data.msg);
+                        $.modal.closeLoading();
+                        return;
+                    }
+                    if (data.data == null) {
+                        $.modal.alertError("数据不存在");
+                        $("#passiveApplyId").val("");
+                        $("#data").hide();
+                        $.modal.closeLoading();
+                        return;
+                    }
+                    console.log(data);
+                    $("#data").show();
+                    $("#passiveApplyUserNames").text(data.data.userName);
+                    $("#passiveApplyUserName").val(data.data.userName);
+                    $("#passiveApplyId").val(data.data.userId);
+                    $("#passiveApplyApplicant").val(data.data.userType);
+                    $("#userTypeName").text(data.data.userTypeName);
+                    $.modal.closeLoading();
+                }
+            });
+        }
+    }
+</script>
+</body>
+
+</html>

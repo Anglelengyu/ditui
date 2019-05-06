@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            任务ID：<input type="text" name="taskId" style="width: 100px;"/>
+                        </li>
+                        <li>
+                            电商平台：
+                            <input type="text" name="platform" style="width: 170px;">
+                        </li>
+                        <li>
+                            商品简称：
+                            <input type="text" name="goodsName" style="width: 170px;">
+                        </li>
+                        <li>
+                            订单数量：
+                            <input type="text" name="orderNum" style="width: 100px;">
+                        </li>
+                        <li>
+                            团队备注：<select name="orTeamRemark" style="width: 100px;">
+                            <option value="">所有</option>
+                            <option th:value="0">未备注</option>
+                            <option th:value="1">已备注</option>
+                        </select>
+                        </li>
+                        <li class="select-time">
+                            <label>创建时间： </label>
+                            <input type="text" class="time-input" id="startTime" th:name="startTime" name="startTime"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" th:name="endTime" name="endTime"/>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                        <li>
+                            <label>当前页面总本金： <span id="taskCorpusTotal" style="line-height: 34px;">0.00</span></label>
+                        </li>
+                        <li>
+                            <label>当前页面总佣金： <span id="taskCommissionPriceTotal" style="line-height: 34px;">0.00</span></label>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var showFlag = [[${@permission.hasPermi('busi:groundTask:alreadyAccepted:list')}]];
+    var removeFlag = [[${@permission.hasPermi('busi:groundTask:alreadyAccepted:remove')}]];
+    var prefix = ctx + "busi/groundTask";
+    var datas = [[${@dict.getType('task_status')}]];
+    $(function () {
+        var options = {
+            url: prefix + "/alreadyAccepted",
+            removeUrl: prefix + "/waitAccepted/remove",
+            modalName: "已接任务",
+            search: false,
+            showExport: true,
+            loadSuccess: function (data) {
+                var taskCorpusTotal = 0;
+                var taskCommissionPriceTotal = 0;
+                var rows = data.rows;
+                for (var i = 0, j = rows.length; i < j; i++) {
+                    taskCorpusTotal += rows[i].taskCorpus;
+                    taskCommissionPriceTotal += rows[i].taskCommissionPrice;
+                }
+                $("#taskCorpusTotal").html(($.unit.fen2yuan(taskCorpusTotal)));
+                $("#taskCommissionPriceTotal").html(($.unit.fen2yuan(taskCommissionPriceTotal)));
+            },
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: '任务ID',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'platform',
+                    title: '电商平台',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var platform = value.split(",");
+                        var platformCon = '<ul>';
+                        for (i = 0; i < platform.length; i++) {
+                            platformCon += '<li style="margin-bottom: 5px;">' + platform[i] + '</li>';
+                            platformCon += '<hr style="margin-bottom: 5px;margin-top: 0px;">';
+                        }
+                        return platformCon;
+                    }
+                },
+                {
+                    field: 'goodsName',
+                    title: '商品名称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var goodsName = row.goodsName.split(",");
+                        var goodsCon = '<ul>';
+                        for (i = 0; i < goodsName.length; i++) {
+                            goodsCon += '<li style="margin-bottom: 5px;">' + goodsName[i] + '</li>';
+                            goodsCon += '<hr style="margin-bottom: 5px;margin-top: 0px;">';
+                        }
+                        return goodsCon;
+                    }
+                },
+                {
+                    field: 'orderNum',
+                    title: '订单数量',
+                    sortable: true,
+                    formatter: function (value, row) {
+                        return row.orderNum;
+                    }
+                },
+                {
+                    field: 'taskCorpus',
+                    title: '任务总本金',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(row.taskCorpus);
+                    }
+                },
+                {
+                    field: 'taskCommissionPrice',
+                    title: '任务总佣金',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(row.taskCommissionPrice);
+                    }
+                },
+                {
+                    field: 'allotType,realTimeStart',
+                    title: '分配方式',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (row.allotType == 1) {
+                            return row.realTimeStart + "~" + row.realTimeEnd;
+                        }
+                        if (row.allotType == 2) {
+                            return "储备任务";
+                        }
+                        return "手动分配"
+                    }
+                },
+                {
+                    field: 'employeeName',
+                    title: '员工昵称',
+                    sortable: true
+                },
+                {
+                    field: 'employeeArea',
+                    title: '员工地区',
+                    sortable: true
+                },
+                {
+                    field: 'taskStatus',
+                    title: '任务状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'teamRemark',
+                    title: '团队备注',
+                    formatter: function (value, row, index) {
+                        return '<a href="#" onclick="showRemark(\'' + row.id + '\')" class="showKeyWords" orderTemplateId="' + value + '">查看备注</a>';
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + showFlag + '" href="#" onclick="showDetail(\'' + row.id + '\')"><i class="fa fa-eye"></i>查看</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                },
+
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true,
+                    formatter: function (value, row) {
+                        return row.createTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    var showRemark = function (id) {
+        var me = $(this);
+        var url = prefix + '/waitDistribution/showRemark/' + id;
+        $.modal.open("", url, '600', '350');
+    };
+
+
+    var showDetail = function (id) {
+        var url = prefix + '/alreadyDistribution/showTaskDetails/' + id;
+        var index = layer.open({
+            type: 2,
+            area: ['900px', ($(window).height() - 50) + 'px'],
+            //不固定
+            maxmin: true,
+            shade: 0.3,
+            title: '查看任务详情',
+            content: url,
+            // 弹层外区域关闭
+            shadeClose: true
+        });
+        layer.full(index);
+    }
+
+    var moveToHistory = function () {
+        var rows = $('#bootstrap-table').bootstrapTable('getSelections');
+        if (rows.length == 0) {
+            $.modal.confirm("没有选中的数据，是否将所有任务转移到历史记录？", function () {
+                var data = {type: 1};
+                toHistory(data)
+            });
+            return;
+        } else {
+            var taskIds = new Array();
+            for (i = 0; i < rows.length; i++) {
+                taskIds.push(rows[i].taskId);
+            }
+
+            $.modal.confirm("确定将" + rows.length + "条选中的任务转移到历史记录？", function () {
+                var data = {"taskId": taskIds.join(","), type: 2};
+                toHistory(data)
+            });
+        }
+    }
+    $("input[type=text]").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $.table.search();
+        }
+    })
+    var toHistory = function (data) {
+        var url = prefix + "/moveToHistory";
+        $.operate.submit(url, "post", "json", data);
+    }
+</script>
+</body>
+</html>

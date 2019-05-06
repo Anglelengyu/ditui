@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/js/plugins/quploader/uploader.css}" rel="stylesheet"/>
+<style type="text/css">
+    .main {
+        overflow: hidden;
+    }
+
+    .sidebar {
+        float: left;
+        width: 220px;
+        border-right: 1px solid #ccc;
+    }
+
+    .sidebar .title {
+        font-size: 16px;
+        padding: 8px 0 8px 15px;
+    }
+
+    .sidebar li {
+        padding: 8px 0 8px 35px;
+        border-top: 1px solid #ddd;
+    }
+
+    .sidebar li a {
+        color: #0094ff;
+        font-size: 14px;
+    }
+
+    .sidebar li.on, .sidebar li:hover {
+        background-color: #efefef;
+    }
+
+    .content {
+        float: right;
+        width: 100%;
+        margin-left: -240px;
+    }
+
+    .contentin {
+        _width: 760px;
+    }
+
+    .x-button {
+        border-radius: 1px;
+        text-align: center;
+        text-decoration: none;
+        background-color: #0a82e4;
+        color: #ffffff;
+        font-size: 17px;
+        margin: 0;
+        white-space: nowrap;
+        cursor: pointer;
+        min-width: 40px;
+        _width: 40px;
+    }
+
+    .content .x-button {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 5px;
+    }
+
+    #upload-target {
+        margin-bottom: 15px;
+    }
+
+    #upload-view {
+        min-height: 200px;
+        _height: 200px;
+        background: #fff;
+        border: 1px solid green;
+    }
+
+    #log {
+        margin: 10px 0;
+        white-space: nowrap;
+        clear: both;
+    }
+
+    .scroll-view {
+        overflow: auto;
+        height: 300px;
+    }
+
+    .h100 {
+        height: 100px;
+    }
+
+    .h1000 {
+        height: 1000px;
+    }
+
+    .tabTitle {
+        overflow: hidden;
+        zoom: 1;
+    }
+
+    .tabTitle li {
+        float: left;
+        margin-right: 4px;
+        z-index: 10;
+        position: relative;
+    }
+
+    .tabTitle li a {
+        float: left;
+        padding: 0 18px;
+        border: 1px solid #cdcdcd;
+        border-bottom: none;
+        line-height: 44px;
+        font-size: 14px;
+        color: #333;
+        text-decoration: none;
+        font-weight: bold;
+        background: url(bg-tab.png) repeat-x left bottom;
+    }
+
+    .tabTitle li a:hover, .tabTitle li.on a {
+        border-top: 2px solid #336699;
+        line-height: 44px;
+        background: #fff;
+    }
+
+    .tabCont {
+        margin-top: -1px;
+        padding: 10px;
+        border: 1px solid #cdcdcd;
+        background: #fff;
+    }
+
+    .turn-box {
+        min-height: 200px;
+        _height: 200px;
+    }
+
+    .turn-box .x-button {
+        margin: 10px;
+    }
+
+    #drop-area {
+        width: 400px;
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        font-size: 18px;
+        color: #777;
+        border: 1px solid red;
+        margin: 10px 0;
+    }
+
+    @media screen and (min-width: 1200px) {
+        .hd .con {
+            width: 1280px;
+        }
+
+        .hd .side_r {
+            width: 1039px;
+        }
+    }
+</style>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-order-add" enctype="multipart/form-data">
+        <div class="main">
+            <div class="content">
+                <div class="contentin">
+                    <div>
+                        <a id="upload-target" class="x-button btn btn-success">添加文件</a>
+                        <a id="upload-submit" class="x-button btn btn-success">确认上传</a>
+                    </div>
+                    <div id="upload-view"></div>
+                </div>
+            </div>
+            <div id="sidebar" class="sidebar"></div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+
+<script th:src="@{/js/plugins/quploader/Q.js}"></script>
+<script th:src="@{/js/plugins/quploader/Q.Uploader.js}"></script>
+<script th:src="@{/js/plugins/quploader/Q.Uploader.UI.File.js}"></script>
+
+<script type="text/javascript">
+    var prefix = ctx + "busi/order"
+    window.UPLOAD_URL = "/common/upload";
+    $("#form-order-add").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            }
+        }
+    });
+
+    var uploader = new Q.Uploader({
+        url: UPLOAD_URL + "?type=file",
+        target: document.getElementById("upload-target"),
+        view: document.getElementById("upload-view"),
+        html5: true,
+        multiple: true,
+        auto: false,
+        allows: ".xls,.xlsx",
+        on: {
+            //添加之前触发
+            add: function (task) {
+                if (task.disabled) return alert("允许上传的文件格式为：" + this.ops.allows);
+            },
+            upload: function (task) {
+                console.log(task.name + " : 开始上传");
+            },
+            complete: function (task) {
+                if (task.json && task.json.files) {
+                    var files = task.json.files;
+                    var fileId = files[0].substring(0, files[0].indexOf("."));
+                    $("#form-order-add").append("<input type='hidden' name='files' id='" + fileId + "' value='" + files[0] + "'/>");
+                }
+            },
+            remove: function (task) {
+                if (task.json && task.json.files) {
+                    var files = task.json.files;
+                    var fileId = files[0].substring(0, files[0].indexOf("."));
+                    $("#" + fileId).remove();
+                }
+            }
+        }
+    });
+
+    $("#upload-submit").click(function (e) {
+        uploader.start();
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            if ($("#form-order-add").children("input[name='files']").length == 0) {
+                $.modal.alertWarning("请上传订单导入文件的文件");
+                return false;
+            }
+            $.operate.save(prefix + "/import", $('#form-order-add').serialize());
+        }
+    }
+</script>
+</body>
+</html>

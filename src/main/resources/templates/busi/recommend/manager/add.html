@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-user-add">
+        <div class="form-group">
+            <input id="teamId" name="teamId" type="hidden" th:value="*{teamId}"/>
+            <label class="col-sm-3 control-label ">推荐人名称：</label>
+            <div class="col-sm-5">
+                <input class="form-control" type="text" id="name" name="name"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <input id="managerIds" name="managerIds" type="hidden"/>
+            <label class="col-sm-3 control-label ">推荐掌柜：</label>
+            <div class="col-sm-6">
+                <select id="manager" name="manager" class="ui fluid search dropdown" multiple="">
+                    <option th:each="manager : *{managerList}" th:text="${manager.userName}"
+                            th:value="${manager.userId}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">备注：</label>
+            <div class="col-sm-6">
+                <textarea rows="3" name="remark" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript">
+
+    $('.ui.fluid.dropdown').dropdown({});
+
+    var prefix = ctx + "busi/recommend/manager";
+    $("#form-user-add").validate({
+        rules: {
+            name: {
+                required: true,
+            },
+            manager: {
+                required: true,
+            },
+            remark: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var select = document.getElementById("manager");
+            var str = [];
+            for (i = 0; i < select.length; i++) {
+                if (select.options[i].selected) {
+                    str.push(select[i].value);
+                }
+            }
+            $("#managerIds").val(str);
+            $.operate.save(prefix + "/add", $('#form-user-add').serialize());
+        }
+    }
+</script>
+</body>
+
+</html>
