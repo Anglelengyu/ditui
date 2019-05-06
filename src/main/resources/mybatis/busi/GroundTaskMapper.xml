@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.groundTask.mapper.GroundTaskMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.groundTask.domain.GroundTask" id="GroundTaskResult">
+        <result property="id" column="id"/>
+        <result property="taskId" column="taskId"/>
+        <result property="employeeId" column="employeeId"/>
+        <result property="orderNum" column="orderNum"/>
+        <result property="taskCommissionPrice" column="taskCommissionPrice"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="createBy" column="createBy"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="taskStatus" column="taskStatus"/>
+        <result property="taskCorpus" column="taskCorpus"/>
+        <result property="completionTime" column="completionTime"/>
+        <result property="lng" column="lng"/>
+        <result property="lat" column="lat"/>
+        <result property="allotType" column="allotType"/>
+        <result property="realTimeStart" column="realTimeStart"/>
+        <result property="realTimeEnd" column="realTimeEnd"/>
+        <result property="teamRemark" column="teamRemark"/>
+    </resultMap>
+
+    <sql id="selectGroundTaskVo">
+        SELECT task.id, task.task_id taskId,task.task_status taskStatus, task.order_num orderNum, task.task_commission_price taskCommissionPrice,task.team_remark teamRemark,
+        task.create_time createTime,task.status,task.update_time updateTime,group_concat(bo.platform) platform, group_concat(bo.group_classifys) groupClassifys, group_concat(bo.goods_name) goodsName,
+        group_concat(bo.goods_img) goodsImg, group_concat(bo.unit_price) unitPrice,
+        group_concat(bo.commission_price) commissionPrice,task.task_corpus taskCorpus, completion_time completionTime,
+        task.employee_id as employeeId, task.allot_type as allotType, task.real_time_start as realTimeStart, task.real_time_end as realTimeEnd,
+        su.user_name employeeName,su.area employeeArea,su.phonenumber employeePhone
+        FROM busi_ground_task task
+        INNER JOIN busi_ground_task_order ot ON task.task_id = ot.task_id
+        INNER JOIN busi_tb_transaction_order bo ON bo.order_id = ot.order_id
+        LEFT JOIN busi_employee employee ON employee.employee_id = task.employee_id
+        LEFT JOIN sys_user su ON su.user_id = employee.user_id
+    </sql>
+
+    <sql id="selectGroundTask">
+        SELECT task.id, task.task_id taskId,task.task_status taskStatus, task.order_num orderNum, task.task_commission_price taskCommissionPrice,task.team_remark teamRemark,
+        task.create_time createTime,task.status,task.update_time updateTime,group_concat(bo.platform) platform, group_concat(bo.group_classifys) groupClassifys, group_concat(bo.goods_name) goodsName,
+        group_concat(bo.goods_img) goodsImg, group_concat(bo.unit_price) unitPrice,
+        group_concat(bo.commission_price) commissionPrice,task.task_corpus taskCorpus, completion_time completionTime,
+        task.employee_id as employeeId, task.allot_type as allotType, task.real_time_start as realTimeStart, task.real_time_end as realTimeEnd,
+        su.user_name userName
+        FROM busi_ground_task task
+        INNER JOIN busi_ground_task_order ot ON task.task_id = ot.task_id
+        INNER JOIN busi_tb_transaction_order bo ON bo.order_id = ot.order_id
+        LEFT JOIN busi_employee employee ON employee.employee_id = task.employee_id
+        LEFT JOIN sys_user su ON su.user_id = employee.user_id
+    </sql>
+
+    <select id="selectGroundTaskList" parameterType="net.hongkuang.ditui.project.busi.groundTask.domain.SearchGroundTask"
+            resultType="net.hongkuang.ditui.project.busi.groundTask.domain.GroundTaskVo">
+        <include refid="selectGroundTaskVo"/>
+        where task.status = #{status}
+        <if test="taskId != null  and taskId != ''  ">and task.task_id like concat('%',#{taskId},'%')</if>
+        <if test="orderNum != null  and orderNum != ''  ">and task.order_num = #{orderNum}</if>
+        <if test="goodsName != null  and goodsName != ''  ">and bo.goods_name like concat('%',#{goodsName},'%')</if>
+        <if test="taskStatus != null ">and task.task_status = #{taskStatus}</if>
+        <if test="teamId != null  and teamId != ''  ">
+            and ((bo.team_id = #{teamId} and bo.receipt_team_id is null) OR (bo.team_id != #{teamId} and bo.receipt_team_id = #{teamId}))
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and completion_time >= #{startTime}
+        </if>
+        <if test="endTime != null  and endTime != ''">
+            and completion_time &lt;= #{endTime}
+        </if>
+        <if test="userName != null  and userName != ''  ">and su.`userName` like concat(#{userName},'%')</if>
+        group by task.task_id
+    </select>
+
+    <select id="selectGroundTaskById" parameterType="net.hongkuang.ditui.project.busi.groundTask.domain.SearchGroundTask"
+            resultType="net.hongkuang.ditui.project.busi.groundTask.domain.GroundTask">
+        <include refid="selectGroundTaskVo"/>
+        where task.id = #{id}
+    </select>
+
+    <select id="selectGroundTaskByOrderId" parameterType="String"
+            resultType="net.hongkuang.ditui.project.busi.groundTask.domain.GroundTask">
+        <include refid="selectGroundTaskVo"/>
+        where ot.order_id = #{orderId}
+    </select>
+
+    <select id="selectGroundTaskByTaskId" parameterType="net.hongkuang.ditui.project.busi.groundTask.domain.SearchGroundTask"
+            resultType="net.hongkuang.ditui.project.busi.groundTask.domain.GroundTask">
+        <include refid="selectGroundTaskVo"/>
+        where task.task_id = #{taskId}
+    </select>
+
+
+    <insert id="batchInsert">
+        insert into busi_ground_task(id, task_id, order_num, task_commission_price, task_corpus, create_time, update_time, status,team_id,
+        ext1, ext2, create_by, update_by)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+            #{item.taskId},
+            #{item.orderNum},
+            #{item.taskCommissionPrice},
+            #{item.taskCorpus},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.teamId},
+            #{item.ext1},
+            #{item.ext2},
+            #{item.createBy},
+            #{item.updateBy})
+        </foreach>
+    </insert>
+
+    <update id="updateGroundTaskTeamRemark" parameterType="GroundTask">
+        update busi_ground_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamRemark != null">team_remark = #{teamRemark},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="selectGroundTaskByIds" resultMap="GroundTaskResult">
+        <include refid="selectGroundTask"/>
+        where task.id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <delete id="deleteGroundTaskByIds" parameterType="String">
+        delete from busi_ground_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteGroundTaskByTaskIds" parameterType="String">
+        delete from busi_ground_task where task_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateGroundTask" parameterType="GroundTask">
+        update busi_ground_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="employeeId != null  and employeeId != ''  ">employee_id = #{employeeId},</if>
+            <if test="orderNum != null  ">order_num = #{orderNum},</if>
+            <if test="taskCommissionPrice != null  ">task_commission_price = #{taskCommissionPrice},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="taskCorpus != null">task_corpus = #{taskCorpus}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="selectAllocTaskList" parameterType="map" resultMap="GroundTaskResult">
+        select DISTINCT bgt.task_id as taskId from busi_tb_transaction_order btto
+        inner join busi_ground_task_order bgto on bgto.order_id = btto.order_id
+        inner join busi_ground_task bgt on bgto.task_id = bgt.task_id
+        where bgt.`status` = #{status}
+        and btto.goods_name in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and bgt.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        order by FIELD(btto.goods_name,
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+    <update id="updateBatchStatusByIds">
+        update busi_ground_task set status = #{status}
+        <if test="allotType != null">
+            , allot_type = #{allotType}
+        </if>
+        <if test="realTimeStart != null and realTimeStart != ''">
+            , real_time_start = #{realTimeStart}
+        </if>
+        <if test="realTimeEnd != null and realTimeEnd != ''">
+            , real_time_end = #{realTimeEnd}
+        </if>
+        where task_id in
+        <foreach item="taskId" collection="list" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+        and status = #{preStatus}
+    </update>
+
+    <update id="updateBatchGroundTaskStatusAllot" parameterType="string">
+        update busi_ground_task set status = 2,allot_type = 2 where task_id in
+        <foreach item="taskId" collection="list" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <update id="updateBatchTaskStatusByIds">
+        update busi_ground_task set task_status = #{status}
+        <if test="employeeId != null and employeeId != ''">
+            , employee_id = #{employeeId}
+        </if>
+        where task_id in
+        <foreach item="taskId" collection="ids" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+        and task_status = #{preStatus}
+    </update>
+
+    <update id="updateAllTaskStatus">
+        update busi_ground_task set status = #{status} where status = #{preStatus}
+        and task_id in
+        <foreach item="taskId" collection="ids" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <select id="checkGroundTaskStatusByEmployeeId" resultMap="GroundTaskResult">
+        <include refid="selectGroundTaskVo"/>
+        where employee.employee_id = #{employeeId}
+        AND task.task_status =#{status}
+    </select>
+
+</mapper>

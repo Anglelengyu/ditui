@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<script th:src="@{http://api.map.baidu.com/api?v=2.0&ak=u9xfZAnV2IQZbv7s6tGrXdrq}"></script>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            业务员姓名：<input type="text" id="name" name="name" style="width: 150px;"/>
+                        </li>
+
+                        <li>
+                            手机号：<input type="text" name="phone" id="phone" style="width: 100px;"/>
+                        </li>
+                        <li class="select-time">
+                            <label>完成时间： </label>
+                            <input type="text" class="time-input" id="startTime" th:name="startTime" name="startTime"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" th:name="endTime" name="endTime"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="getHistoryInfo()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                        <li style="line-height: 30px;display: none;" id="searchResultView">
+                            本次检索到数据 102 条
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12" style="height: 90%">
+            <div style="width:100%;height: 100%" id="historyMap"></div>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var prefix = ctx + "busi/salesman";
+
+    var map = new BMap.Map("historyMap");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(103.675694, 30.63585), 18);  // 初始化地图,设置中心点坐标和地图级别
+    //添加地图类型控件
+    map.addControl(new BMap.MapTypeControl({
+        mapTypes: [
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]
+    }));
+
+    // 请求后台获取相关坐标数据
+    var geoc = new BMap.Geocoder();
+    var opts = {
+        width: 300,     // 信息窗口宽度
+        height: 100,     // 信息窗口高度
+        title: "<h4>任务信息</h4>", // 信息窗口标题
+        enableMessage: true//设置允许信息窗发送短息
+    };
+    var getHistoryInfo = function () {
+        var name = $("#name").val();
+        var phone = $("#phone").val();
+        if (!isEmpty(name) || !isEmpty(phone)) {
+            var config = {
+                url: prefix + "/getHistoryInfo",
+                data: {name: name, phone: phone, startTime: $("#startTime").val(), endTime: $("#endTime").val()},
+                callback: function (result) {
+                    var datas = result.data;
+                    $.modal.msg("本次查询到历史任务数据：" + datas.length + "条")
+                    var pot;
+                    $.each(datas, function (index, data) {
+                        var point = new BMap.Point(data.lng, data.lat);
+                        if (index == 0) {
+                            pot = point;
+                        }
+                        addMarker(point, data.completionTime, data.taskId, data.taskNo);
+                    })
+                    map.centerAndZoom(pot, 19);
+                    $.modal.closeLoading();
+                }
+            };
+            $ajax2(config);
+        } else {
+            $.modal.alertWarning("请填写数据进行检索!");
+        }
+    }
+
+    function addMarker(point, completionTime, taskId, taskNo) {
+        geoc.getLocation(point, function (rs) {
+            var content = '任务编号：<a href="#" onclick="showDetail(\'' + taskId + '\')">' + taskNo + '</a><br />完成地点：' + rs.address + '<br />完成时间：' + new Date(completionTime).format("yyyy-MM-dd hh:mm:ss")
+            var marker = new BMap.Marker(point);
+            map.addOverlay(marker);
+            addClickHandler(content, marker);
+        });
+
+    }
+
+    function addClickHandler(content, marker) {
+        marker.addEventListener("click", function (e) {
+                openInfo(content, e)
+            }
+        );
+    }
+
+    function openInfo(content, e) {
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow, point); //开启信息窗口
+    }
+
+    // map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    $("input[type=text]").keypress(function (e) {
+        if (e.keyCode == 13) {
+            getHistoryInfo();
+        }
+    })
+    var showDetail = function (id) {
+        var url = prefix + '/showTaskDetails/' + id;
+        var index = layer.open({
+            type: 2,
+            area: ['900px', ($(window).height() - 50) + 'px'],
+            //不固定
+            maxmin: true,
+            shade: 0.3,
+            title: '查看任务详情',
+            content: url,
+            // 弹层外区域关闭
+            shadeClose: true
+        });
+        layer.full(index);
+    }
+</script>
+</body>
+</html>

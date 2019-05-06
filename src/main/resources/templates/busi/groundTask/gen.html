@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/js/plugins/quploader/uploader.css}" rel="stylesheet"/>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-order-gen">
+        <input id="ids" name="ids" type="hidden"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="width: 23%;">商品数量：</label>
+            <div class="col-sm-3">
+                <input id="genTypes" th:disabled="true" name="genTypes" class="form-control"
+                       type="text">
+            </div>
+            <label class="col-sm-2 control-label">订单总量：</label>
+            <div class="col-sm-3">
+                <input id="orderTotalNum" th:disabled="true" name="orderTotalNum" class="form-control"
+                       type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="width: 30%;">生成方式：</label>
+            <div class="col-sm-5">
+                <div class="select-list">
+                    <ul>
+                        <li style="margin: 0;">
+                            <select name="genType" th:with="type=${@dict.getType('order_gen_task_type')}">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <a class="btn btn-primary btn-edit" id="query" onclick="query()">计算</a>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            生成后任务数量：<label id="taskTotal">0</label>个</label>&nbsp;&nbsp;
+            生成任务后剩余订单量：<label id="surplusTotal">0</label>个</label>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+
+<script type="text/javascript">
+    var prefix = ctx + "busi/groundTask";
+    var selectOrderIds = parent.document.getElementById('selectOrderIds').value;
+    $("#ids").val(selectOrderIds);
+    init();
+
+    $("#form-order-gen").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            },
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/genTask", $('#form-order-gen').serialize());
+        }
+    }
+
+    function init() {
+        $.modal.loading("正在处理中，请稍后...");
+        $.ajax({
+            type: "POST",
+            url: prefix + "/genTypeAndOrderTotalNum",
+            data:{ids:selectOrderIds},
+            error: function (request) {
+                $.modal.alertError("系统错误");
+                $.modal.closeLoading();
+            },
+            success: function (data) {
+                if (data.code != 0) {
+                    $("#genTypes").val(0);
+                    $("#orderTotalNum").val(0);
+                    $.modal.alertError(data.msg);
+                    $.modal.closeLoading();
+                    return;
+                }
+                console.log(data);
+                $("#genTypes").val(data.data.genType);
+                $("#orderTotalNum").val(data.data.orderTotalNum);
+                $.modal.closeLoading();
+            }
+        });
+    }
+
+    function query() {
+        $.modal.loading("正在处理中，请稍后...");
+        $.ajax({
+            type: "POST",
+            url: prefix + "/getTaskNum",
+            data:{ids:selectOrderIds,genType:$("select[name='genType']").val()},
+            error: function (request) {
+                $.modal.alertError("系统错误");
+                $.modal.closeLoading();
+            },
+            success: function (data) {
+                if (data.code != 0) {
+                    $("#taskTotal").text(0);
+                    $("#surplusTotal").text(0);
+                    $.modal.alertError(data.msg);
+                    $.modal.closeLoading();
+                    return;
+                }
+                console.log(data);
+                $("#taskTotal").text(data.data.genTaskNum);
+                $("#surplusTotal").text(data.data.genGsurplusNum);
+                $.modal.closeLoading();
+            }
+        });
+    }
+</script>
+</body>
+</html>

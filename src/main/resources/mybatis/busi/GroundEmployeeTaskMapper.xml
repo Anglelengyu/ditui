@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.groundEmployeeTask.mapper.GroundEmployeeTaskMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.groundEmployeeTask.domain.GroundEmployeeTask" id="GroundEmployeeTaskResult">
+        <result property="id" column="id"/>
+        <result property="groundEmployeeTaskId" column="ground_employee_task_id"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="teamId" column="team_id"/>
+    </resultMap>
+
+    <sql id="selectGroundEmployeeTaskVo">
+        select id, ground_employee_task_id, employee_id, task_id, create_time, update_time, status, ext1, ext2,team_id from busi_ground_employee_task
+    </sql>
+
+    <select id="selectGroundEmployeeTaskList" parameterType="net.hongkuang.ditui.project.busi.groundEmployeeTask.domain.GroundEmployeeTask"
+            resultMap="GroundEmployeeTaskResult">
+        <include refid="selectGroundEmployeeTaskVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="groundEmployeeTaskId != null  and groundEmployeeTaskId != '' ">and ground_employee_task_id = #{groundEmployeeTaskId}</if>
+            <if test="employeeId != null  and employeeId != '' ">and employee_id = #{employeeId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="teamId != null  and teamId != '' ">and team_id = #{teamId}</if>
+        </where>
+    </select>
+
+    <select id="selectGroundEmployeeTaskById" parameterType="Long" resultMap="GroundEmployeeTaskResult">
+        <include refid="selectGroundEmployeeTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGroundEmployeeTask" parameterType="net.hongkuang.ditui.project.busi.groundEmployeeTask.domain.GroundEmployeeTask">
+        insert into busi_ground_employee_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="groundEmployeeTaskId != null  and groundEmployeeTaskId != ''  ">ground_employee_task_id,</if>
+            <if test="employeeId != null  and employeeId != ''  ">employee_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="teamId != null  and teamId != ''  ">team_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="groundEmployeeTaskId != null  and groundEmployeeTaskId != ''  ">#{groundEmployeeTaskId},</if>
+            <if test="employeeId != null  and employeeId != ''  ">#{employeeId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="teamId != null  and teamId != ''  ">#{teamId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGroundEmployeeTask" parameterType="net.hongkuang.ditui.project.busi.groundEmployeeTask.domain.GroundEmployeeTask">
+        update busi_ground_employee_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groundEmployeeTaskId != null  and groundEmployeeTaskId != ''  ">ground_employee_task_id = #{groundEmployeeTaskId},</if>
+            <if test="employeeId != null  and employeeId != ''  ">employee_id = #{employeeId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="teamId != null  and teamId != ''  ">team_id = #{teamId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGroundEmployeeTaskById" parameterType="Long">
+        delete from busi_ground_employee_task where id = #{id}
+    </delete>
+
+    <delete id="deleteGroundEmployeeTaskByIds" parameterType="String">
+        delete from busi_ground_employee_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteByTaskIds" parameterType="String">
+        delete from busi_ground_employee_task where task_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert">
+        insert into busi_ground_employee_task(ground_employee_task_id, employee_id, task_id, create_time, update_time, status, ext1, ext2,team_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.groundEmployeeTaskId},
+            #{item.employeeId},
+            #{item.taskId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.ext1},
+            #{item.ext2},
+            #{item.teamId}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getGroundEmployeeTaskNum" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM
+        busi_ground_employee_task
+        WHERE
+        employee_id = #{employeeId}
+        AND create_time LIKE concat(#{taskDate},'%')
+    </select>
+</mapper>

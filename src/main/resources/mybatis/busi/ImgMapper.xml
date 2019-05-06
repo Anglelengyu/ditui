@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.img.mapper.ImgMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.img.domain.Img" id="ImgResult">
+        <result property="id" column="id"/>
+        <result property="imgId" column="img_id"/>
+        <result property="path" column="path"/>
+        <result property="name" column="name"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="imgIndex" column="img_index"/>
+    </resultMap>
+
+    <sql id="selectImgVo">
+        select id, img_id, path, name, task_id, create_time, status, ext1, ext2, update_time, create_by, update_by,
+        img_index from busi_img
+    </sql>
+
+    <select id="selectImgList" parameterType="net.hongkuang.ditui.project.busi.img.domain.Img" resultMap="ImgResult">
+        <include refid="selectImgVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="imgId != null  and imgId != '' ">and img_id = #{imgId}</if>
+            <if test="path != null  and path != '' ">and path = #{path}</if>
+            <if test="name != null  and name != '' ">and name = #{name}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+            <if test="imgIndex != null ">and img_index = #{imgIndex}</if>
+        </where>
+    </select>
+
+    <select id="selectImgById" parameterType="Long" resultMap="ImgResult">
+        <include refid="selectImgVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertImg" parameterType="net.hongkuang.ditui.project.busi.img.domain.Img">
+        insert into busi_img
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="imgId != null  and imgId != ''  ">img_id,</if>
+            <if test="path != null  and path != ''  ">path,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="imgIndex != null  ">img_index,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="imgId != null  and imgId != ''  ">#{imgId},</if>
+            <if test="path != null  and path != ''  ">#{path},</if>
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="imgIndex != null  ">#{imgIndex},</if>
+        </trim>
+    </insert>
+
+    <update id="updateImg" parameterType="net.hongkuang.ditui.project.busi.img.domain.Img">
+        update busi_img
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imgId != null  and imgId != ''  ">img_id = #{imgId},</if>
+            <if test="path != null  and path != ''  ">path = #{path},</if>
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="imgIndex != null  ">img_index = #{imgIndex},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteImgById" parameterType="Long">
+        delete from busi_img where id = #{id}
+    </delete>
+
+    <delete id="deleteImgByIds" parameterType="String">
+        delete from busi_img where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByTaskId" resultMap="ImgResult" parameterType="string">
+        <include refid="selectImgVo"/>
+        where task_id = #{taskId}
+        order by img_index asc
+    </select>
+    <insert id="insertBatchImg">
+        INSERT INTO busi_img(img_id,path,task_id,create_time,img_index)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            UUID(),
+            #{item.path},
+            #{item.taskId},
+            sysdate(),
+            #{item.imgIndex}
+            )
+        </foreach>
+    </insert>
+</mapper>

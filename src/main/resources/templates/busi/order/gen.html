@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/js/plugins/quploader/uploader.css}" rel="stylesheet"/>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-order-gen">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">待生成订单产品数量：</label>
+            <div class="col-sm-8">
+                <input id="genTypes" th:disabled="true" name="genTypes" th:value="${genType}" class="form-control"
+                       type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">生成方式：</label>
+            <div class="col-sm-5">
+                <div class="select-list">
+                    <ul>
+                        <li style="margin: 0;">
+                            <select name="genType" th:with="type=${@dict.getType('order_gen_task_type')}">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <a class="btn btn-primary btn-edit" id="query" onclick="query()">查询</a>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            任务数量：<label id="taskTotal">0</label>个</label>&nbsp;&nbsp;
+            剩余订单：<label id="surplusTotal">0</label>个</label>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+
+<script type="text/javascript">
+    var prefix = ctx + "busi/order";
+    $("#form-order-gen").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            },
+        }
+    });
+
+    var isSend = false;
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            if (isSend) {
+                return;
+            }
+            isSend = true;
+            $.operate.save(prefix + "/genTask", $('#form-order-gen').serialize());
+        }
+    }
+
+    function query() {
+        $.modal.loading("正在处理中，请稍后...");
+        $.ajax({
+            type: "get",
+            url: prefix + "/getTaskNum/" + $("select[name='genType']").val(),
+            error: function (request) {
+                $.modal.alertError("系统错误");
+                $.modal.closeLoading();
+            },
+            success: function (data) {
+                if (data.code != 0) {
+                    $("#taskTotal").text(0);
+                    $("#surplusTotal").text(0);
+                    $.modal.alertError(data.msg);
+                    $.modal.closeLoading();
+                }
+                console.log(data);
+                $("#taskTotal").text(data.data.genTaskNum);
+                $("#surplusTotal").text(data.data.genGsurplusNum);
+                $.modal.closeLoading();
+            }
+        });
+    }
+</script>
+</body>
+</html>
