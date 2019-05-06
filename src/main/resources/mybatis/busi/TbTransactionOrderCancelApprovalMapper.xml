@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.tbTransactionOrderCancelApproval.mapper.TbTransactionOrderCancelApprovalMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.tbTransactionOrderCancelApproval.domain.TbTransactionOrderCancelApproval"
+               id="TbTransactionOrderCancelApprovalResult">
+        <result property="id" column="id"/>
+        <result property="approvalId" column="approval_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="employeeId" column="employee_id"/>
+        <result property="employeePhone" column="employee_phone"/>
+        <result property="employeeName" column="employee_name"/>
+        <result property="employeeArea" column="employee_area"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectTbTransactionOrderCancelApprovalVo">
+        select bttoca.id, bttoca.approval_id, bttoca.order_id, bttoca.remark, bttoca.create_time, bttoca.employee_id, bttoca.employee_phone, bttoca.employee_name, bttoca.employee_area, bttoca.status from
+        busi_tb_transaction_order_cancel_approval bttoca
+        left join busi_tb_transaction_order btto on btto.order_id = bttoca.order_id
+    </sql>
+
+    <select id="selectTbTransactionOrderCancelApprovalList"
+            parameterType="net.hongkuang.ditui.project.busi.tbTransactionOrderCancelApproval.domain.TbTransactionOrderCancelApproval"
+            resultMap="TbTransactionOrderCancelApprovalResult">
+        <include refid="selectTbTransactionOrderCancelApprovalVo"/>
+        <where>
+            <if test="id != null ">and bttoca.id = #{id}</if>
+            <if test="approvalId != null  and approvalId != '' ">and bttoca.approval_id = #{approvalId}</if>
+            <if test="orderId != null  and orderId != '' ">and bttoca.order_id = #{orderId}</if>
+            <if test="remark != null  and remark != '' ">and bttoca.remark = #{remark}</if>
+            <if test="createTime != null ">and bttoca.create_time = #{createTime}</if>
+            <if test="employeeId != null  and employeeId != '' ">and bttoca.employee_id = #{employeeId}</if>
+            <if test="employeePhone != null  and employeePhone != '' ">and bttoca.employee_phone = #{employeePhone}</if>
+            <if test="employeeName != null  and employeeName != '' ">and bttoca.employee_name = #{employeeName}</if>
+            <if test="employeeArea != null  and employeeArea != '' ">and bttoca.employee_area = #{employeeArea}</if>
+            <if test="status != null ">and bttoca.status = #{status}</if>
+            <if test="teamId != null  and teamId != '' ">and btto.team_id = #{teamId}</if>
+        </where>
+    </select>
+
+    <select id="selectTbTransactionOrderCancelApprovalById" parameterType="Integer" resultMap="TbTransactionOrderCancelApprovalResult">
+        <include refid="selectTbTransactionOrderCancelApprovalVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTbTransactionOrderCancelApproval"
+            parameterType="net.hongkuang.ditui.project.busi.tbTransactionOrderCancelApproval.domain.TbTransactionOrderCancelApproval">
+        insert into busi_tb_transaction_order_cancel_approval
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="approvalId != null  and approvalId != ''  ">approval_id,</if>
+            <if test="orderId != null  and orderId != ''  ">order_id,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="employeeId != null  and employeeId != ''  ">employee_id,</if>
+            <if test="employeePhone != null  and employeePhone != ''  ">employee_phone,</if>
+            <if test="employeeName != null  and employeeName != ''  ">employee_name,</if>
+            <if test="employeeArea != null  and employeeArea != ''  ">employee_area,</if>
+            <if test="status != null  ">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="approvalId != null  and approvalId != ''  ">#{approvalId},</if>
+            <if test="orderId != null  and orderId != ''  ">#{orderId},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="employeeId != null  and employeeId != ''  ">#{employeeId},</if>
+            <if test="employeePhone != null  and employeePhone != ''  ">#{employeePhone},</if>
+            <if test="employeeName != null  and employeeName != ''  ">#{employeeName},</if>
+            <if test="employeeArea != null  and employeeArea != ''  ">#{employeeArea},</if>
+            <if test="status != null  ">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbTransactionOrderCancelApproval"
+            parameterType="net.hongkuang.ditui.project.busi.tbTransactionOrderCancelApproval.domain.TbTransactionOrderCancelApproval">
+        update busi_tb_transaction_order_cancel_approval
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="approvalId != null  and approvalId != ''  ">approval_id = #{approvalId},</if>
+            <if test="orderId != null  and orderId != ''  ">order_id = #{orderId},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="employeeId != null  and employeeId != ''  ">employee_id = #{employeeId},</if>
+            <if test="employeePhone != null  and employeePhone != ''  ">employee_phone = #{employeePhone},</if>
+            <if test="employeeName != null  and employeeName != ''  ">employee_name = #{employeeName},</if>
+            <if test="employeeArea != null  and employeeArea != ''  ">employee_area = #{employeeArea},</if>
+            <if test="status != null  ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbTransactionOrderCancelApprovalById" parameterType="Integer">
+        delete from busi_tb_transaction_order_cancel_approval where id = #{id}
+    </delete>
+
+    <delete id="deleteTbTransactionOrderCancelApprovalByIds" parameterType="String">
+        delete from busi_tb_transaction_order_cancel_approval where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="reject" parameterType="String">
+        update busi_tb_transaction_order_cancel_approval set status =3 where status = 1 and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="pass" parameterType="String">
+        update busi_tb_transaction_order_cancel_approval set status =2 where status = 1 and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateTbTransactionOrderStatusByOrderIds" parameterType="string">
+        UPDATE busi_tb_transaction_order bo
+        INNER JOIN busi_tb_transaction_order_cancel_approval boca ON bo.order_id = boca.order_id
+        SET bo.`status` = 1
+        WHERE boca.id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="updateTaskCommissionAndCorpus" parameterType="string">
+        UPDATE busi_ground_task bt
+        INNER JOIN busi_ground_task_order bto ON bt.task_id = bto.task_id
+        INNER JOIN busi_tb_transaction_order bo ON bo.order_id = bto.order_id
+        INNER JOIN busi_tb_transaction_order_cancel_approval boca ON boca.order_id = bo.order_id
+        SET bt.task_commission_price = bt.task_commission_price - bo.commission_price,
+        bt.task_corpus = bt.task_corpus - bo.unit_price,
+        bt.order_num = bt.order_num - 1
+        WHERE
+        boca.id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteSaleOrderByIds" parameterType="string">
+        DELETE
+        FROM
+        busi_ground_employee_order
+        WHERE
+        order_id IN ( SELECT order_id FROM busi_tb_transaction_order_cancel_approval WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    <delete id="deleteTaskOrderByIds" parameterType="string">
+        DELETE
+        FROM
+        busi_ground_task_order
+        WHERE
+        order_id IN ( SELECT order_id FROM busi_tb_transaction_order_cancel_approval WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+    <delete id="deleteTbTransactionOrderCancelApprovalByOrderIdList">
+        delete from busi_ground_task_order where order_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectTbTransactionOrderCancelApprovalByIds" resultMap="TbTransactionOrderCancelApprovalResult">
+        SELECT order_id FROM busi_tb_transaction_order_cancel_approval WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

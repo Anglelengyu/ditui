@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.userCenter.packageTemplate.mapper.PackageTemplateJoinRoleMapper">
+
+    <resultMap type="PackageTemplateJoinRole" id="PackageTemplateJoinRoleResult">
+        <result property="packageTemplateId" column="package_template_id"/>
+        <result property="roleId" column="role_id"/>
+    </resultMap>
+
+    <sql id="selectPackageTemplateVo">
+        select role_id, package_template_id from sys_package_template_join_role
+    </sql>
+
+    <select id="selectByPackageTemplateId" parameterType="Integer" resultMap="PackageTemplateJoinRoleResult">
+        <include refid="selectPackageTemplateVo"/>
+        where package_template_id = #{id}
+    </select>
+
+    <insert id="insertPackageTemplateJoinRole" parameterType="java.util.List">
+        insert into sys_package_template_join_role (package_template_id,role_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.packageTemplateId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByPackageTemplateIds" parameterType="String">
+        delete from sys_package_template_join_role where package_template_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.taskCancelApproval.mapper.TaskCancelApprovalMapper">
+
+    <resultMap type="TaskCancelApproval" id="TaskCancelApprovalResult">
+        <result property="id" column="id"/>
+        <result property="approvalId" column="approval_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="saleId" column="sale_id"/>
+        <result property="salePhone" column="sale_phone"/>
+        <result property="saleName" column="sale_name"/>
+        <result property="saleArea" column="sale_area"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectTaskCancelApprovalVo">
+        select id, approval_id, task_id, remark, create_time, sale_id, sale_phone, sale_name, sale_area, status from
+        busi_task_cancel_approval
+    </sql>
+
+    <select id="selectTaskCancelApprovalList" parameterType="TaskCancelApproval" resultMap="TaskCancelApprovalResult">
+        <include refid="selectTaskCancelApprovalVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="approvalId != null  and approvalId != '' ">and approval_id = #{approvalId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="remark != null  and remark != '' ">and remark = #{remark}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="saleId != null  and saleId != '' ">and sale_id = #{saleId}</if>
+            <if test="salePhone != null  and salePhone != '' ">and sale_phone = #{salePhone}</if>
+            <if test="saleName != null  and saleName != '' ">and sale_name = #{saleName}</if>
+            <if test="saleArea != null  and saleArea != '' ">and sale_area = #{saleArea}</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskCancelApprovalById" parameterType="Integer" resultMap="TaskCancelApprovalResult">
+        <include refid="selectTaskCancelApprovalVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTaskCancelApproval" parameterType="TaskCancelApproval">
+        insert into busi_task_cancel_approval
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="approvalId != null  and approvalId != ''  ">approval_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id,</if>
+            <if test="salePhone != null  and salePhone != ''  ">sale_phone,</if>
+            <if test="saleName != null  and saleName != ''  ">sale_name,</if>
+            <if test="saleArea != null  and saleArea != ''  ">sale_area,</if>
+            <if test="status != null  ">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="approvalId != null  and approvalId != ''  ">#{approvalId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="saleId != null  and saleId != ''  ">#{saleId},</if>
+            <if test="salePhone != null  and salePhone != ''  ">#{salePhone},</if>
+            <if test="saleName != null  and saleName != ''  ">#{saleName},</if>
+            <if test="saleArea != null  and saleArea != ''  ">#{saleArea},</if>
+            <if test="status != null  ">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTaskCancelApproval" parameterType="TaskCancelApproval">
+        update busi_task_cancel_approval
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="approvalId != null  and approvalId != ''  ">approval_id = #{approvalId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id = #{saleId},</if>
+            <if test="salePhone != null  and salePhone != ''  ">sale_phone = #{salePhone},</if>
+            <if test="saleName != null  and saleName != ''  ">sale_name = #{saleName},</if>
+            <if test="saleArea != null  and saleArea != ''  ">sale_area = #{saleArea},</if>
+            <if test="status != null  ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskCancelApprovalById" parameterType="Integer">
+        delete from busi_task_cancel_approval where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskCancelApprovalByIds" parameterType="String">
+        delete from busi_task_cancel_approval where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getTaskIdsById" resultType="String" parameterType="String">
+        select task_id from busi_task_cancel_approval where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <update id="reject" parameterType="String">
+        update busi_task_cancel_approval set status =3 where status = 1 and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="pass" parameterType="String">
+        update busi_task_cancel_approval set status =2 where status = 1 and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectTaskIdsByIds" resultType="string" parameterType="string">
+        SELECT task_id FROM `busi_task_cancel_approval` where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <delete id="deleteTaskCancelApprovalByTaskIdList">
+        delete from busi_task_cancel_approval where task_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

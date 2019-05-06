@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-user-add" th:object="${recommendManager}">
+        <input id="id" name="id" type="hidden" th:value="*{id}"/>
+        <div class="form-group">
+            <input id="managerIds" name="managerIds" type="hidden"/>
+            <label class="col-sm-3 control-label ">推荐掌柜：</label>
+            <div class="col-sm-6">
+                <select id="manager" name="manager" class="ui fluid search dropdown" multiple="">
+                    <th:block th:each="manager : ${managerList}">
+                        <option th:text="${manager.userName}" th:value="${manager.userId}"></option>
+                    </th:block>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript" type="text/javascript">
+
+    $('.ui.fluid.dropdown').dropdown({});
+
+    var prefix = ctx + "busi/recommend/manager";
+    $("#form-user-add").validate({
+        rules: {}
+    });
+
+    $(function () {
+        $("#manager option").each(function () {
+            var re = [[${recommendManager.managers}]];
+            for (i = 0; i < re.length; i++) {
+                if (re[i].userId == $(this).val()) {
+                    $(".ui.fluid.dropdown").dropdown("set selected", $(this).val());
+                }
+            }
+        });
+    })
+
+    function submitHandler() {
+        var select = document.getElementById("manager");
+        var str = [];
+        for (i = 0; i < select.length; i++) {
+            if (select.options[i].selected) {
+                str.push(select[i].value);
+            }
+        }
+        $.operate.save(prefix + "/editManager", $('#form-user-add').serialize());
+    }
+</script>
+</body>
+
+</html>

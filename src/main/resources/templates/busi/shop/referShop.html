@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<style>
+
+</style>
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+
+                        <li>
+                            店铺名称：<input type="text" name="name"/>
+                        </li>
+                        <li>
+                            旺旺姓名：<input type="text" name="wangwang" style="width: 120px;"/>
+                        </li>
+                        <li>
+                            掌柜姓名：<input type="text" name="managerName" style="width: 170px;"/>
+                        </li>
+                        <li>
+                            介绍人：<input type="text" name="referUserName" style="width: 170px;"/>
+                        </li>
+                        <li>
+                            类目：<input type="text" name="category"/>
+                        </li>
+
+                        <li>
+                            店铺状态：<select name="status" style="width: 170px;"
+                                         th:with="type=${@dict.getType('sys_normal_disable')}">
+                            <option value="">所有</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                    th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="busi:shop:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary btn-edit disabled" onclick="$.operate.edit()"
+               shiro:hasPermission="busi:shop:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="busi:shop:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="busi:shop:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var datas = [[${@dict.getType('sys_normal_disable')}]];
+    var prefix = ctx + "busi/shop";
+
+    $(function () {
+        var options = {
+            url: prefix + "/referList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/referExport",
+            modalName: "店铺",
+            search: false,
+            showExport: false,
+            showToggle: false,
+            columns: [{
+                checkbox: true
+            }, {
+                field: 'id',
+                title: '逻辑id',
+                sortable: true,
+                visible: false
+            }, {
+                field: 'shopId',
+                title: '逻辑id2',
+                sortable: true,
+                visible: false
+            },
+                {
+                    field: 'id',
+                    title: '店铺编号'
+                },
+                {
+                    field: 'name',
+                    title: '店铺名称',
+                    sortable: true
+                },
+                {
+                    field: 'wangwang',
+                    title: '旺旺名称',
+                    sortable: true
+                },
+                {
+                    field: 'managerName',
+                    title: '掌柜姓名',
+                    sortable: true
+                },
+                {
+                    field: 'referUserName',
+                    title: '介绍人',
+                    sortable: true
+                },
+                {
+                    field: 'category',
+                    title: '类目',
+                    sortable: true
+                },
+                {
+                    field: 'managerId',
+                    title: '今日订单',
+                    formatter: function (value, row, index) {
+                        return '<a href="#" class="showCurentOrder" shopName="' + row.name + '" shopId="' + row.shopId + '" managerId="' + value + '">查看今日订单</a>';
+                    }
+                },
+                {
+                    field: 'managerId',
+                    title: '历史订单',
+                    formatter: function (value, row, index) {
+                        return '<a href="#" class="showHistoryOrder" shopName="' + row.name + '" shopId="' + row.shopId + '" managerId="' + value + '">查看历史订单</a>';
+                    }
+                },
+
+                {
+                    field: 'status',
+                    title: '店铺状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+                },
+                {
+                    field: 'updateTime',
+                    title: '更新时间',
+                    sortable: true
+                }]
+        };
+        $.table.init(options);
+    });
+
+    $("input[type=text]").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $.table.search();
+        }
+    })
+
+    $(document).on('click', '.showCurentOrder', function () {
+        var me = $(this);
+        var url = '/busi/order/allocated/?shopManagerId=' + me.attr("managerId") + '&shopId=' + me.attr('shopId');
+        createMenuItem(url, "查看" + me.attr('shopName') + "的今日订单");
+    })
+    $(document).on('click', '.showHistoryOrder', function () {
+        var me = $(this);
+        var url = '/busi/order/history/?shopManagerId=' + me.attr("managerId") + '&shopId=' + me.attr('shopId');
+        createMenuItem(url, "查看" + me.attr('shopName') + "的历史订单");
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.order.mapper.TbTransactionOrderMapper">
+
+    <resultMap type="TbTransactionOrder" id="TbTransactionOrderResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="managerId" column="managerId"/>
+        <result property="managerUserName" column="managerUserName"/>
+        <result property="platform" column="platform"/>
+        <result property="teamId" column="teamId"/>
+        <result property="teamName" column="teamName"/>
+        <result property="receiptTeamId" column="receiptTeamId"/>
+        <result property="receiptTeamName" column="receiptTeamName"/>
+        <result property="shopId" column="shopId"/>
+        <result property="shopName" column="shopName"/>
+        <result property="goodsName" column="goodsName"/>
+        <result property="goodsId" column="goodsId"/>
+        <result property="goodsImg" column="goodsImg"/>
+        <result property="keyWordName" column="keyWordName"/>
+        <result property="hasApp" column="hasApp"/>
+        <result property="hasPc" column="hasPc"/>
+        <result property="hasCollection" column="hasCollection"/>
+        <result property="hasCart" column="hasCart"/>
+        <result property="hasCollectionCart" column="hasCollectionCart"/>
+        <result property="orderRequire" column="orderRequire"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="unitPriceYuan" column="unitPriceYuan"/>
+        <result property="commissionPrice" column="commissionPrice"/>
+        <result property="commissionPriceYuan" column="commissionPriceYuan"/>
+        <result property="managerRequire" column="managerRequire"/>
+        <result property="teamToManagerRequire" column="teamToManagerRequire"/>
+        <result property="teamRequire" column="teamRequire"/>
+        <result property="executeMethod" column="executeMethod"/>
+        <result property="status" column="status"/>
+        <result property="question" column="question"/>
+        <result property="questionId" column="questionId"/>
+        <result property="orderTrack" column="orderTrack"/>
+        <result property="orderRebate" column="orderRebate"/>
+        <result property="groupClassifys" column="groupClassifys"/>
+        <result property="goShopWay" column="goShopWay"/>
+        <result property="settlementWay" column="settlementWay"/>
+        <result property="teamRemark" column="teamRemark"/>
+        <result property="managerRemark" column="managerRemark"/>
+        <result property="allocatStatus" column="allocatStatus"/>
+        <result property="payment" column="payment"/>
+        <result property="paymentYuan" column="paymentYuan"/>
+        <result property="orderNo" column="orderNo"/>
+        <result property="buyerNick" column="buyerNick"/>
+        <result property="createBy" column="createBy"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="taskId" column="taskId"/>
+        <association property="tbTransactionQuestion" javaType="TbTransactionQuestion"
+                     resultMap="TbTransactionQuestionResult"/>
+        <association property="tbTransactionBuyerRequire" javaType="TbTransactionBuyerRequire"
+                     resultMap="TbTransactionBuyerRequireResult"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionQuestionResult"
+               type="net.hongkuang.ditui.project.busi.tbTransactionTemplate.domain.TbTransactionQuestion">
+        <id property="id" column="ttqQuestionId"/>
+        <result property="mainVideo" column="mainVideo"/>
+        <result property="mainBrowse" column="mainBrowse"/>
+        <result property="detailVideo" column="detailVideo"/>
+        <result property="detailBrowse" column="detailBrowse"/>
+        <result property="evaluateBrowse" column="evaluateBrowse"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionBuyerRequireResult"
+               type="net.hongkuang.ditui.project.busi.order.domain.TbTransactionBuyerRequire">
+        <id property="id" column="ttbrRequireId"/>
+        <result property="sex" column="ttbrSex"/>
+        <result property="age" column="ttbrAge"/>
+        <result property="creditRating" column="ttbrCreditRating"/>
+        <result property="category" column="ttbrCategory"/>
+        <result property="monthlySalesQuota" column="ttbrMonthlySalesQuota"/>
+        <result property="naughtyValue" column="ttbrNaughtyValue"/>
+        <result property="region" column="ttbrRegion"/>
+    </resultMap>
+
+    <resultMap id="GoodsResult" type="net.hongkuang.ditui.project.busi.order.dto.TbTransactionWaitBuildGoodsDto">
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="groupClassifys" column="group_classifys"/>
+        <result property="groupClassifysCount" column="group_classifys_count"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select tto.id as id, tto.order_id as orderId, tto.manager_id as managerId, tto.manager_user_name as
+        managerUserName, tto.platform as platform, tto.team_id as teamId, tto.team_name as teamName,
+        tto.receipt_team_id as receiptTeamId, tto.receipt_team_name as receiptTeamName, tto.shop_id as shopId,
+        tto.shop_name as shopName, tto.goods_name as goodsName, tto.goods_id as goodsId,
+        tto.goods_img as goodsImg, tto.key_word_name as keyWordName, tto.has_app as hasApp, tto.has_pc as hasPc,
+        tto.has_collection as hasCollection, tto.has_cart as hasCart, tto.has_collection_cart as hasCollectionCart,
+        tto.order_require as orderRequire, tto.unit_price as unitPrice, tto.unit_price_yuan as unitPriceYuan,
+        tto.commission_price as commissionPrice, tto.commission_price_yuan as commissionPriceYuan,
+        tto.manager_require as managerRequire,tto.team_to_manager_require as teamToManagerRequire,tto.team_require as teamRequire, tto.execute_method as executeMethod, tto.status as status, tto.question
+        as question, tto.question_id as questionId, tto.order_track as orderTrack, tto.order_rebate as orderRebate,
+        tto.group_classifys as groupClassifys, tto.go_shop_way as goShopWay, tto.settlement_way as settlementWay,
+        tto.team_remark as teamRemark, tto.manager_remark as managerRemark, tto.allocat_status as allocatStatus,
+        tto.payment as payment, tto.payment_yuan as paymentYuan, tto.order_no as orderNo, tto.buyer_nick as buyerNick,
+        tto.create_by as createBy, tto.update_by as updateBy, tto.create_time as createTime, tto.update_time as
+        updateTime,
+        ttbr.id as ttbrRequireId, ttbr.sex as ttbrSex, ttbr.age as ttbrAge, ttbr.credit_rating as ttbrCreditRating,
+        ttbr.category as ttbrCategory, ttbr.monthly_sales_quota as ttbrMonthlySalesQuota, ttbr.naughty_value as
+        ttbrNaughtyValue, ttbr.region as ttbrRegion,
+        ttq.id as ttqQuestionId, ttq.main_video as mainVideo, ttq.main_browse as mainBrowse, ttq.detail_video as
+        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse
+        from busi_tb_transaction_order tto
+        left join busi_tb_transaction_buyer_require ttbr on ttbr.id = tto.buyer_require_id
+        left join busi_tb_transaction_question ttq on ttq.id = tto.question_id
+    </sql>
+
+    <select id="selectTbTransactionOrderList" resultMap="TbTransactionOrderResult">
+        <include refid="selectUserVo"/>
+        <where>
+            <if test="goodsName != null and goodsName != ''">
+                AND tto.goods_name like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="id != null  and id != ''">
+                AND tto.id = #{id}
+            </if>
+            <if test="teamName != null  and teamName != ''">
+                AND tto.team_name like concat('%', #{teamName}, '%')
+            </if>
+            <if test="managerId != null  and managerId != ''">
+                AND tto.manager_id = #{managerId}
+            </if>
+            <if test="managerUserName != null  and managerUserName != ''">
+                AND tto.manager_user_name like concat('%', #{managerUserName}, '%')
+            </if>
+            <if test="teamId != null  and teamId != ''">
+                AND ((tto.team_id = #{teamId} and tto.receipt_team_id is null) OR (tto.team_id != #{teamId} and tto.receipt_team_id = #{teamId}))
+            </if>
+            <if test="shopId != null  and shopId != ''">
+                AND tto.shop_id = #{shopId}
+            </if>
+            <if test="orTeamRemark == 0">
+                AND (tto.team_remark = "" or tto.team_remark is null)
+            </if>
+            <if test="orTeamRemark == 1">
+                AND tto.team_remark != ""
+            </if>
+            <if test="orManagerRemark == 0">
+                AND (tto.manager_remark = "" or tto.manager_remark is null)
+            </if>
+            <if test="orManagerRemark == 1">
+                AND tto.manager_remark != ""
+            </if>
+            <if test="shopName != null  and shopName != ''">
+                AND tto.shop_name like concat('%', #{shopName}, '%')
+            </if>
+            <if test="status != null">
+                AND tto.status = #{status}
+            </if>
+            <if test="allocatStatus != null">
+                AND tto.allocat_status = #{allocatStatus}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND tto.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND tto.create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveTbTransactionOrder" parameterType="TbTransactionOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into busi_tb_transaction_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="managerId != null and managerId != ''">manager_id,</if>
+            <if test="managerUserName != null and managerUserName != ''">manager_user_name,</if>
+            <if test="platform != null and platform != ''">platform,</if>
+            <if test="teamId != null and teamId != ''">team_id,</if>
+            <if test="teamName != null and teamName != ''">team_name,</if>
+            <if test="receiptTeamId != null and receiptTeamId != ''">receipt_team_id,</if>
+            <if test="receiptTeamName != null and receiptTeamName != ''">receipt_team_name,</if>
+            <if test="shopId != null and shopId != ''">shop_id,</if>
+            <if test="shopName != null and shopName != ''">shop_name,</if>
+            <if test="goodsName != null and goodsName != ''">goods_name,</if>
+            <if test="goodsId != null and goodsId != ''">goods_id,</if>
+            <if test="goodsImg != null and goodsImg != ''">goods_img,</if>
+            <if test="keyWordName != null and keyWordName != ''">key_word_name,</if>
+            <if test="hasApp != null and hasApp != ''">has_app,</if>
+            <if test="hasPc != null and hasPc != ''">has_pc,</if>
+            <if test="hasCollection != null and hasCollection != ''">has_collection,</if>
+            <if test="hasCart != null and hasCart != ''">has_cart,</if>
+            <if test="hasCollectionCart != null and hasCollectionCart != ''">has_collection_cart,</if>
+            <if test="orderRequire != null and orderRequire != ''">order_require,</if>
+            <if test="unitPrice != null and unitPrice != ''">unit_price,</if>
+            <if test="unitPriceYuan != null and unitPriceYuan != ''">unit_price_yuan,</if>
+            <if test="commissionPrice != null and commissionPrice != ''">commission_price,</if>
+            <if test="commissionPriceYuan != null and commissionPriceYuan != ''">commission_price_yuan,</if>
+            <if test="managerRequire != null and managerRequire != ''">manager_require,</if>
+            <if test="teamToManagerRequire != null and teamToManagerRequire != ''">team_to_manager_require,</if>
+            <if test="teamRequire != null and teamRequire != ''">team_require,</if>
+            <if test="executeMethod != null and executeMethod != ''">execute_method,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="question != null and question != ''">question,</if>
+            <if test="questionId != null and questionId != ''">question_id,</if>
+            <if test="orderTrack != null and orderTrack != ''">order_track,</if>
+            <if test="orderRebate != null and orderRebate != ''">order_rebate,</if>
+            <if test="groupClassifys != null and groupClassifys != ''">group_classifys,</if>
+            <if test="goShopWay != null and goShopWay != ''">go_shop_way,</if>
+            <if test="settlementWay != null and settlementWay != ''">settlement_way,</if>
+            <if test="teamRemark != null and teamRemark != ''">team_remark,</if>
+            <if test="managerRemark != null and managerRemark != ''">manager_remark,</if>
+            <if test="allocatStatus != null and allocatStatus != ''">allocat_status,</if>
+            <if test="payment != null and payment != ''">payment,</if>
+            <if test="paymentYuan != null and paymentYuan != ''">payment_yuan,</if>
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="buyerNick != null and buyerNick != ''">buyer_nick,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="buyerRequireId != null and buyerRequireId != ''">buyer_require_id,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="managerId != null and managerId != ''">#{managerId},</if>
+            <if test="managerUserName != null and managerUserName != ''">#{managerUserName},</if>
+            <if test="platform != null and platform != ''">#{platform},</if>
+            <if test="teamId != null and teamId != ''">#{teamId},</if>
+            <if test="teamName != null and teamName != ''">#{teamName},</if>
+            <if test="receiptTeamId != null and receiptTeamId != ''">#{receiptTeamId},</if>
+            <if test="receiptTeamName != null and receiptTeamName != ''">#{receiptTeamName},</if>
+            <if test="shopId != null and shopId != ''">#{shopId},</if>
+            <if test="shopName != null and shopName != ''">#{shopName},</if>
+            <if test="goodsName != null and goodsName != ''">#{goodsName},</if>
+            <if test="goodsId != null and goodsId != ''">#{goodsId},</if>
+            <if test="goodsImg != null and goodsImg != ''">#{goodsImg},</if>
+            <if test="keyWordName != null and keyWordName != ''">#{keyWordName},</if>
+            <if test="hasApp != null and hasApp != ''">#{hasApp},</if>
+            <if test="hasPc != null and hasPc != ''">#{hasPc},</if>
+            <if test="hasCollection != null and hasCollection != ''">#{hasCollection},</if>
+            <if test="hasCart != null and hasCart != ''">#{hasCart},</if>
+            <if test="hasCollectionCart != null and hasCollectionCart != ''">#{hasCollectionCart},</if>
+            <if test="orderRequire != null and orderRequire != ''">#{orderRequire},</if>
+            <if test="unitPrice != null and unitPrice != ''">#{unitPrice},</if>
+            <if test="unitPriceYuan != null and unitPriceYuan != ''">#{unitPriceYuan},</if>
+            <if test="commissionPrice != null and commissionPrice != ''">#{commissionPrice},</if>
+            <if test="commissionPriceYuan != null and commissionPriceYuan != ''">#{commissionPriceYuan},</if>
+            <if test="managerRequire != null and managerRequire != ''">#{managerRequire},</if>
+            <if test="teamToManagerRequire != null and teamToManagerRequire != ''">#{teamToManagerRequire},</if>
+            <if test="teamRequire != null and teamRequire != ''">#{teamRequire},</if>
+            <if test="executeMethod != null and executeMethod != ''">#{executeMethod},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="question != null and question != ''">#{question},</if>
+            <if test="questionId != null and questionId != ''">#{questionId},</if>
+            <if test="orderTrack != null and orderTrack != ''">#{orderTrack},</if>
+            <if test="orderRebate != null and orderRebate != ''">#{orderRebate},</if>
+            <if test="groupClassifys != null and groupClassifys != ''">#{groupClassifys},</if>
+            <if test="goShopWay != null and goShopWay != ''">#{goShopWay},</if>
+            <if test="settlementWay != null and settlementWay != ''">#{settlementWay},</if>
+            <if test="teamRemark != null and teamRemark != ''">#{teamRemark},</if>
+            <if test="managerRemark != null and managerRemark != ''">#{managerRemark},</if>
+            <if test="allocatStatus != null and allocatStatus != ''">#{allocatStatus},</if>
+            <if test="payment != null and payment != ''">#{payment},</if>
+            <if test="paymentYuan != null and paymentYuan != ''">#{paymentYuan},</if>
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="buyerNick != null and buyerNick != ''">#{buyerNick},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="buyerRequireId != null and buyerRequireId != ''">#{buyerRequireId},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+
+    <insert id="saveBatchTbTransactionOrder" parameterType="TbTransactionOrder">
+        insert into
+        busi_tb_transaction_order(order_id,manager_id,manager_user_name,platform,team_id,team_name,receipt_team_id,receipt_team_name,shop_id,shop_name,goods_name,goods_id,goods_img,key_word_name,
+        has_app,has_pc,has_collection,has_cart,has_collection_cart,order_require,unit_price,unit_price_yuan,commission_price,commission_price_yuan,manager_require,team_to_manager_require,team_require,execute_method,status,question,question_id,
+        order_track,order_rebate,group_classifys,go_shop_way,settlement_way,team_remark,manager_remark,allocat_status,payment,payment_yuan,order_no,buyer_nick,create_by,update_by,buyer_require_id,create_time,update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.orderId},
+            #{item.managerId},
+            #{item.managerUserName},
+            #{item.platform},
+            #{item.teamId},
+            #{item.teamName},
+            #{item.receiptTeamId},
+            #{item.receiptTeamName},
+            #{item.shopId},
+            #{item.shopName},
+            #{item.goodsName},
+            #{item.goodsId},
+            #{item.goodsImg},
+            #{item.keyWordName},
+            #{item.hasApp},
+            #{item.hasPc},
+            #{item.hasCollection},
+            #{item.hasCart},
+            #{item.hasCollectionCart},
+            #{item.orderRequire},
+            #{item.unitPrice},
+            #{item.unitPriceYuan},
+            #{item.commissionPrice},
+            #{item.commissionPriceYuan},
+            #{item.managerRequire},
+            #{item.teamToManagerRequire},
+            #{item.teamRequire},
+            #{item.executeMethod},
+            #{item.status},
+            #{item.question},
+            #{item.questionId},
+            #{item.orderTrack},
+            #{item.orderRebate},
+            #{item.groupClassifys},
+            #{item.goShopWay},
+            #{item.settlementWay},
+            #{item.teamRemark},
+            #{item.managerRemark},
+            #{item.allocatStatus},
+            #{item.payment},
+            #{item.paymentYuan},
+            #{item.orderNo},
+            #{item.buyerNick},
+            #{item.createBy},
+            #{item.updateBy},
+            #{item.buyerRequireId},
+            sysdate(),
+            sysdate()
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectTbTransactionOrderById" resultMap="TbTransactionOrderResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND tto.id = #{id}
+        </where>
+    </select>
+
+    <select id="selectTbTransactionOrderByOrderId" resultMap="TbTransactionOrderResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND tto.order_id = #{orderId}
+        </where>
+    </select>
+
+    <update id="updateTbTransactionOrderRemark" parameterType="TbTransactionOrder">
+        update busi_tb_transaction_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamRemark != null">team_remark = #{teamRemark},</if>
+            <if test="managerRemark != null">manager_remark = #{managerRemark},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="distributionTeam">
+        update busi_tb_transaction_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="receiptTeamId != null  ">receipt_team_id = #{receiptTeamId},</if>
+            <if test="receiptTeamName != null  ">receipt_team_name = #{receiptTeamName},</if>
+        </trim>
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <delete id="deleteTbTransactionOrderByIds" parameterType="Long">
+        delete from busi_tb_transaction_order
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTbTransactionOrderByOrderIds" parameterType="Long">
+        delete from busi_tb_transaction_order
+        where order_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateTbTransactionOrder" parameterType="TbTransactionOrder">
+        update busi_tb_transaction_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id = #{orderId},</if>
+            <if test="managerId != null and managerId != ''">manager_id = #{managerId},</if>
+            <if test="managerUserName != null and managerUserName != ''">manager_user_name = #{managerUserName},</if>
+            <if test="platform != null and platform != ''">platform = #{platform},</if>
+            <if test="teamId != null and teamId != ''">team_id = #{teamId},</if>
+            <if test="teamName != null and teamName != ''">team_name = #{teamName},</if>
+            <if test="receiptTeamId != null and receiptTeamId != ''">receipt_team_id = #{receiptTeamId},</if>
+            <if test="receiptTeamName != null and receiptTeamName != ''">receipt_team_name = #{receiptTeamName},</if>
+            <if test="shopId != null and shopId != ''">shop_id = #{shopId},</if>
+            <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
+            <if test="goodsName != null and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsId != null and goodsId != ''">goods_id = #{goodsId},</if>
+            <if test="goodsImg != null and goodsImg != ''">goods_img = #{goodsImg},</if>
+            <if test="keyWordName != null and keyWordName != ''">key_word_name = #{keyWordName},</if>
+            <if test="hasApp != null and hasApp != ''">has_app = #{hasApp},</if>
+            <if test="hasPc != null and hasPc != ''">has_pc = #{hasPc},</if>
+            <if test="hasCollection != null and hasCollection != ''">has_collection = #{hasCollection},</if>
+            <if test="hasCart != null and hasCart != ''">has_cart = #{hasCart},</if>
+            <if test="hasCollectionCart != null and hasCollectionCart != ''">has_collection_cart = #{hasCollectionCart},</if>
+            <if test="orderRequire != null and orderRequire != ''">order_require = #{orderRequire},</if>
+            <if test="unitPrice != null and unitPrice != ''">unit_price = #{unitPrice},</if>
+            <if test="unitPriceYuan != null and unitPriceYuan != ''">unit_price_yuan = #{unitPriceYuan},</if>
+            <if test="commissionPrice != null and commissionPrice != ''">commission_price = #{commissionPrice},</if>
+            <if test="commissionPriceYuan != null and commissionPriceYuan != ''">commission_price_yuan = #{commissionPriceYuan},</if>
+            <if test="managerRequire != null and managerRequire != ''">manager_require = #{managerRequire},</if>
+            <if test="teamToManagerRequire != null and teamToManagerRequire != ''">team_to_manager_require = #{teamToManagerRequire},</if>
+            <if test="teamRequire != null and teamRequire != ''">team_require = #{teamRequire},</if>
+            <if test="executeMethod != null and executeMethod != ''">execute_method = #{executeMethod},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="question != null">question = #{question},</if>
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="orderTrack != null and orderTrack != ''">order_track = #{orderTrack},</if>
+            <if test="orderRebate != null and orderRebate != ''">order_rebate = #{orderRebate},</if>
+            <if test="groupClassifys != null and groupClassifys != ''">group_classifys = #{groupClassifys},</if>
+            <if test="goShopWay != null and goShopWay != ''">go_shop_way = #{goShopWay},</if>
+            <if test="settlementWay != null and settlementWay != ''">settlement_way = #{settlementWay},</if>
+            <if test="teamRemark != null and teamRemark != ''">team_remark = #{teamRemark},</if>
+            <if test="managerRemark != null and managerRemark != ''">manager_remark = #{managerRemark},</if>
+            <if test="allocatStatus != null and allocatStatus != ''">allocat_status = #{allocatStatus},</if>
+            <if test="payment != null and payment != ''">payment = #{payment},</if>
+            <if test="paymentYuan != null and paymentYuan != ''">payment_yuan = #{paymentYuan},</if>
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="buyerNick != null and buyerNick != ''">buyer_nick = {buyerNick},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="buyerRequireId != null and buyerRequireId != ''">buyer_require_id = #{buyerRequireId},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="getGroupClassifysCount" resultType="int">
+        select count(DISTINCT group_classifys) from busi_tb_transaction_order
+        <where>
+            <if test="allocatStatus != null">
+                and `allocat_status` = #{allocatStatus}
+            </if>
+            and ((team_id = #{teamId} and receipt_team_id is null) OR (team_id != #{teamId} and receipt_team_id = #{teamId}))
+            and id in
+            <foreach item="id" collection="ids" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="getOrderTotalNum" resultType="int">
+        select count(id) from busi_tb_transaction_order
+        <where>
+            <if test="allocatStatus != null">
+                and `allocat_status` = #{allocatStatus}
+            </if>
+            and ((team_id = #{teamId} and receipt_team_id is null) OR (team_id != #{teamId} and receipt_team_id = #{teamId}))
+        </where>
+        and id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getUnFinishGoodsNameList" resultMap="GoodsResult">
+        select goods_name, count(1) as goods_count from busi_tb_transaction_order where `allocat_status` = #{status}
+        <if test="teamId != null">
+            and ((team_id = #{teamId} and receipt_team_id is null) OR (team_id != #{teamId} and receipt_team_id = #{teamId}))
+        </if>
+        group by goods_name
+        order by goods_count
+    </select>
+
+    <select id="getGroupClassifysCountForReckonAllocatStatus" resultType="int">
+        select count(DISTINCT group_classifys) from busi_tb_transaction_order
+        <where>
+            <if test="reckonAllocatStatus != null">
+                and `reckon_allocat_status` = #{reckonAllocatStatus}
+            </if>
+            and ((team_id = #{teamId} and receipt_team_id is null) OR (team_id != #{teamId} and receipt_team_id = #{teamId}))
+            and id in
+            <foreach item="id" collection="ids" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="selectTbTrasactionWaitBuildList" resultMap="TbTransactionOrderResult">
+        select id, order_id as orderId, commission_price as commissionPrice, unit_price as unitPrice from busi_tb_transaction_order
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="orderId != null  and orderId != '' ">and order_id = #{orderId}</if>
+            <if test="shopId != null  and shopId != '' ">and shop_id = #{shopId}</if>
+            <if test="shopName != null  and shopName != '' ">and shop_name = #{shopName}</if>
+            <if test="goodsName != null  and goodsName != '' ">and goods_name = #{goodsName}</if>
+            <if test="unitPrice != null ">and unit_price = #{unitPrice}</if>
+            <if test="commissionPrice != null ">and commission_price = #{commissionPrice}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="allocatStatus != null ">and allocat_status = #{allocatStatus}</if>
+            <if test="reckonAllocatStatus != null ">and reckon_allocat_status = #{reckonAllocatStatus}</if>
+            and id in
+            <foreach item="id" collection="ids" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+        <if test="sortGoodsNameList != null and sortGoodsNameList.size()>0">
+            order by field(goods_name,
+            <foreach collection="sortGoodsNameList" item="sortGoodsName" separator=",">
+                #{sortGoodsName}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="getWaitBuildGroupClassifysListForReckonAllocatStatus" resultMap="GoodsResult">
+        select group_classifys, count(1) as group_classifys_count from busi_tb_transaction_order where `reckon_allocat_status` =
+        #{reckonAllocatStatus}
+        and ((team_id = #{teamId} and receipt_team_id is null) OR (team_id != #{teamId} and receipt_team_id = #{teamId}))
+        and id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        group by group_classifys
+        order by group_classifys_count
+    </select>
+
+    <select id="getWaitBuildGoodsReckonAllocatstatusList" resultMap="GoodsResult">
+        select goods_name, count(1) as goods_count from busi_tb_transaction_order where `reckon_allocat_status` = #{status}
+        and ((team_id = #{teamId} and receipt_team_id is null) OR (team_id != #{teamId} and receipt_team_id = #{teamId}))
+        <if test="groupClassifys != null and groupClassifys != ''">
+            and group_classifys = #{groupClassifys}
+        </if>
+        and id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        group by goods_name
+        order by goods_count
+    </select>
+
+    <update id="updateTbTransactionOrderAllocStatusInIdsForReckonAllocatStatus">
+        update busi_tb_transaction_order set `reckon_allocat_status` = #{reckonAllocatStatus}
+        where `reckon_allocat_status` = #{preReckonAllocatStatus} and id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateTbTransactionOrderReckonAllocatStatus">
+        update busi_tb_transaction_order set `reckon_allocat_status` = #{reckonAllocatStatus}
+        where id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateTbTransactionOrderAllocStatusInIds">
+        update busi_tb_transaction_order set `allocat_status` = #{orderStatus}
+        where `allocat_status` = #{preOrderStatus} and id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getWaitBuildGroupClassifysList" resultMap="GoodsResult">
+        select group_classifys, count(1) as group_classifys_count from busi_tb_transaction_order where `allocat_status` = #{status}
+        <if test="shopIdList != null and shopIdList.size()>0">
+            and shop_id in
+            <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                #{shopId}
+            </foreach>
+        </if>
+        group by group_classifys
+        order by group_classifys_count
+    </select>
+
+    <select id="selectTbTransactionOrderByTaskId" resultMap="TbTransactionOrderResult">
+        <include refid="selectUserVo"/>
+        inner join busi_ground_task_order bto on bto.order_id = tto.order_id
+        <where>
+            AND bto.task_id = #{taskId}
+        </where>
+    </select>
+
+    <select id="selectTbTransactionOrderListByIds" resultMap="TbTransactionOrderResult">
+        select id,order_id as orderId, unit_price as unitPrice, commission_price as commissionPrice, `status`,receipt_team_id as receiptTeamId from busi_tb_transaction_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectTbTransactionOrderListByOrderIdList" resultMap="TbTransactionOrderResult">
+        select id,order_id as orderId, unit_price as unitPrice, commission_price as commissionPrice, `status`,receipt_team_id as receiptTeamId from busi_tb_transaction_order where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getAutomaticGoodsList" resultMap="GoodsResult">
+        select goods_name, count(1) as goods_count from busi_tb_transaction_order bo
+        inner join busi_ground_task_order bto on bto.order_id = bo.order_id
+        inner join busi_ground_task bt on bto.task_id = bt.task_id
+        where bo.`status` = #{taskStatus}
+        and bt.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        group by bo.goods_name order by goods_count
+    </select>
+
+    <update id="updateTbTransactionOrderStatusInOrderIds">
+        update busi_tb_transaction_order set status = #{orderStatus} where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and status = #{preOrderStatus}
+    </update>
+
+    <update id="updateTbTransactionOrderAllocatStatusInOrderIds">
+        update busi_tb_transaction_order set allocat_status = #{allocatStatus} where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and allocat_status = #{preAllocatStatus}
+    </update>
+
+    <update id="updateTbTransactionOrderAllocatStatusInTaskIds">
+        update busi_tb_transaction_order set allocat_status = #{allocatStatus}
+        where order_id in
+        (select bgto.order_id from busi_ground_task bgt
+        left join busi_ground_task_order bgto on bgto.task_id = bgt.task_id
+        where bgt.id in
+        <foreach collection="taskIds" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        )
+        and allocat_status = #{preAllocatStatus}
+    </update>
+
+    <select id="checkTbTransactionOrderStatusByEmployeeId" resultMap="TbTransactionOrderResult">
+        SELECT
+        bo.*,
+        bt.task_id as taskId
+        FROM
+        busi_tb_transaction_order bo
+        INNER JOIN busi_ground_task_order bto ON bo.order_id = bto.order_id
+        INNER JOIN busi_ground_task bt ON bt.task_id = bto.task_id
+        WHERE
+        bt.employee_id = #{employeeId}
+        AND bo.`status` = #{status}
+    </select>
+
+    <select id="selectTbTransactionOrderByTaskIds" resultMap="TbTransactionOrderResult">
+        <include refid="selectUserVo"/>
+        inner join busi_ground_task_order bto on bto.order_id = tto.order_id
+        inner join busi_ground_task bgt on bgt.task_id = bto.task_id
+        where bgt.id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <update id="taskDistributionTeam">
+        update busi_tb_transaction_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="receiptTeamId != null  ">receipt_team_id = #{receiptTeamId},</if>
+            <if test="receiptTeamName != null  ">receipt_team_name = #{receiptTeamName},</if>
+        </trim>
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateTbTransactionOrderStatusInCancelIds">
+        UPDATE busi_tb_transaction_order bo
+        INNER JOIN busi_tb_transaction_order_cancel_approval boca ON boca.order_id = bo.order_id
+        SET bo.status = #{status}
+        WHERE
+        boca.id IN
+        <foreach item="cancelId" collection="cancelIds" open="(" separator="," close=")">
+            #{cancelId}
+        </foreach>
+        and bo.status = #{preStatus}
+    </update>
+
+</mapper>

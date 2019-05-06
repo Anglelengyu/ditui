@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-shop-add">
+        <input id="taskIds" name="taskIds" type="hidden"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">时间节点：</label>
+            <div class="col-sm-8">
+                <select id="timeNode" class="form-control m-b" th:with="settings=${timeSettings}">
+                    <option th:each="setting : ${settings}"
+                            th:text="${setting.startTimeNode}+'~'+${setting.stopTimeNode}"
+                            th:value="${setting.startTimeNode}+'~'+${setting.stopTimeNode}"></option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "busi/groundTask/waitDistribution";
+    var selectTaskIds = parent.$("#taskIds").val();
+    $("#taskIds").val(selectTaskIds);
+
+    function submitHandler() {
+        var taskIds = $("#taskIds").val();
+
+        var timeNode = $("#timeNode  option:selected").val().split("~");
+        var startTime = timeNode[0];
+        var stopTime = timeNode[1];
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/toReal", {taskIds: taskIds, startTime: startTime, stopTime: stopTime});
+        }
+    }
+</script>
+</body>
+</html>

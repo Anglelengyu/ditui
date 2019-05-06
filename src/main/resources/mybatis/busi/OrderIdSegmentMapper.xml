@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.idSegment.mapper.OrderIdSegmentMapper">
+
+    <resultMap type="OrderIdSegment" id="OrderIdSegmentResult">
+        <result property="id" column="id"/>
+    </resultMap>
+
+    <insert id="insertOrderIdSegment" useGeneratedKeys="true" keyProperty="id" parameterType="OrderIdSegment">
+        insert into busi_order_id_segment(id) values(null)
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+</mapper>

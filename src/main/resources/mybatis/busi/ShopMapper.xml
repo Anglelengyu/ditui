@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.shop.mapper.ShopMapper">
+
+    <resultMap type="Shop" id="ShopResult">
+        <result property="id" column="id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="managerId" column="manager_id"/>
+        <result property="managerName" column="manager_name"/>
+        <result property="referUserId" column="refer_user_id"/>
+        <result property="referUserName" column="refer_user_name"/>
+        <result property="name" column="name"/>
+        <result property="category" column="category"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="createBy" column="create_by"/>
+        <result property="wangwang" column="wangwang"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="selectShopVo">
+        select id, shop_id, manager_id, manager_name, refer_user_id, refer_user_name, name, category, create_time,
+        update_time, status, ext1, ext2, create_by, update_by,wangwang from busi_shop
+    </sql>
+
+    <select id="selectShopList" parameterType="Shop" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        <where>
+            <!--<if test="id != null "> and id = #{id}</if>-->
+            <!--<if test="shopId != null  and shopId != '' "> and shop_id = #{shopId}</if>-->
+            <if test="managerId != null  and managerId != '' ">and manager_id = #{managerId}</if>
+            <if test="managerName != null  and managerName != '' ">and manager_name like
+                concat("%",#{managerName},"%")
+            </if>
+            <if test="referUserId != null  and referUserId != '' ">and refer_user_id = #{referUserId}</if>
+            <if test="referUserName != null  and referUserName != '' ">and refer_user_name like
+                concat("%",#{referUserName},"%")
+            </if>
+            <if test="wangwang != null  and wangwang != '' ">and wangwang like concat("%",#{wangwang},"%")</if>
+            <if test="name != null  and name != '' ">and name like concat("%",#{name},"%")</if>
+            <if test="category != null  and category != '' ">and category like concat("%",#{category},"%")</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectShopById" parameterType="Long" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertShop" parameterType="Shop">
+        insert into busi_shop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="shopId != null  and shopId != ''  ">shop_id,</if>
+            <if test="managerId != null  and managerId != ''  ">manager_id,</if>
+            <if test="managerName != null  and managerName != ''  ">manager_name,</if>
+            <if test="referUserId != null  and referUserId != ''  ">refer_user_id,</if>
+            <if test="referUserName != null  and referUserName != ''  ">refer_user_name,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="category != null  and category != ''  ">category,</if>
+            <if test="status != null  ">status,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="wangwang != null  and wangwang != ''  ">wangwang,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="shopId != null  and shopId != ''  ">#{shopId},</if>
+            <if test="managerId != null  and managerId != ''  ">#{managerId},</if>
+            <if test="managerName != null  and managerName != ''  ">#{managerName},</if>
+            <if test="referUserId != null  and referUserId != ''  ">#{referUserId},</if>
+            <if test="referUserName != null  and referUserName != ''  ">#{referUserName},</if>
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="category != null  and category != ''  ">#{category},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="wangwang != null  and wangwang != ''  ">#{wangwang},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateShop" parameterType="Shop">
+        update busi_shop
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="referUserId != null  and referUserId != ''  ">refer_user_id = #{referUserId},</if>
+            <if test="referUserName != null  and referUserName != ''  ">refer_user_name = #{referUserName},</if>
+            <if test="managerId != null  and managerId != ''  ">manager_id = #{managerId},</if>
+            <if test="managerName != null  and managerName != ''  ">manager_name = #{managerName},</if>
+            <if test="referUserId != null  and referUserId != ''  ">refer_user_id = #{referUserId},</if>
+            <if test="referUserName != null  and referUserName != ''  ">refer_user_name = #{referUserName},</if>
+            <if test="category != null  and category != ''  ">category = #{category},</if>
+            update_time = sysdate(),
+            <if test="status != null  ">status = #{status},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteShopById" parameterType="Long">
+        delete from busi_shop where id = #{id}
+    </delete>
+
+    <delete id="deleteShopByIds" parameterType="String">
+        delete from busi_shop where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="checkNameUnique" parameterType="string" resultType="int">
+        select count(1) from busi_shop where name = #{name}
+    </select>
+    <select id="checkWangwangUnique" parameterType="string" resultType="int">
+        select count(1) from busi_shop where wangwang = #{wangwang}
+    </select>
+
+    <select id="selectShopByName" parameterType="string" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        where name = #{name}
+    </select>
+
+    <select id="selectShopIdByManagerId" resultType="string">
+        select shop_id from busi_shop where manager_id = #{managerId}
+    </select>
+
+    <select id="selectShopByOrderId" parameterType="string"
+            resultType="net.hongkuang.ditui.project.api.dto.OrderRespDto">
+        SELECT
+        bs.*,
+        bo.unit_price unitPrice
+        FROM
+        busi_shop bs
+        INNER JOIN busi_order bo ON bo.shop_id = bs.shop_id
+        WHERE
+        bo.order_id = #{orderId}
+    </select>
+</mapper>

@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            订单编号：<input type="text" name="orderId" style="width: 100px;"/>
+                        </li>
+                        <li>
+                            员工手机号：<input type="text" name="salePhone" style="width: 100px;"/>
+                        </li>
+
+                        <li>
+                            员工姓名：<input type="text" name="saleName" style="width: 100px;"/>
+                        </li>
+
+                        <li>
+                            员工所在地区：<input type="text" name="saleArea" style="width: 100px;"/>
+                        </li>
+
+                        <li>
+                            审批状态：<select name="status" style="width: 170px;"
+                                         th:with="type=${@dict.getType('approval_status')}">
+                            <option value="">所有</option>
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                    th:value="${dict.dictValue}"></option>
+                        </select>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-primary btn-pass disabled" onclick="$.operate.pass()"
+               shiro:hasPermission="busi:tbTransactionOrderCancelApproval:pass">
+                <i class="fa fa-edit"></i> 通过
+            </a>
+            <a class="btn btn-danger btn-reject disabled" onclick="$.operate.reject()"
+               shiro:hasPermission="busi:tbTransactionOrderCancelApproval:reject">
+                <i class="fa fa-remove"></i> 驳回
+            </a>
+            <a class="btn btn-danger btn-del disabled" onclick="$.operate.reject()"
+               shiro:hasPermission="busi:tbTransactionOrderCancelApproval:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <!--<a class="btn btn-warning" onclick="$.table.exportExcel()"-->
+            <!--shiro:hasPermission="busi:orderCancelApproval:export">-->
+            <!--<i class="fa fa-download"></i> 导出-->
+            <!--</a>-->
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var passFlag = [[${@permission.hasPermi('busi:tbTransactionOrderCancelApproval:pass')}]];
+    var rejectFlag = [[${@permission.hasPermi('busi:tbTransactionOrderCancelApproval:reject')}]];
+    var removeFlag = [[${@permission.hasPermi('busi:tbTransactionOrderCancelApproval:remove')}]];
+    var datas = [[${@dict.getType('approval_status')}]];
+    var prefix = ctx + "busi/tbTransactionOrderCancelApproval";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            passUrl: prefix + "/pass",
+            rejectUrl: prefix + "/reject",
+            exportUrl: prefix + "/export",
+            removeUrl: prefix + "/remove",
+            modalName: "订单取消审批",
+            search: false,
+            showExport: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '申请编号',
+                    sortable: true
+                },
+                {
+                    field: 'orderId',
+                    title: '订单编号',
+                    sortable: true
+                },
+                {
+                    field: 'remark',
+                    title: '取消原因',
+                    sortable: true
+                },
+                {
+                    field: 'createTime',
+                    title: '申请时间',
+                    sortable: true
+                },
+                {
+                    field: 'employeeName',
+                    title: '员工姓名',
+                    sortable: true
+                },
+                {
+                    field: 'employeePhone',
+                    title: '员工手机号',
+                    sortable: true
+                },
+
+                {
+                    field: 'employeeArea',
+                    title: '员工所在地区',
+                    sortable: true
+                },
+                {
+                    field: 'status',
+                    title: '审批状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        if (row.status == 1) {
+                            actions.push('<a class="btn btn-primary btn-xs ' + passFlag + '" href="#" onclick="$.operate.pass(\'' + row.id + '\',\'' + row.status + '\')"><i class="fa fa-edit"></i>通过</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + rejectFlag + '" href="#" onclick="$.operate.reject(\'' + row.id + '\',\'' + row.status + '\')"><i class="fa fa-remove"></i>驳回</a> ');
+                        }
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+    $("input[type=text]").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $.table.search();
+        }
+    })
+</script>
+</body>
+</html>

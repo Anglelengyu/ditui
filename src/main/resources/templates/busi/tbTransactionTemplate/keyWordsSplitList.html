@@ -1,0 +1,654 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0;
+    }
+</style>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-keywords-edit" th:object="${tbTransactionTemplate}">
+        <fieldset>
+            <input id="id" name="id" th:value="${id}" type="hidden">
+            <input id="unitPrice" name="unitPrice" th:value="*{unitPriceYuan}" type="hidden">
+            <input id="commissionPrice" name="commissionPrice" th:value="*{commissionPriceYuan}" type="hidden">
+            <input id="totalNumberTotal" name="totalNumberTotal" type="hidden">
+            <input id="splitTotalNumberTotal" name="splitTotalNumberTotal" type="hidden">
+            <div class="form-group">
+                <div class="col-sm-12 field-section">
+                    <table id="collapsingTable" class="ui celled very compact unstackable small center aligned table"
+                           th:attr="data-max-count=2000">
+                        <thead>
+                        <tr>
+                            <th th:each="head : ${itemHeaders}" th:utext="${head}"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${tbTransactionTemplate.tbTransactionKeyWords}">
+                            <td th:each="field : ${itemFields}" th:if="${field=='name'}">
+                                <div class="ui mini fluid input">
+                                    <input style="text-align: center;width:200px !important;color: #8a8a8a" readonly="true"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].name|"
+                                           th:value="${item.name}" placeholder="最多30个汉字"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='totalNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;color: #8a8a8a" type="number"
+                                           readonly="true"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].totalNumber|"
+                                           th:value="${item.totalNumber} == null ? 0 : ${item.totalNumber}"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='splitTotalNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;" type="number"
+                                           onchange="totalNumberChange(this)"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].splitTotalNumber|"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='appNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;color: #8a8a8a" type="number"
+                                           readonly="true"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].appNumber|"
+                                           th:value="${item.appNumber} == null ? 0 : ${item.appNumber}"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='splitAppNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;" type="number"
+                                           onchange="inputNumberChange(this)"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].splitAppNumber|"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='pcNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;color: #8a8a8a" type="number"
+                                           readonly="true" th:name="|tbTransactionKeyWords[${itemStat.index}].pcNumber|"
+                                           th:value="${item.pcNumber} == null ? 0 : ${item.pcNumber}"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='splitPcNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;" type="number"
+                                           onchange="inputNumberChange(this)"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].splitPcNumber|"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='collectionNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;color: #8a8a8a" type="number"
+                                           readonly="true"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].collectionNumber|"
+                                           th:value="${item.collectionNumber} == null ? 0 : ${item.collectionNumber}"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='splitCollectionNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;" type="number"
+                                           onchange="inputNumberChange(this)"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].splitCollectionNumber|"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='cartNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;color: #8a8a8a" type="number"
+                                           readonly="true"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].cartNumber|"
+                                           th:value="${item.cartNumber} == null ? 0 : ${item.cartNumber}"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='splitCartNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;" type="number"
+                                           onchange="inputNumberChange(this)"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].splitCartNumber|"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='collectionCartNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;color: #8a8a8a" type="number"
+                                           readonly="true"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].collectionCartNumber|"
+                                           th:value="${item.collectionCartNumber} == null ? 0 : ${item.collectionCartNumber}"/>
+                                </div>
+                            </td>
+                            <td th:each="field : ${itemFields}" th:if="${field=='splitCollectionCartNumber'}">
+                                <div class="ui mini input">
+                                    <input style="text-align: center;width:46px !important;" type="number"
+                                           onchange="inputNumberChange(this)"
+                                           th:name="|tbTransactionKeyWords[${itemStat.index}].splitCollectionCartNumber|"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="trTotal">
+                            <td></td>
+                            <td id="tdTotalNumberTotal">0</td>
+                            <td id="tdSplitTotalNumberTotal">0</td>
+                            <td id="tdAppNumberTotal">0</td>
+                            <td id="tdSplitAppNumberTotal">0</td>
+                            <td id="tdPcNumberTotal">0</td>
+                            <td id="tdSplitPcNumberTotal">0</td>
+                            <td id="tdCollectionNumberTotal">0</td>
+                            <td id="tdSplitCollectionNumberTotal">0</td>
+                            <td id="tdCartNumberTotal">0</td>
+                            <td id="tdSplitCartNumberTotal">0</td>
+                            <td id="tdCollectionCartNumberTotal">0</td>
+                            <td id="tdSplitCollectionCartNumberTotal">0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10 field-section">
+                    <label class="col-sm-5 control-label">拆分后旧模板总单量：</label>
+                    <div class="col-sm-6">
+                        <table id="collapsingTable2"
+                               class="ui celled very compact unstackable small center aligned table"
+                               th:attr="data-max-count=2000">
+                            <thead>
+                            <tr>
+                                <th>关键词</th>
+                                <th>手机端</th>
+                                <th>电脑端</th>
+                                <th>收藏</th>
+                                <th>加购</th>
+                                <th>收藏+加购</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="trTotal">
+                                <td id="tdBeforeSplitTotalNumberTotal">0</td>
+                                <td id="tdBeforeSplitAppNumberTotal">0</td>
+                                <td id="tdBeforeSplitPcNumberTotal">0</td>
+                                <td id="tdBeforeSplitCollectionNumberTotal">0</td>
+                                <td id="tdBeforeSplitCartNumberTotal">0</td>
+                                <td id="tdBeforeSplitCollectionCartNumberTotal">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10 field-section">
+                    <label class="col-sm-5 control-label">拆分后新模板总单量：</label>
+                    <div class="col-sm-6">
+                        <table id="collapsingTable3"
+                               class="ui celled very compact unstackable small center aligned table"
+                               th:attr="data-max-count=2000">
+                            <thead>
+                            <tr>
+                                <th>关键词</th>
+                                <th>手机端</th>
+                                <th>电脑端</th>
+                                <th>收藏</th>
+                                <th>加购</th>
+                                <th>收藏+加购</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr class="trTotal">
+                                <td id="tdAfterSplitTotalNumberTotal">0</td>
+                                <td id="tdAfterSplitAppNumberTotal">0</td>
+                                <td id="tdAfterSplitPcNumberTotal">0</td>
+                                <td id="tdAfterSplitCollectionNumberTotal">0</td>
+                                <td id="tdAfterSplitCartNumberTotal">0</td>
+                                <td id="tdAfterSplitCollectionCartNumberTotal">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-10 field-section">
+                    <label class="col-sm-5 control-label">选择新模板放单方式：</label>
+                    <div class="col-sm-3">
+                        <select id="executeMethod" class="form-control m-b" name="executeMethod"
+                                th:with="type=${@dict.getType('execute_method')}">
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:field="*{executeMethod}"
+                                    th:value="${dict.dictValue}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:inline="javascript">
+    var prefix = ctx + "busi/tbTransactionTemplate";
+    $(function () {
+        var id = "";
+        var name = "tbTransactionKeyWords";
+        var fields = ['name', 'totalNumber', 'appNumber', 'pcNumber', 'collectionNumber', 'cartNumber', 'collectionCartNumber'];
+        var table = $("#collapsingTable");
+        var tableBody = $(table).find("tr.trTotal");
+        var maxCount = $(table).attr("data-max-count");
+
+        bindingRemoveEvent();
+
+        function resortItems() {
+            $(table).find("tbody tr").each(function (index, row) {
+                $(row).find("input").each(function (fieldIndex, field) {
+                    var inputId, inputName;
+                    if (fields[fieldIndex].length === 0) {
+                        inputId = name + index;
+                        inputName = name + "[" + index + "]";
+                    } else {
+                        inputId = name + index + "." + fields[fieldIndex];
+                        inputName = name + "[" + index + "]." + fields[fieldIndex];
+                    }
+                    $(field).attr("id", inputId);
+                    $(field).attr("name", inputName);
+                });
+            });
+            inputChange();
+        }
+
+        function bindingRemoveEvent() {
+            $(table).find("tbody .action-remove").off("click");
+            $(table).find("tbody .action-remove").on("click", function () {
+                $(this).parent("tr").remove();
+                resortItems();
+            });
+        }
+
+        inputChange();
+    });
+
+
+    function submitHandler() {
+        inputChange();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/splitTemplate", $('#form-keywords-edit').serialize());
+        }
+    }
+
+    function totalNumberChange(obj) {
+        //得到当前所在行
+        var rowIndex = Number(obj.parentNode.parentNode.parentNode.rowIndex) - 1;
+        var totalNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].totalNumber']").val());
+        var splitTotalNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitTotalNumber']").val());
+        var appNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].appNumber']").val());
+        var pcNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].pcNumber']").val());
+
+        if (splitTotalNumber > totalNumber) {
+            $.modal.alertError("拆分单量不能超过总单量");
+            $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitTotalNumber']").val(totalNumber);
+        }
+        splitTotalNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitTotalNumber']").val());
+
+        if (splitTotalNumber >= appNumber) {
+            $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+            $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+        } else {
+            $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber);
+            $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(0);
+        }
+
+        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val(0);
+        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val(0);
+        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val(0);
+        inputChange();
+    }
+
+
+    function inputNumberChange(obj) {
+        //得到当前所在行
+        var rowIndex = Number(obj.parentNode.parentNode.parentNode.rowIndex) - 1;
+        var splitTotalNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitTotalNumber']").val());
+        var totalNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].totalNumber']").val());
+
+        if ($(obj).attr("name") == "tbTransactionKeyWords[" + rowIndex + "].splitAppNumber") {
+            var splitAppNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val());
+            var splitPcNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val());
+            var appNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].appNumber']").val());
+            var pcNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].pcNumber']").val());
+            if (splitAppNumber < 0) {
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(0);
+                splitAppNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val());
+            }
+            if (splitAppNumber + splitPcNumber > splitTotalNumber) {
+                if (splitAppNumber > splitTotalNumber) {
+                    if (appNumber >= splitTotalNumber) {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(0);
+                        inputChange();
+                        return;
+                    } else {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+                        inputChange();
+                        return;
+                    }
+                } else {
+                    if (splitAppNumber >= appNumber) {
+                        console.log("-------------");
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+                        inputChange();
+                        return;
+                    }
+                    var b = splitTotalNumber - splitAppNumber;
+                    if (b > pcNumber) {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(pcNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - pcNumber);
+                        inputChange();
+                        return;
+                    }
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - splitAppNumber);
+                    inputChange();
+                    return;
+                }
+                if (appNumber >= splitTotalNumber) {
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - splitPcNumber);
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val();
+                } else {
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+                }
+            } else {
+                if (splitAppNumber >= appNumber) {
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+                } else {
+                    var b = splitTotalNumber - splitAppNumber;
+                    if (b > pcNumber) {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(pcNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - pcNumber);
+                        inputChange();
+                        return;
+                    }
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - splitAppNumber);
+                }
+            }
+        }
+
+        if ($(obj).attr("name") == "tbTransactionKeyWords[" + rowIndex + "].splitPcNumber") {
+            var splitPcNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val());
+            var splitAppNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val());
+            var appNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].appNumber']").val());
+            var pcNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].pcNumber']").val());
+            if (splitPcNumber < 0) {
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(0);
+                splitPcNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val());
+            }
+            if (splitAppNumber + splitPcNumber > splitTotalNumber) {
+                if (splitPcNumber > splitTotalNumber) {
+                    if (pcNumber >= splitTotalNumber) {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(0);
+                        inputChange();
+                        return;
+                    } else {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(pcNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - pcNumber);
+                        inputChange();
+                        return;
+                    }
+                } else {
+                    if (splitPcNumber >= pcNumber) {
+                        console.log("-------------");
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(pcNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - pcNumber);
+                        inputChange();
+                        return;
+                    }
+                    var b = splitTotalNumber - splitPcNumber;
+                    if (b > appNumber) {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+                        inputChange();
+                        return;
+                    }
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - splitPcNumber);
+                    inputChange();
+                    return;
+                }
+                if (pcNumber >= splitTotalNumber) {
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - splitAppNumber);
+                } else {
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(pcNumber);
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - pcNumber);
+                }
+            } else {
+                if (splitPcNumber >= pcNumber) {
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(pcNumber);
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - pcNumber);
+                } else {
+                    var b = splitTotalNumber - splitPcNumber;
+                    if (b > appNumber) {
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(appNumber);
+                        $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitPcNumber']").val(splitTotalNumber - appNumber);
+                        inputChange();
+                        return;
+                    }
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitAppNumber']").val(splitTotalNumber - splitPcNumber);
+                }
+            }
+        }
+
+
+        if ($(obj).attr("name") == "tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber") {
+            var splitCollectionNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val());
+            var splitCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val());
+            var splitCollectionCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val());
+            var collectionNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].collectionNumber']").val());
+            var cartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].cartNumber']").val());
+            var collectionCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].collectionCartNumber']").val());
+            if (splitCollectionNumber < 0) {
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val(0);
+            }
+            if (splitCollectionNumber + splitCartNumber + splitCollectionCartNumber > splitTotalNumber) {
+                $.modal.alertError("拆分收藏、拆分加购、拆分收藏+加购 之和不能超过总单量");
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val(0);
+                inputChange();
+                return;
+            } else {
+                if (splitCollectionNumber > collectionNumber) {
+                    $.modal.alertError("拆分收藏不能超过总拆分收藏单量");
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val(0);
+                    inputChange();
+                    return;
+                }
+            }
+        }
+
+        if ($(obj).attr("name") == "tbTransactionKeyWords[" + rowIndex + "].splitCartNumber") {
+            var splitCollectionNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val());
+            var splitCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val());
+            var splitCollectionCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val());
+            var collectionNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].collectionNumber']").val());
+            var cartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].cartNumber']").val());
+            var collectionCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].collectionCartNumber']").val());
+            if (splitCartNumber < 0) {
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val(0);
+            }
+            if (splitCollectionNumber + splitCartNumber + splitCollectionCartNumber > splitTotalNumber) {
+                $.modal.alertError("拆分收藏、拆分加购、拆分收藏+加购 之和不能超过总单量");
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val(0);
+                inputChange();
+                return;
+            } else {
+                if (splitCartNumber > cartNumber) {
+                    $.modal.alertError("拆分加购不能超过总拆分加购单量");
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val(0);
+                    inputChange();
+                    return;
+                }
+            }
+        }
+
+        if ($(obj).attr("name") == "tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber") {
+            var splitCollectionNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionNumber']").val());
+            var splitCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCartNumber']").val());
+            var splitCollectionCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val());
+            var collectionNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].collectionNumber']").val());
+            var cartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].cartNumber']").val());
+            var collectionCartNumber = Number($("input[name='tbTransactionKeyWords[" + rowIndex + "].collectionCartNumber']").val());
+            if (splitCollectionCartNumber < 0) {
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val(0);
+            }
+            if (splitCollectionNumber + splitCartNumber + splitCollectionCartNumber > splitTotalNumber) {
+                $.modal.alertError("拆分收藏、拆分加购、拆分收藏+加购 之和不能超过总单量");
+                $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val(0);
+                inputChange();
+                return;
+            } else {
+                if (splitCollectionCartNumber > collectionCartNumber) {
+                    $.modal.alertError("拆分加购不能超过总拆分加购单量");
+                    $("input[name='tbTransactionKeyWords[" + rowIndex + "].splitCollectionCartNumber']").val(0);
+                    inputChange();
+                    return;
+                }
+            }
+        }
+
+        inputChange();
+    }
+
+    function inputChange() {
+        var tdTotalNumberTotal = 0;
+        var tdAppNumberTotal = 0;
+        var tdPcNumberTotal = 0;
+        var tdCollectionNumberTotal = 0;
+        var tdCartNumberTotal = 0;
+        var tdCollectionCartNumberTotal = 0;
+
+        var tdSplitTotalNumberTotal = 0;
+        var tdSplitAppNumberTotal = 0;
+        var tdSplitPcNumberTotal = 0;
+        var tdSplitCollectionNumberTotal = 0;
+        var tdSplitCartNumberTotal = 0;
+        var tdSplitCollectionCartNumberTotal = 0;
+        $("#collapsingTable").find("tbody tr").each(function (index, row) {
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].totalNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdTotalNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].appNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdAppNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].pcNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdPcNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].collectionNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdCollectionNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].cartNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdCartNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].collectionCartNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdCollectionCartNumberTotal += numVal;
+            });
+
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].splitTotalNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdSplitTotalNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].splitAppNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdSplitAppNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].splitPcNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdSplitPcNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].splitCollectionNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdSplitCollectionNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].splitCartNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdSplitCartNumberTotal += numVal;
+            });
+            $(row).find("input[name='tbTransactionKeyWords[" + index + "].splitCollectionCartNumber']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                tdSplitCollectionCartNumberTotal += numVal;
+            });
+        });
+        var unitPrice = Number($("#unitPrice").val());
+        var commissionPrice = Number($("#commissionPrice").val());
+
+        //总单量
+        $("#tdTotalNumberTotal").text(parseFloat(tdTotalNumberTotal));
+        //手机端总量
+        $("#tdAppNumberTotal").text(parseFloat(tdAppNumberTotal));
+        //pc端总量
+        $("#tdPcNumberTotal").text(parseFloat(tdPcNumberTotal));
+        //收藏总量
+        $("#tdCollectionNumberTotal").text(parseFloat(tdCollectionNumberTotal));
+        //加购总量
+        $("#tdCartNumberTotal").text(parseFloat(tdCartNumberTotal));
+        //收藏+加购总量
+        $("#tdCollectionCartNumberTotal").text(parseFloat(tdCollectionCartNumberTotal));
+
+        //拆分总单量
+        $("#tdSplitTotalNumberTotal").text(parseFloat(tdSplitTotalNumberTotal));
+        //拆分手机端总量
+        $("#tdSplitAppNumberTotal").text(parseFloat(tdSplitAppNumberTotal));
+        //拆分pc端总量
+        $("#tdSplitPcNumberTotal").text(parseFloat(tdSplitPcNumberTotal));
+        //拆分收藏总量
+        $("#tdSplitCollectionNumberTotal").text(parseFloat(tdSplitCollectionNumberTotal));
+        //拆分加购总量
+        $("#tdSplitCartNumberTotal").text(parseFloat(tdSplitCartNumberTotal));
+        //拆分收藏+加购总量
+        $("#tdSplitCollectionCartNumberTotal").text(parseFloat(tdSplitCollectionCartNumberTotal));
+
+        /*  拆分后旧模板总单量  */
+        //总关键词单量
+        $("#tdBeforeSplitTotalNumberTotal").text(parseFloat(tdTotalNumberTotal - tdSplitTotalNumberTotal));
+        $("#totalNumberTotal").val(parseFloat(tdTotalNumberTotal - tdSplitTotalNumberTotal));
+        //手机端总量
+        $("#tdBeforeSplitAppNumberTotal").text(parseFloat(tdAppNumberTotal - tdSplitAppNumberTotal));
+        //pc端总量
+        $("#tdBeforeSplitPcNumberTotal").text(parseFloat(tdPcNumberTotal - tdSplitPcNumberTotal));
+        //收藏总量
+        $("#tdBeforeSplitCollectionNumberTotal").text(parseFloat(tdCollectionNumberTotal - tdSplitCollectionNumberTotal));
+        //加购总量
+        $("#tdBeforeSplitCartNumberTotal").text(parseFloat(tdCartNumberTotal - tdSplitCartNumberTotal));
+        //收藏+加购总量
+        $("#tdBeforeSplitCollectionCartNumberTotal").text(parseFloat(tdCollectionCartNumberTotal - tdSplitCollectionCartNumberTotal));
+
+        /*  拆分后新模板总单量  */
+        //总单量
+        $("#tdAfterSplitTotalNumberTotal").text(parseFloat(tdSplitTotalNumberTotal));
+        $("#splitTotalNumberTotal").val(parseFloat(tdSplitTotalNumberTotal));
+        //手机端总量
+        $("#tdAfterSplitAppNumberTotal").text(parseFloat(tdSplitAppNumberTotal));
+        //pc端总量
+        $("#tdAfterSplitPcNumberTotal").text(parseFloat(tdSplitPcNumberTotal));
+        //收藏总量
+        $("#tdAfterSplitCollectionNumberTotal").text(parseFloat(tdSplitCollectionNumberTotal));
+        //加购总量
+        $("#tdAfterSplitCartNumberTotal").text(parseFloat(tdSplitCartNumberTotal));
+        //收藏+加购总量
+        $("#tdAfterSplitCollectionCartNumberTotal").text(parseFloat(tdSplitCollectionCartNumberTotal));
+
+
+        $("#totalUnitPrice").val(parseFloat(unitPrice * tdTotalNumberTotal).toFixed(2));
+        $("#totalCommissionPrice").val(parseFloat(commissionPrice * tdTotalNumberTotal).toFixed(2));
+        $("#totalNumber").text(parseFloat(tdTotalNumberTotal));
+
+        $("#totalNumberLable").text(parseFloat(tdTotalNumberTotal));
+        $("#unitPriceTotalLable").text(parseFloat(unitPrice * tdTotalNumberTotal).toFixed(2));
+        $("#commissionPriceTotalLable").text(parseFloat(commissionPrice * tdTotalNumberTotal).toFixed(2));
+    }
+</script>
+</body>
+</html>

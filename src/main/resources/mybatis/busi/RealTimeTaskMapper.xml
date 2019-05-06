@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.realTimeTask.mapper.RealTimeTaskMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.realTimeTask.domain.RealTimeTask" id="RealTimeTaskResult">
+        <result property="id" column="id"/>
+        <result property="realTimeTaskId" column="real_time_task_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="stopTime" column="stop_time"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="taskDate" column="task_date"/>
+    </resultMap>
+
+    <sql id="selectRealTimeTaskVo">
+        select id, real_time_task_id, task_id, start_time, stop_time, status, create_time, update_time, create_by,
+        update_by, task_date from busi_real_time_task
+    </sql>
+
+    <select id="selectRealTimeTaskList"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeTask.domain.RealTimeTask"
+            resultMap="RealTimeTaskResult">
+        <include refid="selectRealTimeTaskVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="realTimeTaskId != null  and realTimeTaskId != '' ">and real_time_task_id = #{realTimeTaskId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="startTime != null  and startTime != '' ">and start_time = #{startTime}</if>
+            <if test="stopTime != null  and stopTime != '' ">and stop_time = #{stopTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+            <if test="taskDate != null  and taskDate != '' ">and task_date = #{taskDate}</if>
+        </where>
+    </select>
+
+    <select id="selectRealTimeTaskById" parameterType="Long" resultMap="RealTimeTaskResult">
+        <include refid="selectRealTimeTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRealTimeTask" parameterType="net.hongkuang.ditui.project.busi.realTimeTask.domain.RealTimeTask">
+        insert into busi_real_time_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="realTimeTaskId != null  and realTimeTaskId != ''  ">real_time_task_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="startTime != null  and startTime != ''  ">start_time,</if>
+            <if test="stopTime != null  and stopTime != ''  ">stop_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+            <if test="taskDate != null  and taskDate != ''  ">task_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="realTimeTaskId != null  and realTimeTaskId != ''  ">#{realTimeTaskId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="startTime != null  and startTime != ''  ">#{startTime},</if>
+            <if test="stopTime != null  and stopTime != ''  ">#{stopTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+            <if test="taskDate != null  and taskDate != ''  ">#{taskDate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateRealTimeTask" parameterType="net.hongkuang.ditui.project.busi.realTimeTask.domain.RealTimeTask">
+        update busi_real_time_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="realTimeTaskId != null  and realTimeTaskId != ''  ">real_time_task_id = #{realTimeTaskId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="startTime != null  and startTime != ''  ">start_time = #{startTime},</if>
+            <if test="stopTime != null  and stopTime != ''  ">stop_time = #{stopTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="taskDate != null  and taskDate != ''  ">task_date = #{taskDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRealTimeTaskById" parameterType="Long">
+        delete from busi_real_time_task where id = #{id}
+    </delete>
+
+    <delete id="deleteRealTimeTaskByIds" parameterType="String">
+        delete from busi_real_time_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert">
+        insert into busi_real_time_task(id, real_time_task_id, task_id, start_time, stop_time, status, create_time,
+        update_time,create_by,update_by,task_date)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+            #{item.realTimeTaskId},
+            #{item.taskId},
+            #{item.startTime},
+            #{item.stopTime},
+            #{item.status},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.createBy},
+            #{item.updateBy},
+            #{item.taskDate})
+        </foreach>
+    </insert>
+
+    <select id="selectRealTimeTaskCount" resultType="int">
+        select count(1) from busi_real_time_task
+        where start_time = #{startTime} and stop_time = #{stopTime}
+        and task_date = #{taskDate}
+    </select>
+
+    <update id="updateTimeTaskByTaskIds" parameterType="string">
+        update busi_real_time_task set status = 1 where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <select id="selectCurrentTimeTaskCount"
+            resultType="net.hongkuang.ditui.project.busi.realTimeTask.domain.RealTimeTask">
+        SELECT
+        brtt.start_time startTime,brtt.stop_time stopTime
+        FROM
+        busi_real_time_task brtt
+        INNER JOIN busi_task bt ON bt.task_id = brtt.task_id
+        WHERE
+        brtt.task_date = #{taskDate}
+        AND bt.task_status = 1
+        AND brtt.start_time &lt;= #{currentTime}
+        ORDER BY start_time ASC,stop_time ASC
+        LIMIT 0,1
+    </select>
+
+    <select id="selectTodoRealTimeTaskList" resultType="string">
+        SELECT
+        brtt.task_id
+        FROM
+        busi_real_time_task brtt
+        INNER JOIN busi_task bt ON bt.task_id = brtt.task_id
+        WHERE
+        brtt.task_date = #{taskDate}
+        AND brtt.start_time &lt;= #{startTime} AND brtt.stop_time &gt;= #{stopTime}
+        AND bt.task_status = 1
+    </select>
+</mapper>

@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-task-edit" th:object="${groundTask}">
+        <fieldset>
+            <legend style="font-size: 15px;">订单信息</legend>
+            <div class="form-group">
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend style="font-size: 15px;">任务信息</legend>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">任务编号：</label>
+                <label class="control-label col-sm-1" id="taskId"></label>
+                <label class="col-sm-2 control-label">订单数量：</label>
+                <label class="control-label col-sm-1" id="orderNum"></label>
+                <label class="col-sm-2 control-label">任务本金：</label>
+                <label class="control-label col-sm-1" id="taskCorpus"></label>
+                <label class="col-sm-2 control-label">任务佣金：</label>
+                <label class="control-label col-sm-1" id="taskCommissionPrice"></label>
+            </div>
+
+        </fieldset>
+        <fieldset>
+            <legend style="font-size: 15px;">任务资料</legend>
+            <div class="form-group" id="imgArea">
+            </div>
+            <div class="form-group" id="textArea">
+
+            </div>
+            <div class="form-group" id="picker" style="width: 100%;height: 300px;">
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:src="@{http://api.map.baidu.com/api?v=2.0&ak=u9xfZAnV2IQZbv7s6tGrXdrq}"></script>
+<script th:inline="javascript">
+    var taskId = [[${groundTask.taskId}]];
+    var id = [[${groundTask.id}]];
+    var imgs = [[${imgs}]];
+    var taskImgText = ['', '我的评价(必填)', '收货地址(必填)', '场景照片(必填)', '其他图片', '其他图片']
+    var imgLabel = new Array();
+    var textLabel = new Array();
+    var previewImgs = new Array();
+    var prefix = ctx + "busi/groundTask/waitDistribution";
+    $.each(imgs, function (index, img) {
+        var path = img.path.indexOf("http") < 0 ? accessFileUrl + "/" + img.path : img.path
+        previewImgs.push({
+            "alt": taskImgText[img.imgIndex],
+            "pid": img.id, //图片id
+            "src": path, //原图地址
+            "thumb": "" //缩略图地址
+        })
+        imgLabel.push('<label class="col-sm-2 control-label"><img src="' + path + '" index="' + index + '" class="preview" style="width: 200px;height: 200px;overflow: hidden"></label>');
+        textLabel.push('<label class="col-sm-2 control-label" style="text-align: center;">' + taskImgText[img.imgIndex] + '</label>');
+    })
+    var previewJson = {
+        "title": "任务编号：" + taskId,
+        "id": taskId,
+        "start": 0
+    };
+    previewJson.data = previewImgs;
+    $("#imgArea").html(imgLabel.join(" "));
+    $("#textArea").html(textLabel.join(" "));
+
+    $(document).on("click", ".preview", function () {
+        var me = $(this);
+        previewJson.start = me.attr("index");
+        layer.photos({
+            photos: previewJson
+            , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        });
+    })
+    $("#taskId").text(taskId);
+    $("#orderNum").text([[${groundTask.orderNum}]]);
+    $("#taskCorpus").text($.unit.fen2yuan([[${groundTask.taskCorpus}]]));
+    $("#taskCommissionPrice").text($.unit.fen2yuan([[${groundTask.taskCommissionPrice}]]));
+    var tableJson = {
+        "title": "任务编号：" + taskId,
+        "id": taskId,
+        "start": 0
+    };
+    var datas = [[${@dict.getType('order_status')}]];
+    var tableImgs = new Array();
+    var orders = [[${groundTask.orders}]];
+    $(document).on("click", ".tablePreview", function () {
+        var me = $(this);
+        tableJson.start = me.attr("index");
+        if ($.common.isEmpty(tableJson.data)) {
+            tableJson.data = tableImgs;
+        }
+        layer.photos({
+            photos: tableJson
+            , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        });
+    });
+
+    function addTaskOrder() {
+        $.modal.openRefer("添加订单", prefix + "/addOrder/" + taskId, 350, 230);
+    }
+
+    function showBuyInfo() {
+        $.modal.open("查看用户信息", prefix + "/showBuyInfo/" + taskId);
+    }
+
+    var orderIds = "";
+    $(function () {
+        var removeFlag = [[${@permission.hasPermi('busi:groundTask:waitDistribution:remove')}]];
+        var options = {
+//            url: prefix + "/getTaskDetails/"+id,
+            createUrl: prefix + "/addOrder/" + taskId,
+            removeUrl: prefix + "/removeTaskOrder/" + taskId,
+            modalName: "任务",
+            search: false,
+            data: orders,
+            showSearch: false,
+            strictSearch: false,
+            showExport: false,
+            showColumns: false,
+            showRefresh: false,
+            showToggle: false,
+            detailView: true,
+            pagination: false,
+            height: 0,
+            columns: [
+                {
+                    field: 'id',
+                    title: '订单编号',
+                    visible: true
+                },
+                {
+                    field: 'platform',
+                    title: '平台'
+                },
+                {
+                    field: 'managerUserName',
+                    title: '掌柜昵称'
+                },
+                {
+                    field: 'shopName',
+                    title: '店铺名称'
+                },
+                {
+                    field: 'goodsName',
+                    title: '商品简称'
+                },
+                {
+                    field: 'keyWordName',
+                    title: '关键词'
+                },
+                {
+                    field: 'unitPrice',
+                    title: '商品本金',
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(value);
+                    }
+                },
+                {
+                    field: 'commissionPrice',
+                    title: '商品佣金',
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(value);
+                    }
+                },
+                {
+                    field: 'goodsImg',
+                    title: '商品主图',
+                    formatter: function (value, row, index) {
+                        if (orderIds.indexOf(row.orderId) < 0) {
+                            tableImgs.push({
+                                "alt": row.goodsName,
+                                "pid": row.orderId, //图片id
+                                "src": value.indexOf("http") < 0 ? accessFileUrl + "/" + value : value, //原图地址
+                                "thumb": "" //缩略图地址
+                            })
+                        }
+                        orderIds += row.orderId;
+                        return $.image.tablePreview(value, index);
+                    }
+                },
+                {
+                    field: 'status',
+                    title: '订单状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="removeTaskOrder(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    var showRemark = function (id) {
+        var me = $(this);
+        var url = prefix + '/showRemark/' + id;
+        $.modal.open("", url, '600', '350');
+    };
+
+    function removeTaskOrder(id) {
+        $.modal.confirm("确定删除该条" + $.table._option.modalName + "信息吗？", function () {
+            var url = $.common.isEmpty(id) ? $.table._option.removeUrl : $.table._option.removeUrl.replace("{id}", id);
+            var data = {"ids": id};
+            $.modal.loading("正在处理中，请稍后...");
+            var config = {
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    $.operate.ajaxSuccess(result);
+                    window.location.reload();
+                }
+            };
+            $.ajax(config);
+        });
+    }
+
+    // 百度地图相关------------------------------------start----
+
+
+    var lng = [[${groundTask.lng}]];
+    var lat = [[${groundTask.lat}]];
+
+    if (lng != null && lat != null) {
+        var completionTime = [[${groundTask.completionTime}]]
+        var point = new BMap.Point(lng, lat);
+        var map = new BMap.Map("picker");    // 创建Map实例
+        map.centerAndZoom(point, 18);  // 初始化地图,设置中心点坐标和地图级别
+        //添加地图类型控件
+        map.enableScrollWheelZoom();
+        map.addControl(new BMap.MapTypeControl({
+            mapTypes: [
+                BMAP_NORMAL_MAP,
+                BMAP_HYBRID_MAP
+            ]
+        }));
+        var opts = {
+            width: 280,     // 信息窗口宽度
+            height: 80,     // 信息窗口高度
+            title: "<h4>任务信息</h4>", // 信息窗口标题
+            enableMessage: true//设置允许信息窗发送短息
+        };
+        // 请求后台获取相关坐标数据
+        var geoc = new BMap.Geocoder();
+        geoc.getLocation(point, function (rs) {
+            var content = "完成地点：" + rs.address + "<br />完成时间：" + new Date(completionTime).format("yyyy-MM-dd hh:mm:ss");
+            var marker = new BMap.Marker(point);
+            map.addOverlay(marker);
+            openInfo(content);
+            marker.addEventListener("click", function (e) {
+                    openInfo(content, e)
+                }
+            );
+        });
+
+        var openInfo = function (content) {
+            var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow, point); //开启信息窗口
+        }
+    }
+    // 百度地图相关------------------------------------end----
+</script>
+</body>
+</html>

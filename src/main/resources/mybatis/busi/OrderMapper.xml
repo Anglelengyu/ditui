@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.order.mapper.OrderMapper">
+
+    <resultMap type="Order" id="OrderResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="category" column="category"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="keyWord" column="key_word"/>
+        <result property="remarks" column="remarks"/>
+        <result property="orderImg" column="order_img"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="commission" column="commission"/>
+        <result property="status" column="status"/>
+        <result property="allocatStatus" column="allocat_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="payment" column="payment"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="buyerNick" column="buyer_nick"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="markStatus" column="mark_status"/>
+        <result property="markComment" column="mark_comment"/>
+    </resultMap>
+
+    <resultMap type="Order" id="ExtendOrderResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="category" column="category"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="keyWord" column="key_word"/>
+        <result property="remarks" column="remarks"/>
+        <result property="orderImg" column="order_img"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="commission" column="commission"/>
+        <result property="status" column="status"/>
+        <result property="allocatStatus" column="allocat_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="payment" column="payment"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="buyerNick" column="buyer_nick"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="markStatus" column="mark_status"/>
+        <result property="markComment" column="mark_comment"/>
+        <result property="saleName" column="sale_name"/>
+        <result property="saleArea" column="sale_area"/>
+        <result property="saleCommission" column="sale_commission"/>
+        <result property="taskId" column="task_id"/>
+        <result property="taskCompletionTime" column="task_completion_time"/>
+    </resultMap>
+
+    <resultMap id="goodsResult" type="net.hongkuang.ditui.project.busi.order.dto.UnfinishGoodsDto">
+        <result property="goodsName" column="goods_name"/>
+        <result property="category" column="category"/>
+        <result property="goodsCount" column="goods_count"/>
+        <result property="categoryCount" column="category_count"/>
+
+    </resultMap>
+
+    <sql id="selectOrderVo">
+        select id, order_id, category, shop_id, shop_name, goods_name, key_word, remarks, order_img, unit_price,
+        commission, status, create_time, update_time, ext1, ext2, payment, order_no, buyer_nick, create_by, update_by,
+        mark_status, mark_comment from busi_order
+    </sql>
+
+    <select id="selectOrderList" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="orderId != null  and orderId != '' ">and order_id = #{orderId}</if>
+            <if test="category != null  and category != '' ">and category = #{category}</if>
+            <if test="shopId != null  and shopId != '' ">and shop_id = #{shopId}</if>
+            <if test="shopName != null  and shopName != '' ">and shop_name = #{shopName}</if>
+            <if test="goodsName != null  and goodsName != '' ">and goods_name = #{goodsName}</if>
+            <if test="keyWord != null  and keyWord != '' ">and key_word = #{keyWord}</if>
+            <if test="remarks != null  and remarks != '' ">and remarks = #{remarks}</if>
+            <if test="orderImg != null  and orderImg != '' ">and order_img = #{orderImg}</if>
+            <if test="unitPrice != null ">and unit_price = #{unitPrice}</if>
+            <if test="commission != null ">and commission = #{commission}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="allocatStatus != null ">and allocat_status = #{allocatStatus}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="payment != null ">and payment = #{payment}</if>
+            <if test="orderNo != null  and orderNo != '' ">and order_no = #{orderNo}</if>
+            <if test="buyerNick != null  and buyerNick != '' ">and buyer_nick = #{buyerNick}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+            <if test="name != null and name != ''">
+                and (shop_name like CONCAT('%', #{name},'%') or goods_name like CONCAT('%', #{name},'%') or
+                category like CONCAT('%', #{name},'%') or key_word like CONCAT('%', #{name},'%') )
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                and create_time &lt;= #{endTime}
+            </if>
+            <if test="shopIdList != null and shopIdList.size()>0">
+                and shop_id in
+                <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrderById" parameterType="Long" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertOrder" parameterType="Order">
+        insert into busi_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="orderId != null  and orderId != ''  ">order_id,</if>
+            <if test="category != null  and category != ''  ">category,</if>
+            <if test="shopId != null  and shopId != ''  ">shop_id,</if>
+            <if test="shopName != null  and shopName != ''  ">shop_name,</if>
+            <if test="goodsName != null  and goodsName != ''  ">goods_name,</if>
+            <if test="keyWord != null  and keyWord != ''  ">key_word,</if>
+            <if test="remarks != null  and remarks != ''  ">remarks,</if>
+            <if test="orderImg != null  and orderImg != ''  ">order_img,</if>
+            <if test="unitPrice != null  ">unit_price,</if>
+            <if test="commission != null  ">commission,</if>
+            <if test="status != null  ">status,</if>
+            <if test="allocatStatus != null">allocat_status,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="payment != null  ">payment,</if>
+            <if test="orderNo != null  and orderNo != ''  ">order_no,</if>
+            <if test="buyerNick != null  and buyerNick != ''  ">buyer_nick,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="orderId != null  and orderId != ''  ">#{orderId},</if>
+            <if test="category != null  and category != ''  ">#{category},</if>
+            <if test="shopId != null  and shopId != ''  ">#{shopId},</if>
+            <if test="shopName != null  and shopName != ''  ">#{shopName},</if>
+            <if test="goodsName != null  and goodsName != ''  ">#{goodsName},</if>
+            <if test="keyWord != null  and keyWord != ''  ">#{keyWord},</if>
+            <if test="remarks != null  and remarks != ''  ">#{remarks},</if>
+            <if test="orderImg != null  and orderImg != ''  ">#{orderImg},</if>
+            <if test="unitPrice != null  ">#{unitPrice},</if>
+            <if test="commission != null  ">#{commission},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="payment != null  ">#{payment},</if>
+            <if test="orderNo != null  and orderNo != ''  ">#{orderNo},</if>
+            <if test="buyerNick != null  and buyerNick != ''  ">#{buyerNick},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOrder" parameterType="Order">
+        update busi_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''  ">order_id = #{orderId},</if>
+            <if test="category != null  and category != ''  ">category = #{category},</if>
+            <if test="shopId != null  and shopId != ''  ">shop_id = #{shopId},</if>
+            <if test="shopName != null  and shopName != ''  ">shop_name = #{shopName},</if>
+            <if test="goodsName != null  and goodsName != ''  ">goods_name = #{goodsName},</if>
+            <if test="keyWord != null  and keyWord != ''  ">key_word = #{keyWord},</if>
+            <if test="remarks != null  and remarks != ''  ">remarks = #{remarks},</if>
+            <if test="orderImg != null  and orderImg != ''  ">order_img = #{orderImg},</if>
+            <if test="unitPrice != null  ">unit_price = #{unitPrice},</if>
+            <if test="commission != null  ">commission = #{commission},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="allocatStatus != null">allocat_status=#{allocatStatus},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="payment != null  ">payment = #{payment},</if>
+            <if test="orderNo != null  and orderNo != ''  ">order_no = #{orderNo},</if>
+            <if test="buyerNick != null  and buyerNick != ''  ">buyer_nick = #{buyerNick},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="markStatus != null">mark_status = #{markStatus},</if>
+            <if test="markComment != null">mark_comment = #{markComment}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOrderById" parameterType="Long">
+        delete from busi_order where id = #{id}
+    </delete>
+
+    <delete id="deleteOrderByIds" parameterType="String">
+        delete from busi_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertBatchOrder" parameterType="Order">
+        insert into busi_order(order_id, category, shop_id, shop_name, goods_name, key_word, remarks,order_img,
+        unit_price,commission,status,allocat_status,reckon_allocat_status,create_time,update_time,ext1,ext2,payment,order_no,buyer_nick,create_by,update_by
+        ) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.orderId},
+            #{item.category},
+            #{item.shopId},
+            #{item.shopName},
+            #{item.goodsName},
+            #{item.keyWord},
+            #{item.remarks},
+            #{item.orderImg},
+            #{item.unitPrice},
+            #{item.commission},
+            #{item.status},
+            #{item.allocatStatus},
+            #{item.reckonAllocatStatus},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.ext1},
+            #{item.ext2},
+            #{item.payment},
+            #{item.orderNo},
+            #{item.buyerNick},
+            #{item.createBy},
+            #{item.updateBy})
+        </foreach>
+    </insert>
+
+    <select id="selectUnFinishedList" resultMap="OrderResult">
+        select id, order_id, commission, unit_price from busi_order
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="orderId != null  and orderId != '' ">and order_id = #{orderId}</if>
+            <if test="category != null  and category != '' ">and category = #{category}</if>
+            <if test="shopId != null  and shopId != '' ">and shop_id = #{shopId}</if>
+            <if test="shopName != null  and shopName != '' ">and shop_name = #{shopName}</if>
+            <if test="goodsName != null  and goodsName != '' ">and goods_name = #{goodsName}</if>
+            <if test="keyWord != null  and keyWord != '' ">and key_word = #{keyWord}</if>
+            <if test="remarks != null  and remarks != '' ">and remarks = #{remarks}</if>
+            <if test="orderImg != null  and orderImg != '' ">and order_img = #{orderImg}</if>
+            <if test="unitPrice != null ">and unit_price = #{unitPrice}</if>
+            <if test="commission != null ">and commission = #{commission}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="allocatStatus != null ">and allocat_status = #{allocatStatus}</if>
+            <if test="reckonAllocatStatus != null ">and reckon_allocat_status = #{reckonAllocatStatus}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="payment != null ">and payment = #{payment}</if>
+            <if test="orderNo != null  and orderNo != '' ">and order_no = #{orderNo}</if>
+            <if test="buyerNick != null  and buyerNick != '' ">and buyer_nick = #{buyerNick}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+            <if test="name != null and name != ''">
+                (shop_name like CONCAT('%', #{name},'%') or goods_name like CONCAT('%', #{name},'%') or
+                category like CONCAT('%', #{name},'%') or key_word like CONCAT('%', #{name},'%') )
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                and create_time &lt;= #{endTime}
+            </if>
+        </where>
+        <if test="sortGoodsNameList != null and sortGoodsNameList.size()>0">
+            order by field(goods_name,
+            <foreach collection="sortGoodsNameList" item="sortGoodsName" separator=",">
+                #{sortGoodsName}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <update id="updateOrderAllocStatusInIds">
+        update busi_order set `allocat_status` = #{orderStatus}
+        where `allocat_status` = #{preOrderStatus} and id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="migrationOrderByIds">
+        update busi_order set allocat_status = 3 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectOrderListByOrderId" resultMap="OrderResult" parameterType="string">
+        SELECT
+        bo.*
+        FROM
+        busi_task_order taskorder
+        INNER JOIN busi_order bo ON bo.order_id = taskorder.order_id
+        WHERE
+        task_id = #{taskId}
+    </select>
+
+    <select id="getAutomaticGoodsList" resultMap="goodsResult">
+        select goods_name, count(1) as goods_count from busi_order bo
+        inner join busi_task_order bto on bto.order_id = bo.order_id
+        inner join busi_task bt on bto.task_id = bt.task_id
+        where bo.`status` = #{taskStatus}
+        group by bo.goods_name order by goods_count
+    </select>
+
+
+    <update id="updateOrderStatusByTaskIds" parameterType="string">
+        UPDATE busi_order bo
+        INNER JOIN busi_task_order bto ON bto.order_id = bo.order_id
+        SET bo.status = 1
+        WHERE bto.task_id IN
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <select id="selectOrderByOrderId" resultMap="OrderResult">
+        <include refid="selectOrderVo"/>
+        where order_id = #{orderId}
+    </select>
+
+    <update id="updateOrderStatusInIds">
+        update busi_order set status = #{orderStatus} where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and status = #{preOrderStatus}
+    </update>
+
+    <select id="checkOrderStatusBySaleId" resultMap="OrderResult">
+        SELECT
+        bo.*,
+        bt.task_id
+        FROM
+        busi_order bo
+        INNER JOIN busi_task_order bto ON bo.order_id = bto.order_id
+        INNER JOIN busi_task bt ON bt.task_id = bto.task_id
+        WHERE
+        bt.sale_id = #{saleId}
+        AND bo.`status` = #{status}
+    </select>
+
+    <select id="selectExtendOrderList" resultMap="ExtendOrderResult">
+        select bo.*
+        , bs.`name` as sale_name, bs.area as sale_area, bs.commission as sale_commission
+        , bto.task_id, bt.completion_time as task_completion_time
+        from busi_order bo
+        INNER join busi_task_order bto on bo.order_id = bto.order_id
+        INNER join busi_task bt on bt.task_id = bto.task_id
+        left join busi_salesman bs on bs.sale_id = bt.sale_id
+        <where>
+            <if test="allocatStatus != null">
+                and bo.allocat_status = #{allocatStatus}
+            </if>
+            <if test="status != null">
+                and bo.status = #{status}
+            </if>
+            <if test="shopName != null and shopName != ''">
+                and shop_name like CONCAT('%', #{shopName},'%')
+            </if>
+            <if test="saleName != null and saleName != ''">
+                and bs.name like CONCAT('%', #{saleName},'%')
+            </if>
+            <if test="salesmanId != null and salesmanId != ''">
+                and bs.id = #{salesmanId}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like CONCAT('%', #{goodsName},'%')
+            </if>
+            <if test="category != null and category != ''">
+                and category like CONCAT('%', #{category},'%')
+            </if>
+            <if test="keyWord != null and keyWord != ''">
+                and key_word like CONCAT('%', #{keyWord},'%')
+            </if>
+            <if test="buyerNick != null  and buyerNick != '' ">
+                and buyer_nick = #{buyerNick}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                and order_no = #{orderNo}
+            </if>
+            <if test="shopId != null  and shopId != '' ">and shop_id = #{shopId}</if>
+            <if test="name != null and name != ''">
+                and (shop_name like CONCAT('%', #{name},'%') or goods_name like CONCAT('%', #{name},'%') or
+                category like CONCAT('%', #{name},'%') or key_word like CONCAT('%', #{name},'%') )
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and bo.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                and bo.create_time &lt;= #{endTime}
+            </if>
+            <if test="taskCompletionStartTime != null and taskCompletionStartTime != ''">
+                and bt.completion_time &gt;= #{taskCompletionStartTime}
+            </if>
+            <if test="taskCompletionEndTime != null and taskCompletionEndTime != ''">
+                and bt.completion_time &lt;= #{taskCompletionEndTime}
+            </if>
+            <if test="shopIdList != null and shopIdList.size()>0">
+                and shop_id in
+                <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrderListByIds" resultMap="OrderResult">
+        select id,order_id, unit_price, commission, `status` from busi_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <update id="updateOrderStatusInCancelIds">
+        UPDATE busi_order bo
+        INNER JOIN busi_order_cancel_approval boca ON boca.order_id = bo.order_id
+        SET bo.status = #{status}
+        WHERE
+        boca.id IN
+        <foreach item="cancelId" collection="cancelIds" open="(" separator="," close=")">
+            #{cancelId}
+        </foreach>
+        and bo.status = #{preStatus}
+    </update>
+
+    <select id="getGoodsCategoryCount" resultType="int">
+        select count(DISTINCT category) from busi_order
+        <where>
+            <if test="status != null">
+                and `allocat_status` = #{status}
+            </if>
+            <if test="shopIdList != null and shopIdList.size()>0">
+                and shop_id in
+                <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getUnFinishGoodsCategoryList" resultMap="goodsResult">
+        select category, count(1) as category_count from busi_order where `allocat_status` = #{status}
+        <if test="shopIdList != null and shopIdList.size()>0">
+            and shop_id in
+            <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                #{shopId}
+            </foreach>
+        </if>
+        group by category
+        order by category_count
+    </select>
+
+    <select id="getUnFinishGoodsList" resultMap="goodsResult">
+        select goods_name, count(1) as goods_count from busi_order where `allocat_status` = #{status}
+        <if test="shopIdList != null and shopIdList.size()>0">
+            and shop_id in
+            <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                #{shopId}
+            </foreach>
+        </if>
+        <if test="category != null and category != ''">
+            and category = #{category}
+        </if>
+        group by goods_name
+        order by goods_count
+    </select>
+
+    <select id="getUnFinishGoodsReckonAllocatstatusList" resultMap="goodsResult">
+        select goods_name, count(1) as goods_count from busi_order where `reckon_allocat_status` = #{status}
+        <if test="shopIdList != null and shopIdList.size()>0">
+            and shop_id in
+            <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                #{shopId}
+            </foreach>
+        </if>
+        <if test="category != null and category != ''">
+            and category = #{category}
+        </if>
+        group by goods_name
+        order by goods_count
+    </select>
+
+    <update id="updateOrderStatusAndOrderNo">
+        <foreach collection="list" item="order" separator=";" open="" close="">
+            update busi_order
+            set order_no = #{order.orderNo},
+            status = #{order.status}
+            <if test="order.markStatus != null">
+                ,mark_status = #{order.markStatus}
+            </if>
+            <if test="order.markComment != null and order.markComment != ''">
+                ,mark_comment = #{order.markComment}
+            </if>
+            <if test="order.buyerNick != null and order.buyerNick != ''">
+                ,buyer_nick = #{order.buyerNick}
+            </if>
+            <if test="order.payment != null">
+                ,payment = #{order.payment}
+            </if>
+            where
+            order_id = #{order.orderId}
+        </foreach>
+    </update>
+
+    <update id="updateOrderStatusInOrderIds">
+        update busi_order set status = #{orderStatus} where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and status = #{preOrderStatus}
+    </update>
+
+
+    <select id="selectOrderListByOrderIdList" resultMap="OrderResult">
+        select id, order_id, unit_price, commission, `status` from busi_order where order_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getGoodsCategoryCountForReckonAllocatStatus" resultType="int">
+        select count(DISTINCT category) from busi_order
+        <where>
+            <if test="reckonAllocatStatus != null">
+                and `reckon_allocat_status` = #{reckonAllocatStatus}
+            </if>
+            <if test="shopIdList != null and shopIdList.size()>0">
+                and shop_id in
+                <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getUnFinishGoodsCategoryListForReckonAllocatStatus" resultMap="goodsResult">
+        select category, count(1) as category_count from busi_order where `reckon_allocat_status` =
+        #{reckonAllocatStatus}
+        <if test="shopIdList != null and shopIdList.size()>0">
+            and shop_id in
+            <foreach collection="shopIdList" item="shopId" separator="," open="(" close=")">
+                #{shopId}
+            </foreach>
+        </if>
+        group by category
+        order by category_count
+    </select>
+
+    <update id="updateOrderAllocStatusInIdsForReckonAllocatStatus">
+        update busi_order set `reckon_allocat_status` = #{reckonAllocatStatus}
+        where `reckon_allocat_status` = #{preReckonAllocatStatus} and id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateOrderReckonAllocatStatus">
+        update busi_order set `reckon_allocat_status` = #{reckonAllocatStatus}
+        where id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+</mapper>

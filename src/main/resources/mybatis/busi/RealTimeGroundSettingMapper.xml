@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.realTimeGroundSetting.mapper.RealTimeGroundSettingMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.realTimeGroundSetting.domain.RealTimeGroundSetting"
+               id="RealTimeGroundSettingResult">
+        <result property="id" column="id"/>
+        <result property="realTimeId" column="real_time_id"/>
+        <result property="taskNum" column="task_num"/>
+        <result property="startTimeNode" column="start_time_node"/>
+        <result property="stopTimeNode" column="stop_time_node"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="taskDate" column="task_date"/>
+        <result property="teamId" column="team_id"/>
+        <result property="orLock" column="orLock"/>
+    </resultMap>
+
+    <sql id="selectRealTimeGroundSettingVo">
+        select brtgs.id, brtgs.real_time_id, brtgs.task_num, brtgs.start_time_node, brtgs.stop_time_node, brtgs.status, brtgs.create_time, brtgs.update_time, brtgs.create_by,
+        brtgs.update_by,brtgs.task_date,brtgs.team_id,brtgs.orLock from busi_real_time_ground_setting brtgs
+        left join busi_team bt on bt.team_id = brtgs.team_id
+        left join sys_user su on su.user_id = bt.user_id
+    </sql>
+
+    <select id="selectRealTimeGroundSettingList"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeGroundSetting.domain.RealTimeGroundSetting"
+            resultMap="RealTimeGroundSettingResult">
+        <include refid="selectRealTimeGroundSettingVo"/>
+        <where>
+            <if test="id != null ">and brtgs.id = #{id}</if>
+            <if test="realTimeId != null  and realTimeId != '' ">and brtgs.real_time_id = #{realTimeId}</if>
+            <if test="taskNum != null ">and brtgs.task_num = #{taskNum}</if>
+            <if test="startTimeNode != null  and startTimeNode != '' ">and brtgs.start_time_node = #{startTimeNode}</if>
+            <if test="stopTimeNode != null  and stopTimeNode != '' ">and brtgs.stop_time_node = #{stopTimeNode}</if>
+            <if test="status != null ">and brtgs.status = #{status}</if>
+            <if test="teamId != null ">and brtgs.team_id = #{teamId}</if>
+            <if test="createTime != null ">and brtgs.create_time = #{createTime}</if>
+            <if test="updateTime != null ">and brtgs.update_time = #{updateTime}</if>
+            <if test="createBy != null  and createBy != '' ">and brtgs.create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and brtgs.update_by = #{updateBy}</if>
+        </where>
+    </select>
+
+    <select id="selectRealTimeGroundSettingById" parameterType="Long" resultMap="RealTimeGroundSettingResult">
+        <include refid="selectRealTimeGroundSettingVo"/>
+        where brtgs.id = #{id}
+    </select>
+
+    <insert id="insertRealTimeGroundSetting"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeGroundSetting.domain.RealTimeGroundSetting">
+        insert into busi_real_time_ground_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="realTimeId != null  and realTimeId != ''  ">real_time_id,</if>
+            <if test="taskNum != null  ">task_num,</if>
+            <if test="taskDate != null  ">task_date,</if>
+            <if test="startTimeNode != null  and startTimeNode != ''  ">start_time_node,</if>
+            <if test="stopTimeNode != null  and stopTimeNode != ''  ">stop_time_node,</if>
+            <if test="status != null  ">status,</if>
+            <if test="teamId != null  ">team_id,</if>
+            create_time,
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="realTimeId != null  and realTimeId != ''  ">#{realTimeId},</if>
+            <if test="taskNum != null  ">#{taskNum},</if>
+            <if test="taskDate != null  ">#{taskDate},</if>
+            <if test="startTimeNode != null  and startTimeNode != ''  ">#{startTimeNode},</if>
+            <if test="stopTimeNode != null  and stopTimeNode != ''  ">#{stopTimeNode},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="teamId != null  ">#{teamId},</if>
+            sysdate(),
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertRealTimeGroundSettingBatch"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeGroundSetting.domain.RealTimeGroundSetting">
+        insert into busi_real_time_ground_setting(
+        real_time_id,
+        task_num,
+        task_date,
+        start_time_node,
+        stop_time_node,
+        status,
+        team_id,
+        create_time,
+        create_by
+        )
+        values
+        <foreach collection="list" item="setting" separator=",">
+            (
+            #{setting.realTimeId},
+            #{setting.taskNum},
+            #{setting.taskDate},
+            #{setting.startTimeNode},
+            #{setting.stopTimeNode},
+            #{setting.status},
+            #{setting.teamId},
+            sysdate(),
+            #{setting.createBy}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateRealTimeGroundSetting"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeGroundSetting.domain.RealTimeGroundSetting">
+        update busi_real_time_ground_setting brtgs
+        <trim prefix="SET" suffixOverrides=",">
+            brtgs.task_num = #{taskNum},
+            <if test="startTimeNode != null  and startTimeNode != ''  ">brtgs.start_time_node = #{startTimeNode},</if>
+            <if test="stopTimeNode != null  and stopTimeNode != ''  ">brtgs.stop_time_node = #{stopTimeNode},</if>
+            <if test="updateTime != null  ">brtgs.update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">brtgs.update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRealTimeGroundSettingById" parameterType="Long">
+        delete from busi_real_time_ground_setting where id = #{id}
+    </delete>
+    <delete id="deleteRealTimeGroundSettingByIds" parameterType="String">
+        delete from busi_real_time_ground_setting where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByGroundTaskDate" resultMap="RealTimeGroundSettingResult">
+        <include refid="selectRealTimeGroundSettingVo"/>
+        where brtgs.task_date = #{taskDate}
+        and brtgs.team_id = #{teamId}
+        order by brtgs.start_time_node asc ,
+        brtgs.stop_time_node asc
+    </select>
+
+    <select id="selectTaskNumTotalByGroundTaskDate" resultType="Integer">
+        select SUM(brtgs.task_num) from busi_real_time_ground_setting brtgs
+        where brtgs.task_date = #{taskDate}
+        and brtgs.team_id = #{teamId}
+    </select>
+
+    <delete id="deleteByGroundTaskDate" parameterType="string">
+        delete from busi_real_time_ground_setting where task_date = #{taskDate}
+    </delete>
+
+    <select id="selectByGroundTaskDateForApi" resultType="net.hongkuang.ditui.project.api.dto.RealTimeRespVo">
+        select start_time_node startTimeNode,stop_time_node stopTimeNode,task_date taskDate,IF(start_time_node =
+        #{startTime} AND stop_time_node = #{stopTime},true,false) grabFlag from busi_real_time_ground_setting
+        where task_date = #{taskDate}
+        order by start_time_node asc ,
+        stop_time_node asc
+    </select>
+
+    <select id="countByTaskDate" parameterType="string" resultType="int">
+        select count(1) from busi_real_time_ground_setting where task_date = #{taskDate}
+    </select>
+</mapper>

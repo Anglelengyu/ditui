@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-user-add">
+        <div class="form-group">
+            <input id="taskIds" name="taskIds" type="hidden"/>
+            <input id="teamName" name="teamName" type="hidden"/>
+            <label class="col-sm-3 control-label ">合作团队：</label>
+            <div class="col-sm-6">
+                <select id="teamId" name="teamId" class="form-control m-b">
+                    <option value="">请选择团队</option>
+                    <option th:each="team : ${teamList}" th:text="${team.userName}" th:value="${team.teamId}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" style="color: #ff4d4d">注意：</label>
+            <label class="col-sm-10 control-label" style="color: #ff4d4d">1、任务分配给合作团队后，掌柜看到的团队昵称还是您的昵称。</br>
+                2、合作团队接到您的任务后，只能自己团队完成，不能再分给其他团队。</label>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript">
+    var selectTaskIds = parent.$("#taskIds").val();
+    $("#taskIds").val(selectTaskIds);
+    var prefix = ctx + "busi/groundTask/waitDistribution";
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            if ($('#teamId').find("option:selected").val() == null || $('#teamId').find("option:selected").val() == "") {
+                $.modal.alertWarning("请选择合作团队");
+                return;
+            }
+            $("#teamName").val($('#teamId').find("option:selected").text());
+            $.operate.save(prefix + "/distributionTeam", {taskIds: selectTaskIds, teamId: $('#teamId').find("option:selected").val(), teamName: $("#teamName").val()});
+        }
+    }
+</script>
+</body>
+
+</html>

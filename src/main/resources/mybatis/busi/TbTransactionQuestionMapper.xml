@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.tbTransactionTemplate.mapper.TbTransactionQuestionMapper">
+
+    <resultMap id="TbTransactionQuestionResult"
+               type="net.hongkuang.ditui.project.busi.tbTransactionTemplate.domain.TbTransactionQuestion">
+        <id property="id" column="ttqQuestionId"/>
+        <result property="mainVideo" column="mainVideo"/>
+        <result property="mainBrowse" column="mainBrowse"/>
+        <result property="detailVideo" column="detailVideo"/>
+        <result property="detailBrowse" column="detailBrowse"/>
+        <result property="evaluateBrowse" column="evaluateBrowse"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select ttq.id as ttqQuestionId,ttq.main_video as mainVideo,ttq.main_browse as mainBrowse,ttq.detail_video as
+        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse
+        from busi_tb_transaction_question ttq
+    </sql>
+
+    <insert id="saveTbTransactionQuestion" parameterType="TbTransactionQuestion" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into busi_tb_transaction_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mainVideo != null  and mainVideo != ''  ">main_video,</if>
+            <if test="mainBrowse != null  and mainBrowse != ''  ">main_browse,</if>
+            <if test="detailVideo != null  and detailVideo != ''  ">detail_video,</if>
+            <if test="detailBrowse != null  and detailBrowse != ''  ">detail_browse,</if>
+            <if test="evaluateBrowse != null  and evaluateBrowse != ''  ">evaluate_browse,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mainVideo != null  and mainVideo != ''  ">#{mainVideo},</if>
+            <if test="mainBrowse != null  and mainBrowse != ''  ">#{mainBrowse},</if>
+            <if test="detailVideo != null  and detailVideo != ''  ">#{detailVideo},</if>
+            <if test="detailBrowse != null  and detailBrowse != ''  ">#{detailBrowse},</if>
+            <if test="evaluateBrowse != null  and evaluateBrowse != ''  ">#{evaluateBrowse},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateTbTransactionQuestion" parameterType="TbTransactionQuestion">
+        update busi_tb_transaction_question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mainVideo != null  and mainVideo != ''  ">main_video = #{mainVideo},</if>
+            <if test="mainBrowse != null  and mainBrowse != ''  ">main_browse = #{mainBrowse},</if>
+            <if test="detailVideo != null  and detailVideo != ''  ">detail_video = #{detailVideo},</if>
+            <if test="detailBrowse != null  and detailBrowse != ''  ">detail_browse = #{detailBrowse},</if>
+            <if test="evaluateBrowse != null  and evaluateBrowse != ''  ">evaluate_browse = #{evaluateBrowse},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbTransactionQuestionById" parameterType="Long">
+        delete from busi_tb_transaction_question where id = #{id}
+    </delete>
+
+    <select id="selectTbTransactionQuestionById" resultMap="TbTransactionQuestionResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND ttq.id = #{id}
+        </where>
+    </select>
+
+    <delete id="deleteTbTransactionQuestionByTemplateIds" parameterType="Long">
+        delete from busi_tb_transaction_question
+        where id in
+        (
+        select question_id from busi_tb_transaction_template
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+    <delete id="deleteTbTransactionQuestionByOrderIds" parameterType="Long">
+        delete from busi_tb_transaction_question
+        where id in
+        (
+        select question_id from busi_tb_transaction_order
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-task-edit" th:object="${orderTemplateKeyWords}">
+        <fieldset>
+            <div class="form-group">
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table" data-mobile-responsive="true"></table>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:inline="javascript">
+    var orders = [[${orderTemplateKeyWords}]];
+
+    $(function () {
+        var options = {
+            modalName: "关键词列表",
+            search: false,
+            data: orders,
+            showSearch: false,
+            strictSearch: false,
+            showExport: false,
+            showColumns: false,
+            showRefresh: false,
+            showToggle: false,
+            detailView: true,
+            pagination: false,
+            height: 0,
+            columns: [
+                {
+                    field: 'id',
+                    title: '关键词ID',
+                    visible: true
+                },
+                {
+                    field: 'name',
+                    title: '关键词名称'
+                },
+                {
+                    field: 'num',
+                    title: '订单数量'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function submitHandler() {
+        $.modal.close();
+    }
+</script>
+</body>
+</html>

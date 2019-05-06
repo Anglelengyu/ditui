@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.salesman.mapper.SalesmanMapper">
+
+    <resultMap type="Salesman" id="SalesmanResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="head" column="head"/>
+        <result property="area" column="area"/>
+        <result property="commission" column="commission"/>
+        <result property="corpus" column="corpus"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="saleId" column="sale_id"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="groupLeaderName" column="group_leader_name"/>
+        <result property="groupLeaderId" column="group_leader_id"/>
+        <result property="orderLimit" column="order_limit"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+    </resultMap>
+
+    <sql id="selectSalesmanVo">
+        select id, name, phone, head, area, commission, corpus, create_time, update_time, status, sale_id, ext1, ext2,
+        group_leader_name, group_leader_id, create_by, update_by, password, salt,order_limit from busi_salesman
+    </sql>
+
+    <select id="selectSalesmanList" parameterType="Salesman" resultMap="SalesmanResult">
+        <include refid="selectSalesmanVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="name != null  and name != '' ">and name like concat('%',#{name},'%')</if>
+            <if test="phone != null  and phone != '' ">and phone like concat('%',#{phone},'%')</if>
+            <if test="head != null  and head != '' ">and head = #{head}</if>
+            <if test="area != null  and area != '' ">and area like concat('%',#{area},'%')</if>
+            <if test="commission != null ">and commission = #{commission}</if>
+            <if test="corpus != null ">and corpus = #{corpus}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="saleId != null  and saleId != '' ">and sale_id = #{saleId}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="groupLeaderName != null  and groupLeaderName != '' ">and group_leader_name like
+                concat('%',#{groupLeaderName},'%')
+            </if>
+            <if test="groupLeaderId != null  and groupLeaderId != '' ">and group_leader_id = #{groupLeaderId}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+            <if test="password != null  and password != '' ">and password = #{password}</if>
+            <if test="salt != null  and salt != '' ">and salt = #{salt}</if>
+        </where>
+    </select>
+
+    <select id="selectSalesmanById" parameterType="Long" resultMap="SalesmanResult">
+        <include refid="selectSalesmanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSalesman" parameterType="Salesman">
+        insert into busi_salesman
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="phone != null  and phone != ''  ">phone,</if>
+            <if test="head != null  and head != ''  ">head,</if>
+            <if test="orderLimit != null">order_limit,</if>
+            <if test="area != null  and area != ''  ">area,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id,</if>
+            <if test="groupLeaderName != null  and groupLeaderName != ''  ">group_leader_name,</if>
+            <if test="groupLeaderId != null  and groupLeaderId != ''  ">group_leader_id,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            commission,
+            create_time,
+            password,
+            salt,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="phone != null  and phone != ''  ">#{phone},</if>
+            <if test="head != null  and head != ''  ">#{head},</if>
+            <if test="orderLimit != null">#{orderLimit},</if>
+            <if test="area != null  and area != ''  ">#{area},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="saleId != null  and saleId != ''  ">#{saleId},</if>
+            <if test="groupLeaderName != null  and groupLeaderName != ''  ">#{groupLeaderName},</if>
+            <if test="groupLeaderId != null  and groupLeaderId != ''  ">#{groupLeaderId},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            #{commission},
+            sysdate(),
+            #{password},
+            #{salt}
+        </trim>
+    </insert>
+
+    <update id="updateSalesman" parameterType="Salesman">
+        update busi_salesman
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="phone != null  and phone != ''  ">phone = #{phone},</if>
+            <if test="head != null  and head != ''  ">head = #{head},</if>
+            <if test="area != null  and area != ''  ">area = #{area},</if>
+            <if test="commission != null  ">commission = #{commission},</if>
+            <if test="orderLimit != null  ">order_limit = #{orderLimit},</if>
+            <!--<if test="corpus != null  ">corpus = #{corpus},</if>-->
+            <!--<if test="createTime != null  ">create_time = #{createTime},</if>-->
+            update_time = sysdate(),
+            <if test="status != null  ">status = #{status},</if>
+            <!--<if test="saleId != null  and saleId != ''  ">sale_id = #{saleId},</if>-->
+            <!--<if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>-->
+            <!--<if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>-->
+            <if test="groupLeaderName != null  and groupLeaderName != ''  ">group_leader_name = #{groupLeaderName},</if>
+            <if test="groupLeaderId != null  and groupLeaderId != ''  ">group_leader_id = #{groupLeaderId},</if>
+            <!--<if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>-->
+            password = #{password},
+            salt = #{salt},
+            update_by = #{updateBy}
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSalesmanById" parameterType="Long">
+        delete from busi_salesman where id = #{id}
+    </delete>
+
+    <delete id="deleteSalesmanByIds" parameterType="String">
+        delete from busi_salesman where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="checkPhoneUnique" parameterType="string" resultMap="SalesmanResult">
+        <include refid="selectSalesmanVo"/>
+        where phone = #{phone}
+    </select>
+
+    <select id="selectSalesmanBySaleIdList" resultMap="SalesmanResult">
+        select sale_id, area, name, commission from busi_salesman where sale_id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <select id="selectSalesmanHistoryList" resultType="net.hongkuang.ditui.project.busi.salesman.domain.SalesmanHistory"
+            parameterType="net.hongkuang.ditui.project.busi.salesman.domain.SearchSalesman">
+        SELECT
+        sale.*, bt.lng,
+        bt.lat,
+        bt.completion_time completionTime,
+        bt.task_id taskNo,
+        bt.id taskId
+        FROM
+        busi_salesman sale
+        INNER JOIN busi_sale_task bst ON sale.sale_id = bst.sale_id
+        INNER JOIN busi_task bt ON bt.task_id = bst.task_id
+        where 0=0
+        <if test="name !=null and name != ''">and sale.name like concat('%',#{name},'%')</if>
+        <if test="phone !=null and phone != ''">and sale.phone like concat('%',#{phone},'%')</if>
+        <if test="startTime != null and startTime != ''">
+            and bt.completion_time >= #{startTime}
+        </if>
+        <if test="endTime != null  and endTime != ''">
+            and bt.completion_time &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

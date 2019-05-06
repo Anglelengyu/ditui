@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.team.mapper.TeamMapper">
+
+
+    <resultMap type="Team" id="TeamResult">
+        <id property="userId" column="user_id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="teamId" column="teamId"/>
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+
+    <resultMap id="RoleResult" type="net.hongkuang.ditui.project.system.role.domain.Role">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleKey" column="role_key"/>
+        <result property="roleSort" column="role_sort"/>
+        <result property="dataScope" column="data_scope"/>
+        <result property="status" column="role_status"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select u.user_id, u.login_name, u.user_name, u.sex, u.avatar, u.password, u.salt, u.status, u.del_flag,
+        u.login_ip, u.login_date, u.create_time, u.remark,
+        r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status,t.team_id as teamId
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        left join busi_team t on t.user_id = u.user_id
+        left join busi_manager_middle_team m on t.team_id = m.team_id
+        left join busi_team_middle_employee e on t.team_id = e.team_id
+        left join busi_team_middle_team tm on t.team_id = tm.other_team_id
+    </sql>
+
+
+    <select id="selectTeamList" resultMap="TeamResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND u.del_flag = '0'
+            <if test="loginName != null and loginName != ''">
+                AND u.login_name like concat('%', #{loginName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status = #{status}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND u.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND u.create_time &lt;= #{endTime}
+            </if>
+            <if test="teamId != null  and teamId != ''">
+                AND t.team_id = #{teamId}
+            </if>
+            <if test="managerId != null  and managerId != ''">
+                AND m.manager_id = #{managerId}
+            </if>
+            <if test="employeeId != null  and employeeId != ''">
+                AND e.employee_id = #{employeeId}
+            </if>
+            <if test="otherTeamId != null  and otherTeamId != ''">
+                AND tm.team_id = #{otherTeamId}
+            </if>
+            <if test="recommend != null  and recommend != ''">
+                AND m.recommend = #{recommend}
+            </if>
+            AND r.role_key= "team"
+        </where>
+    </select>
+
+    <select id="selectTeamByTeamId" resultMap="TeamResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND u.del_flag = '0'
+            AND t.team_id = #{teamId}
+        </where>
+    </select>
+
+    <select id="selectTeamByUserId" resultMap="TeamResult" parameterType="Long">
+        <include refid="selectUserVo"/>
+        <where>
+            AND u.del_flag = '0'
+            AND t.user_id = #{userId}
+        </where>
+    </select>
+
+    <insert id="saveTeam" parameterType="Team" useGeneratedKeys="true" keyProperty="teamId">
+        insert into busi_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null  and userId != ''  ">user_id,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null  and userId != ''  ">#{userId},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <delete id="deleteTeamByIds" parameterType="Long">
+        delete from busi_team where team_id in
+        <foreach collection="array" item="teamId" open="(" separator="," close=")">
+            #{teamId}
+        </foreach>
+    </delete>
+
+    <insert id="insertTeamMiddleEmployee" parameterType="TeamMiddleEmployee">
+        insert into busi_team_middle_employee
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId != null  and teamId != ''  ">team_id,</if>
+            <if test="employeeId != null  and employeeId != ''  ">employee_id,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamId != null  and teamId != ''  ">#{teamId},</if>
+            <if test="employeeId != null  and employeeId != ''  ">#{employeeId},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <insert id="insertTeamMiddleTeam" parameterType="TeamMiddleTeam">
+        insert into busi_team_middle_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId != null  and teamId != ''  ">team_id,</if>
+            <if test="otherTeamId != null  and otherTeamId != ''  ">other_team_id,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamId != null  and teamId != ''  ">#{teamId},</if>
+            <if test="otherTeamId != null  and otherTeamId != ''  ">#{otherTeamId},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <delete id="deleteTeamMiddleEmployee" parameterType="Long">
+        delete from busi_team_middle_employee
+        where employee_id =#{employeeId}
+        and team_id = #{teamId}
+    </delete>
+
+    <delete id="deleteTeamMiddleTeam" parameterType="Long">
+        delete from busi_team_middle_team
+        where other_team_id =#{otherTeamId} and team_id = #{teamId}
+    </delete>
+
+    <select id="selectTeamByUserNum" resultMap="TeamResult">
+        <include refid="selectUserVo"/>
+        where u.user_num = #{userNum}
+        AND r.role_key = "team"
+    </select>
+
+    <select id="selectCountTeamMiddleEmployeeById" resultType="Integer">
+        select count(e.id)
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        left join busi_team t on t.user_id = u.user_id
+        left join busi_team_middle_employee e on t.team_id = e.team_id
+        <where>
+            AND e.employee_id = #{employeeId}
+            AND e.team_id = #{teamId}
+        </where>
+    </select>
+
+    <select id="selectCountTeamMiddleTeamById" resultType="Integer">
+        select count(e.id)
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        left join busi_team t on t.user_id = u.user_id
+        left join busi_team_middle_team e on t.team_id = e.team_id
+        left join busi_team_middle_team oe on t.team_id = oe.other_team_id
+        <where>
+            AND ((e.other_team_id = #{otherTeamId} or e.team_id = #{teamId}) or (oe.other_team_id = #{teamId} or
+            oe.team_id = #{otherTeamId}))
+        </where>
+    </select>
+
+    <select id="selectTeamMiddleTeamById" resultMap="TeamResult">
+        select distinct(t.team_id),t.team_id as teamId,u.user_name
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        left join busi_team t on t.user_id = u.user_id
+        left join busi_team_middle_team e on t.team_id = e.team_id
+        left join busi_team_middle_team oe on t.team_id = oe.other_team_id
+        <where>
+            AND t.team_id !=#{teamId}
+            AND ((e.other_team_id = #{teamId} or e.team_id = #{teamId}) or (oe.other_team_id = #{teamId} or oe.team_id =
+            #{teamId}))
+        </where>
+    </select>
+
+</mapper>

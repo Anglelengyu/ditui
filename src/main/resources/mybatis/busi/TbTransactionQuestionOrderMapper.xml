@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.tbTransactionQuestionOrder.mapper.TbTransactionQuestionOrderMapper">
+
+    <resultMap type="TbTransactionQuestionOrder" id="TbTransactionQuestionOrderResult">
+        <result property="questionOrderId" column="questionOrderId"/>
+        <result property="questionOrderRemark" column="questionOrderRemark"/>
+        <result property="questionOrderRole" column="questionOrderRole"/>
+        <result property="questionOrderStatus" column="questionOrderStatus"/>
+        <result property="orderId" column="orderId"/>
+        <result property="managerId" column="managerId"/>
+        <result property="managerUserName" column="managerUserName"/>
+        <result property="platform" column="platform"/>
+        <result property="teamId" column="teamId"/>
+        <result property="teamName" column="teamName"/>
+        <result property="receiptTeamId" column="receiptTeamId"/>
+        <result property="receiptTeamName" column="receiptTeamName"/>
+        <result property="shopId" column="shopId"/>
+        <result property="shopName" column="shopName"/>
+        <result property="goodsName" column="goodsName"/>
+        <result property="goodsId" column="goodsId"/>
+        <result property="goodsImg" column="goodsImg"/>
+        <result property="keyWordName" column="keyWordName"/>
+        <result property="hasApp" column="hasApp"/>
+        <result property="hasPc" column="hasPc"/>
+        <result property="hasCollection" column="hasCollection"/>
+        <result property="hasCart" column="hasCart"/>
+        <result property="hasCollectionCart" column="hasCollectionCart"/>
+        <result property="orderRequire" column="orderRequire"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="unitPriceYuan" column="unitPriceYuan"/>
+        <result property="commissionPrice" column="commissionPrice"/>
+        <result property="commissionPriceYuan" column="commissionPriceYuan"/>
+        <result property="managerRequire" column="managerRequire"/>
+        <result property="teamToManagerRequire" column="teamToManagerRequire"/>
+        <result property="teamRequire" column="teamRequire"/>
+        <result property="executeMethod" column="executeMethod"/>
+        <result property="status" column="status"/>
+        <result property="question" column="question"/>
+        <result property="questionId" column="questionId"/>
+        <result property="orderTrack" column="orderTrack"/>
+        <result property="orderRebate" column="orderRebate"/>
+        <result property="groupClassifys" column="groupClassifys"/>
+        <result property="goShopWay" column="goShopWay"/>
+        <result property="settlementWay" column="settlementWay"/>
+        <result property="teamRemark" column="teamRemark"/>
+        <result property="managerRemark" column="managerRemark"/>
+        <result property="allocatStatus" column="allocatStatus"/>
+        <result property="payment" column="payment"/>
+        <result property="paymentYuan" column="paymentYuan"/>
+        <result property="orderNo" column="orderNo"/>
+        <result property="buyerNick" column="buyerNick"/>
+        <result property="createBy" column="createBy"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="taskId" column="taskId"/>
+        <association property="tbTransactionQuestion" javaType="TbTransactionQuestion"
+                     resultMap="TbTransactionQuestionResult"/>
+        <association property="tbTransactionBuyerRequire" javaType="TbTransactionBuyerRequire"
+                     resultMap="TbTransactionBuyerRequireResult"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionQuestionResult"
+               type="net.hongkuang.ditui.project.busi.tbTransactionTemplate.domain.TbTransactionQuestion">
+        <id property="id" column="ttqQuestionId"/>
+        <result property="mainVideo" column="mainVideo"/>
+        <result property="mainBrowse" column="mainBrowse"/>
+        <result property="detailVideo" column="detailVideo"/>
+        <result property="detailBrowse" column="detailBrowse"/>
+        <result property="evaluateBrowse" column="evaluateBrowse"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionBuyerRequireResult"
+               type="net.hongkuang.ditui.project.busi.order.domain.TbTransactionBuyerRequire">
+        <id property="id" column="ttbrRequireId"/>
+        <result property="sex" column="ttbrSex"/>
+        <result property="age" column="ttbrAge"/>
+        <result property="creditRating" column="ttbrCreditRating"/>
+        <result property="category" column="ttbrCategory"/>
+        <result property="monthlySalesQuota" column="ttbrMonthlySalesQuota"/>
+        <result property="naughtyValue" column="ttbrNaughtyValue"/>
+        <result property="region" column="ttbrRegion"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select tto.id as id, tto.order_id as orderId, tto.manager_id as managerId, tto.manager_user_name as
+        managerUserName, tto.platform as platform, tto.team_id as teamId, tto.team_name as teamName,
+        tto.receipt_team_id as receiptTeamId, tto.receipt_team_name as receiptTeamName, tto.shop_id as shopId,
+        tto.shop_name as shopName, tto.goods_name as goodsName, tto.goods_id as goodsId,
+        tto.goods_img as goodsImg, tto.key_word_name as keyWordName, tto.has_app as hasApp, tto.has_pc as hasPc,
+        tto.has_collection as hasCollection, tto.has_cart as hasCart, tto.has_collection_cart as hasCollectionCart,
+        tto.order_require as orderRequire, tto.unit_price as unitPrice, tto.unit_price_yuan as unitPriceYuan,
+        tto.commission_price as commissionPrice, tto.commission_price_yuan as commissionPriceYuan,
+        tto.manager_require as managerRequire,tto.team_to_manager_require as teamToManagerRequire,tto.team_require as teamRequire, tto.execute_method as executeMethod, tto.status as status, tto.question
+        as question, tto.question_id as questionId, tto.order_track as orderTrack, tto.order_rebate as orderRebate,
+        tto.group_classifys as groupClassifys, tto.go_shop_way as goShopWay, tto.settlement_way as settlementWay,
+        tto.team_remark as teamRemark, tto.manager_remark as managerRemark, tto.allocat_status as allocatStatus,
+        tto.payment as payment, tto.payment_yuan as paymentYuan, tto.order_no as orderNo, tto.buyer_nick as buyerNick,
+        tto.create_by as createBy, tto.update_by as updateBy, tto.create_time as createTime, tto.update_time as
+        updateTime,
+        ttbr.id as ttbrRequireId, ttbr.sex as ttbrSex, ttbr.age as ttbrAge, ttbr.credit_rating as ttbrCreditRating,
+        ttbr.category as ttbrCategory, ttbr.monthly_sales_quota as ttbrMonthlySalesQuota, ttbr.naughty_value as
+        ttbrNaughtyValue, ttbr.region as ttbrRegion,
+        ttq.id as ttqQuestionId, ttq.main_video as mainVideo, ttq.main_browse as mainBrowse, ttq.detail_video as
+        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse,bttqo.id as questionOrderId,bttqo.remark as questionOrderRemark,bttqo.role as questionOrderRole,bttqo.status as questionOrderStatus
+        from busi_tb_transaction_question_order bttqo
+        left join busi_tb_transaction_order tto on tto.order_id = bttqo.order_id
+        left join busi_tb_transaction_buyer_require ttbr on ttbr.id = tto.buyer_require_id
+        left join busi_tb_transaction_question ttq on ttq.id = tto.question_id
+    </sql>
+
+    <select id="selectTbTransactionQuestionOrderList" resultMap="TbTransactionQuestionOrderResult">
+        <include refid="selectUserVo"/>
+        <where>
+            <if test="goodsName != null and goodsName != ''">
+                AND tto.goods_name like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="id != null  and id != ''">
+                AND tto.id = #{id}
+            </if>
+            <if test="teamName != null  and teamName != ''">
+                AND tto.team_name like concat('%', #{teamName}, '%')
+            </if>
+            <if test="managerId != null  and managerId != ''">
+                AND tto.manager_id = #{managerId}
+            </if>
+            <if test="managerUserName != null  and managerUserName != ''">
+                AND tto.manager_user_name like concat('%', #{managerUserName}, '%')
+            </if>
+            <if test="teamId != null  and teamId != ''">
+                AND ((tto.team_id = #{teamId} and tto.receipt_team_id is null) OR (tto.team_id != #{teamId} and tto.receipt_team_id = #{teamId}))
+            </if>
+            <if test="shopId != null  and shopId != ''">
+                AND tto.shop_id = #{shopId}
+            </if>
+            <if test="orTeamRemark == 0">
+                AND (tto.team_remark = "" or tto.team_remark is null)
+            </if>
+            <if test="orTeamRemark == 1">
+                AND tto.team_remark != ""
+            </if>
+            <if test="orManagerRemark == 0">
+                AND (tto.manager_remark = "" or tto.manager_remark is null)
+            </if>
+            <if test="orManagerRemark == 1">
+                AND tto.manager_remark != ""
+            </if>
+            <if test="shopName != null  and shopName != ''">
+                AND tto.shop_name like concat('%', #{shopName}, '%')
+            </if>
+            <if test="status != null">
+                AND tto.status = #{status}
+            </if>
+            <if test="allocatStatus != null">
+                AND tto.allocat_status = #{allocatStatus}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND tto.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND tto.create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveTbTransactionQuestionOrder" parameterType="TbTransactionQuestionOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into busi_tb_transaction_question_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="role != null and role != ''">role,</if>
+            <if test="status != null and status != ''">status,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="role != null and role != ''">#{role},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+
+    <insert id="saveBatchTbTransactionOrder" parameterType="TbTransactionQuestionOrder">
+        insert into
+        busi_tb_transaction_question_order(order_id,remark,role,status,create_time,update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.orderId},
+            #{item.remark},
+            #{item.role},
+            #{item.status},
+            sysdate(),
+            sysdate()
+            )
+        </foreach>
+    </insert>
+
+</mapper>

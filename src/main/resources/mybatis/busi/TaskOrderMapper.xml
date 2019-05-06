@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.taskOrder.mapper.TaskOrderMapper">
+
+    <resultMap type="TaskOrder" id="TaskOrderResult">
+        <result property="id" column="id"/>
+        <result property="taskOrderId" column="task_order_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="selectTaskOrderVo">
+        select id, task_order_id, task_id, order_id, create_time, update_time, status, ext1, ext2, create_by, update_by
+        from busi_task_order
+    </sql>
+
+    <select id="selectTaskOrderList" parameterType="TaskOrder" resultMap="TaskOrderResult">
+        <include refid="selectTaskOrderVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="taskOrderId != null  and taskOrderId != '' ">and task_order_id = #{taskOrderId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="orderId != null  and orderId != '' ">and order_id = #{orderId}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskOrderById" parameterType="Long" resultMap="TaskOrderResult">
+        <include refid="selectTaskOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTaskOrder" parameterType="TaskOrder">
+        insert into busi_task_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="taskOrderId != null  and taskOrderId != ''  ">task_order_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="orderId != null  and orderId != ''  ">order_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="taskOrderId != null  and taskOrderId != ''  ">#{taskOrderId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="orderId != null  and orderId != ''  ">#{orderId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTaskOrder" parameterType="TaskOrder">
+        update busi_task_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskOrderId != null  and taskOrderId != ''  ">task_order_id = #{taskOrderId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="orderId != null  and orderId != ''  ">order_id = #{orderId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskOrderById" parameterType="Long">
+        delete from busi_task_order where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskOrderByIds" parameterType="String">
+        delete from busi_task_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert">
+        insert into busi_task_order(id, task_order_id, task_id, order_id, create_time, update_time, status, ext1, ext2,
+        create_by, update_by)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+            #{item.taskOrderId},
+            #{item.taskId},
+            #{item.orderId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.ext1},
+            #{item.ext2},
+            #{item.createBy},
+            #{item.updateBy})
+        </foreach>
+    </insert>
+
+
+    <update id="updateTaskOrderStatusByTaskIds" parameterType="string">
+        update busi_task_order set status = 1 where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <select id="selectOrderIdByTaskId" resultType="string">
+        select order_id from busi_task_order where task_id = #{taskId}
+    </select>
+
+    <select id="selectTaskOrderByOrderId" resultMap="TaskOrderResult">
+        select * from busi_task_order where order_id = #{orderId}
+    </select>
+
+    <select id="selectTaskOrderByOrderIdList" resultMap="TaskOrderResult">
+        select task_id, order_id from busi_task_order where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteTaskOrderByOrderIdList">
+        delete from busi_task_order where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTaskOrderByOrderId">
+        delete from busi_task_order where order_id = #{id} and task_id = #{taskId}
+    </delete>
+
+</mapper>

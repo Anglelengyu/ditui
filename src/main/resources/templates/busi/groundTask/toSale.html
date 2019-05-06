@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-shop-add">
+        <input id="taskIds" name="taskIds" type="hidden"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">员工姓名：</label>
+            <div class="col-sm-8">
+                <select id="timeNode" class="form-control m-b" th:with="employees=${employees}">
+                    <option th:each="employee : ${employees}" th:text="${employee.userName}"
+                            th:value="${employee.employeeId}+'_'+${employee.userId}"></option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    var prefix = ctx + "busi/groundTask/waitDistribution";
+    var selectTaskIds = parent.document.getElementById('taskIds').value;
+    $("#taskIds").val(selectTaskIds);
+
+    function submitHandler() {
+        var saleInfo = $("#timeNode  option:selected").val().split("_");
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/toSale", {taskIds: $("#taskIds").val(), employeeId: saleInfo[0], userId: saleInfo[1]});
+        }
+    }
+</script>
+</body>
+</html>

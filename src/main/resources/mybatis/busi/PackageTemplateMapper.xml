@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.userCenter.packageTemplate.mapper.PackageTemplateMapper">
+
+    <resultMap type="PackageTemplate" id="PackageTemplateResult">
+        <result property="id" column="id"/>
+        <result property="packageDesc" column="package_desc"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="baseCoin" column="base_coin"/>
+        <result property="giveCoin" column="give_coin"/>
+        <result property="idx" column="idx"/>
+        <result property="createBy" column="createBy"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectPackageTemplateVo">
+        select id, package_desc, price, base_coin, give_coin, idx, createBy, updateBy, create_time, update_time,name
+               from sys_package_template
+    </sql>
+
+    <select id="selectPackageTemplateList" parameterType="PackageTemplate" resultMap="PackageTemplateResult">
+        <include refid="selectPackageTemplateVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}
+            </if>
+            <if test="name != null ">and name = #{name}
+            </if>
+            <if test="packageDesc != null  and packageDesc != '' ">and package_desc = #{packageDesc}
+            </if>
+            <if test="price != null ">and price = #{price}
+            </if>
+            <if test="baseCoin != null ">and base_coin = #{baseCoin}
+            </if>
+            <if test="giveCoin != null ">and give_coin = #{giveCoin}
+            </if>
+            <if test="idx != null ">and idx = #{idx}
+            </if>
+            <if test="createBy != null  and createBy != '' ">and createBy = #{createBy}
+            </if>
+            <if test="updateBy != null  and updateBy != '' ">and updateBy = #{updateBy}
+            </if>
+            <if test="createTime != null ">and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null ">and update_time = #{updateTime}
+            </if>
+        </where>
+        order by idx
+    </select>
+
+    <select id="selectPackageTemplateListByRoleIds" parameterType="String" resultMap="PackageTemplateResult">
+        <include refid="selectPackageTemplateVo"/>
+        where id in (select package_template_id from sys_package_template_join_role where role_id in
+            <foreach item="id" collection="array" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        )
+        order by idx
+    </select>
+
+
+    <select id="selectPackageTemplateById" parameterType="Integer" resultMap="PackageTemplateResult">
+        <include refid="selectPackageTemplateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPackageTemplate" parameterType="PackageTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_package_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,
+            </if>
+            <if test="name != null ">name,
+            </if>
+            <if test="packageDesc != null  and packageDesc != ''  ">package_desc,
+            </if>
+            <if test="price != null  ">price,
+            </if>
+            <if test="baseCoin != null  ">base_coin,
+            </if>
+            <if test="giveCoin != null  ">give_coin,
+            </if>
+            <if test="idx != null  ">idx,
+            </if>
+            <if test="createBy != null  and createBy != ''  ">createBy,
+            </if>
+            <if test="updateBy != null  and updateBy != ''  ">updateBy,
+            </if>
+            <if test="createTime != null  ">create_time,
+            </if>
+            <if test="updateTime != null  ">update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},
+            </if>
+            <if test="name != null ">#{name},
+            </if>
+            <if test="packageDesc != null  and packageDesc != ''  ">#{packageDesc},
+            </if>
+            <if test="price != null  ">#{price},
+            </if>
+            <if test="baseCoin != null  ">#{baseCoin},
+            </if>
+            <if test="giveCoin != null  ">#{giveCoin},
+            </if>
+            <if test="idx != null  ">#{idx},
+            </if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},
+            </if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},
+            </if>
+            <if test="createTime != null  ">#{createTime},
+            </if>
+            <if test="updateTime != null  ">#{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updatePackageTemplate" parameterType="PackageTemplate">
+        update sys_package_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="packageDesc != null  and packageDesc != ''  ">package_desc = #{packageDesc},
+            </if>
+            <if test="name != null ">name = #{name},
+            </if>
+            <if test="price != null  ">price = #{price},
+            </if>
+            <if test="baseCoin != null  ">base_coin = #{baseCoin},
+            </if>
+            <if test="giveCoin != null  ">give_coin = #{giveCoin},
+            </if>
+            <if test="idx != null  ">idx = #{idx},
+            </if>
+            <if test="createBy != null  and createBy != ''  ">createBy = #{createBy},
+            </if>
+            <if test="updateBy != null  and updateBy != ''  ">updateBy = #{updateBy},
+            </if>
+            <if test="createTime != null  ">create_time = #{createTime},
+            </if>
+            <if test="updateTime != null  ">update_time = #{updateTime},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePackageTemplateById" parameterType="Integer">
+        delete from sys_package_template where id = #{id}
+    </delete>
+
+    <delete id="deletePackageTemplateByIds" parameterType="String">
+        delete from sys_package_template where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.system.user.mapper.UserMenuMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.system.user.domain.UserMenu" id="UserMenuResult">
+        <result property="userId" column="user_id"/>
+        <result property="menuId" column="menu_id"/>
+    </resultMap>
+
+    <delete id="deleteUserMenuByUserId" parameterType="Long">
+        delete from sys_user_menu where user_id=#{userId}
+    </delete>
+
+    <insert id="batchUserMenu">
+        insert into sys_user_menu(user_id, menu_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userId},#{item.menuId})
+        </foreach>
+    </insert>
+
+</mapper> 

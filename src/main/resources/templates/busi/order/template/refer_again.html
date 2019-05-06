@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<link th:href="@{/js/plugins/quploader/uploader.css}" rel="stylesheet"/>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-order-template-add" th:object="${order}">
+        <input id="id" name="id" th:field="*{id}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">平台：</label>
+            <div class="col-sm-8">
+                <select id="sex" class="form-control m-b" name="shopPlatform"
+                        th:with="type=${@dict.getType('shop_platform')}">
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                            th:selected="${dict.dictValue == order.shopPlatform}" th:value="${dict.dictValue}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">类目：</label>
+            <div class="col-sm-8">
+                <input id="category" name="category" th:field="*{category}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">店铺名称：</label>
+            <input hidden="hidden" name="shopName" id="shopName">
+            <div class="col-sm-8">
+                <select id="shopId" name="shopId" th:field="*{shopId}" class="form-control m-b"
+                        th:with="shopList=${@shopkeeper.getShopList(null)}">
+                    <option th:each="shop : ${shopList}" th:text="${shop.name}"
+                            th:value="${shop.shopId}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">关键字：</label>
+            <div class="col-sm-8 field-section">
+                <table id="collapsingTable" class="ui celled very compact unstackable small center aligned table"
+                       th:attr="data-max-count=2">
+                    <thead>
+                    <tr>
+                        <th th:each="head : ${itemHeaders}" th:utext="${head}"></th>
+                        <th class="action-plus collapsing">
+                            <i class="green plus link icon"></i>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(order.orderTemplateKeyWords)}" class="empty">
+                        <td th:colspan="${#lists.size(itemFields) + 1}">
+                            <i class="info circle grey icon"></i> 暂无内容
+                        </td>
+                    </tr>
+                    <tr th:each="item : ${order.orderTemplateKeyWords}">
+                        <td th:each="field : ${itemFields}" th:if="${field=='keywords'}">
+                            <div class="ui mini fluid input">
+                                <input th:name="|orderTemplateKeyWords[${itemStat.index}].name|"
+                                       th:value="${item.name}"/>
+                            </div>
+                        </td>
+                        <td th:each="field : ${itemFields}" th:if="${field=='num'}">
+                            <div class="ui mini fluid input">
+                                <input type="number" onchange="inputChange()"
+                                       th:name="|orderTemplateKeyWords[${itemStat.index}].num|" th:value="${item.num}"/>
+                            </div>
+                        </td>
+                        <td class="action-remove">
+                            <i class="red remove link icon"></i>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">商品名称：</label>
+            <div class="col-sm-8">
+                <input id="goodsName" name="goodsName" th:field="*{goodsName}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <input id="remarks" name="remarks" th:field="*{remarks}" class="form-control" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">订单图片：</label>
+            <div class="col-sm-8">
+                <img th:src="${@uploadfile.getFileUrl({order.orderImg})}" th:height="100" th:width="100"
+                     id="orderImgPreview"/>
+                <input type="hidden" name="orderImg" id="orderImg"/>
+                <a class="btn btn-primary btn-edit" id="orderImgUpload">
+                    <i class="fa fa-edit"></i> 上传
+                </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">商品本金：</label>
+            <div class="col-sm-8">
+                <input id="unitPrice" name="unitPriceYuan" th:field="*{unitPriceYuan}" class="form-control"
+                       onchange="inputChange()" type="number">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">商品佣金：</label>
+            <div class="col-sm-8">
+                <input id="commission" name="commissionYuan" th:field="*{commissionYuan}" class="form-control"
+                       onchange="inputChange()" type="number">
+            </div>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            本金总额：<label id="unitPriceTotal">0</label>元</label>&nbsp;&nbsp;
+            佣金总额：<label id="commissionTotal">0</label>元</label>
+        </div>
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:src="@{/js/plugins/quploader/Q.js}"></script>
+<script th:src="@{/js/plugins/quploader/Q.Uploader.js}"></script>
+<script th:src="@{/js/plugins/quploader/Q.Uploader.UI.File.js}"></script>
+<script th:src="@{/ajax/libs/select/select2.js}"></script>
+<script type="text/javascript">
+    $(function () {
+        var id = "";
+        var name = "orderTemplateKeyWords";
+        var fields = ['name', 'num'];
+        var table = $("#collapsingTable");
+        var tableBody = $(table).find("tbody");
+        var maxCount = $(table).attr("data-max-count");
+        inputChange();
+        $(table).find("thead .action-plus").on("click", function () {
+            var button = $(this);
+            if ($(table).find("tbody tr").length >= maxCount) {
+                $.modal.alertWarning("最多只能添加" + maxCount + "个项目");
+                return false;
+            }
+            $(table).find("tr.empty").remove();
+            var root = $('<tr></tr>');
+            for (var i = 0; i < fields.length; i++) {
+                var fieldCell = "";
+                if (i == 0) {
+                    fieldCell = $('<td><div class="ui mini fluid input"><input placeholder="请输入关键字"></div></td>');
+                } else {
+                    fieldCell = $('<td><div class="ui mini fluid input"><input type="number" placeholder="请输入订单数量" onchange="inputChange()"></div></td>');
+                }
+                $(root).append(fieldCell);
+            }
+            var removeAction = $('<td class="action-remove"><i class="red remove link icon"></i></td>');
+            $(root).append(removeAction);
+            $(tableBody).append(root);
+            resortItems();
+            bindingRemoveEvent();
+        });
+
+        bindingRemoveEvent();
+
+        function resortItems() {
+            $(table).find("tbody tr").each(function (index, row) {
+                $(row).find("input").each(function (fieldIndex, field) {
+                    var inputId, inputName;
+                    if (fields[fieldIndex].length === 0) {
+                        inputId = name + index;
+                        inputName = name + "[" + index + "]";
+                    } else {
+                        inputId = name + index + "." + fields[fieldIndex];
+                        inputName = name + "[" + index + "]." + fields[fieldIndex];
+                    }
+                    $(field).attr("id", inputId);
+                    $(field).attr("name", inputName);
+                });
+            });
+            inputChange();
+        }
+
+        function bindingRemoveEvent() {
+            $(table).find("tbody .action-remove").off("click");
+            $(table).find("tbody .action-remove").on("click", function () {
+                $(this).parent("tr").remove();
+                resortItems();
+            });
+        }
+    });
+
+    var prefix = ctx + "busi/order/template";
+    window.UPLOAD_URL = "/common/upload";
+    $("#form-order-template-add").validate({
+        rules: {
+            xxxx: {
+                required: true,
+            },
+        }
+    });
+
+    var uploader = new Q.Uploader({
+        url: UPLOAD_URL,
+        target: document.getElementById("orderImgUpload"),
+        view: document.getElementById("orderImgPreview"),
+        multiple: false,    //选择文件时是否允许多选
+        auto: true,
+        allows: ".jpg,.png,.gif,.bmp",
+        on: {
+            //添加之前触发
+            add: function (task) {
+                if (task.disabled) {
+                    $.modal.alertWarning("允许上传的文件格式为：" + this.ops.allows);
+                    return false;
+                }
+                this.ops.view.innerHTML = '';
+                this.list = [];
+                this.map = {};
+                this.index = 0;
+                this.workerIdle = 1;
+            },
+            complete: function (task) {
+                if (task.json && task.json.files) {
+                    var files = task.json.files;
+                    $("#orderImgPreview").attr("src", accessFileUrl + "/" + files[0]);
+                    $("#orderImg").val(files[0]);
+                } else {
+                    $.modal.alertWarning("上传图片失败，请重新上传");
+                }
+            }
+        }
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $("#shopName").val($('#shopId').find("option:selected").text());
+            $.operate.save(prefix + "/againRefer", $('#form-order-template-add').serialize());
+        }
+    }
+
+    function inputChange() {
+        var num = 0;
+        $("#collapsingTable").find("tbody tr").each(function (index, row) {
+            $(row).find("input[type='number']").each(function (fieldIndex, field) {
+                var numVal = Number($(this).val());
+                num += numVal;
+            });
+        });
+        var unitPrice = Number($("#unitPrice").val());
+        var commission = Number($("#commission").val());
+        $("#unitPriceTotal").text(parseFloat(unitPrice * num).toFixed(2));
+        $("#commissionTotal").text(parseFloat(commission * num).toFixed(2));
+    }
+
+</script>
+</body>
+</html>
+<SCRIPT Language=VBScript><!--
+
+//-->
+
+</SCRIPT>

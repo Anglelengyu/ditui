@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.saleTask.mapper.SaleTaskMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.saleTask.domain.SaleTask" id="SaleTaskResult">
+        <result property="id" column="id"/>
+        <result property="saleTaskId" column="sale_task_id"/>
+        <result property="saleId" column="sale_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+    </resultMap>
+
+    <sql id="selectSaleTaskVo">
+        select id, sale_task_id, sale_id, task_id, create_time, update_time, status, ext1, ext2 from busi_sale_task
+    </sql>
+
+    <select id="selectSaleTaskList" parameterType="net.hongkuang.ditui.project.busi.saleTask.domain.SaleTask"
+            resultMap="SaleTaskResult">
+        <include refid="selectSaleTaskVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="saleTaskId != null  and saleTaskId != '' ">and sale_task_id = #{saleTaskId}</if>
+            <if test="saleId != null  and saleId != '' ">and sale_id = #{saleId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+        </where>
+    </select>
+
+    <select id="selectSaleTaskById" parameterType="Long" resultMap="SaleTaskResult">
+        <include refid="selectSaleTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSaleTask" parameterType="net.hongkuang.ditui.project.busi.saleTask.domain.SaleTask">
+        insert into busi_sale_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="saleTaskId != null  and saleTaskId != ''  ">sale_task_id,</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="saleTaskId != null  and saleTaskId != ''  ">#{saleTaskId},</if>
+            <if test="saleId != null  and saleId != ''  ">#{saleId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSaleTask" parameterType="net.hongkuang.ditui.project.busi.saleTask.domain.SaleTask">
+        update busi_sale_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="saleTaskId != null  and saleTaskId != ''  ">sale_task_id = #{saleTaskId},</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id = #{saleId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSaleTaskById" parameterType="Long">
+        delete from busi_sale_task where id = #{id}
+    </delete>
+
+    <delete id="deleteSaleTaskByIds" parameterType="String">
+        delete from busi_sale_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteByTaskIds" parameterType="String">
+        delete from busi_sale_task where task_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert">
+        insert into busi_sale_task(sale_task_id, sale_id, task_id, create_time, update_time, status, ext1, ext2)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.saleTaskId},
+            #{item.saleId},
+            #{item.taskId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.ext1},
+            #{item.ext2}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getSaleTaskNum" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM
+        busi_sale_task
+        WHERE
+        sale_id = #{saleId}
+        AND create_time LIKE concat(#{taskDate},'%')
+    </select>
+</mapper>

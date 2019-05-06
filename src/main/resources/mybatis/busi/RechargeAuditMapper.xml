@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.userCenter.rechargeAudit.mapper.RechargeAuditMapper">
+
+    <resultMap type="RechargeAudit" id="RechargeAuditResult">
+        <result property="id" column="id"/>
+        <result property="price" column="price"/>
+        <result property="baseCoin" column="base_coin"/>
+        <result property="giveCoin" column="give_coin"/>
+        <result property="empId" column="emp_id"/>
+        <result property="createBy" column="createBy"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"  typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="packageId" column="package_id"/>
+    </resultMap>
+
+    <sql id="selectRechargeAuditVo">
+        select id, price, base_coin, give_coin, emp_id, createBy, updateBy, create_time, update_time,package_id, status       from sys_recharge_audit
+    </sql>
+
+    <select id="selectRechargeAuditList" parameterType="RechargeAudit" resultMap="RechargeAuditResult">
+        <include refid="selectRechargeAuditVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}
+            </if>
+            <if test="price != null ">and price = #{price}
+            </if>
+            <if test="baseCoin != null ">and base_coin = #{baseCoin}
+            </if>
+            <if test="giveCoin != null ">and give_coin = #{giveCoin}
+            </if>
+            <if test="empId != null ">and emp_id = #{empId}
+            </if>
+            <if test="createBy != null  and createBy != '' ">and createBy = #{createBy}
+            </if>
+            <if test="updateBy != null  and updateBy != '' ">and updateBy = #{updateBy}
+            </if>
+            <if test="createTime != null ">and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null ">and update_time = #{updateTime}
+            </if>
+            <if test="packageId != null ">and package_id = #{packageId}
+            </if>
+            <if test="status != null ">and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRechargeAuditById" parameterType="Integer" resultMap="RechargeAuditResult">
+        <include refid="selectRechargeAuditVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRechargeAudit" parameterType="RechargeAudit">
+        insert into sys_recharge_audit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,
+            </if>
+            <if test="price != null  ">price,
+            </if>
+            <if test="baseCoin != null  ">base_coin,
+            </if>
+            <if test="giveCoin != null  ">give_coin,
+            </if>
+            <if test="empId != null  ">emp_id,
+            </if>
+            <if test="createBy != null  and createBy != ''  ">createBy,
+            </if>
+            <if test="updateBy != null  and updateBy != ''  ">updateBy,
+            </if>
+            <if test="createTime != null  ">create_time,
+            </if>
+            <if test="updateTime != null  ">update_time,
+            </if>
+            <if test="packageId != null ">package_id ,
+            </if>
+            <if test="status != null ">status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},
+            </if>
+            <if test="price != null  ">#{price},
+            </if>
+            <if test="baseCoin != null  ">#{baseCoin},
+            </if>
+            <if test="giveCoin != null  ">#{giveCoin},
+            </if>
+            <if test="empId != null  ">#{empId},
+            </if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},
+            </if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},
+            </if>
+            <if test="createTime != null  ">#{createTime},
+            </if>
+            <if test="updateTime != null  ">#{updateTime},
+            </if>
+            <if test="packageId != null ">#{packageId},
+            </if>
+            <if test="status != null ">#{status},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateRechargeAudit" parameterType="RechargeAudit">
+        update sys_recharge_audit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="price != null  ">price = #{price},
+            </if>
+            <if test="baseCoin != null  ">base_coin = #{baseCoin},
+            </if>
+            <if test="giveCoin != null  ">give_coin = #{giveCoin},
+            </if>
+            <if test="empId != null  ">emp_id = #{empId},
+            </if>
+            <if test="createBy != null  and createBy != ''  ">createBy = #{createBy},
+            </if>
+            <if test="updateBy != null  and updateBy != ''  ">updateBy = #{updateBy},
+            </if>
+            <if test="createTime != null  ">create_time = #{createTime},
+            </if>
+            <if test="updateTime != null  ">update_time = #{updateTime},
+            </if>
+            <if test="packageId != null ">package_id = #{packageId},
+            </if>
+            <if test="status != null ">status = #{status},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRechargeAuditById" parameterType="Integer">
+        delete from sys_recharge_audit where id = #{id}
+    </delete>
+
+    <delete id="deleteRechargeAuditByIds" parameterType="String">
+        delete from sys_recharge_audit where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.reserveTask.mapper.ReserveTaskMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.reserveTask.domain.ReserveTask" id="ReserveTaskResult">
+        <result property="id" column="id"/>
+        <result property="reserveId" column="reserve_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="reserveDate" column="reserve_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="selectReserveTaskVo">
+        select id, reserve_id, task_id, status, create_time, update_time, reserve_date, create_by, update_by from
+        busi_reserve_task
+    </sql>
+
+    <select id="selectReserveTaskList" parameterType="net.hongkuang.ditui.project.busi.reserveTask.domain.ReserveTask"
+            resultMap="ReserveTaskResult">
+        <include refid="selectReserveTaskVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="reserveId != null  and reserveId != '' ">and reserve_id = #{reserveId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="reserveDate != null  and reserveDate != '' ">and reserve_date = #{reserveDate}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+        </where>
+    </select>
+
+    <select id="selectReserveTaskById" parameterType="Long" resultMap="ReserveTaskResult">
+        <include refid="selectReserveTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertReserveTask" parameterType="net.hongkuang.ditui.project.busi.reserveTask.domain.ReserveTask">
+        insert into busi_reserve_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="reserveId != null  and reserveId != ''  ">reserve_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="status != null  ">status,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="reserveDate != null  and reserveDate != ''  ">reserve_date,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="reserveId != null  and reserveId != ''  ">#{reserveId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="reserveDate != null  and reserveDate != ''  ">#{reserveDate},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+        </trim>
+    </insert>
+    <insert id="insertBatchReserveTask" parameterType="net.hongkuang.ditui.project.busi.reserveTask.domain.ReserveTask">
+        insert into busi_reserve_task(reserve_id,task_id,status,reserve_date,create_time,create_by)
+        values
+        <foreach collection="list" item="reserve" separator=",">
+            (
+            #{reserve.reserveId},
+            #{reserve.taskId},
+            #{reserve.status},
+            #{reserve.reserveDate},
+            sysdate(),
+            #{reserve.createBy}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateReserveTask" parameterType="net.hongkuang.ditui.project.busi.reserveTask.domain.ReserveTask">
+        update busi_reserve_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reserveId != null  and reserveId != ''  ">reserve_id = #{reserveId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="reserveDate != null  and reserveDate != ''  ">reserve_date = #{reserveDate},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteReserveTaskById" parameterType="Long">
+        delete from busi_reserve_task where id = #{id}
+    </delete>
+
+    <delete id="deleteReserveTaskByIds" parameterType="String">
+        delete from busi_reserve_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectCountByReserveDate" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM
+        busi_reserve_task brt
+        INNER JOIN busi_task bt ON bt.task_id = brt.task_id
+        WHERE
+        brt.reserve_date = #{reserveDate}
+        AND bt.task_status = 1
+    </select>
+
+    <select id="selectTodoReserveTaskList" resultType="string">
+        SELECT
+        brt.task_id
+        FROM
+        busi_reserve_task brt
+        INNER JOIN busi_task bt ON bt.task_id = brt.task_id
+        WHERE
+        brt.reserve_date = #{reserveDate}
+        AND bt.task_status = 1
+    </select>
+</mapper>

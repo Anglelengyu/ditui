@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.tbTransactionTemplate.mapper.TbTransactionTemplateMapper">
+
+
+    <resultMap type="TbTransactionTemplate" id="TbTransactionTemplateResult">
+        <id property="id" column="id"/>
+        <result property="templateName" column="templateName"/>
+        <result property="managerId" column="managerId"/>
+        <result property="managerUserName" column="managerUserName"/>
+        <result property="platform" column="platform"/>
+        <result property="teamId" column="teamId"/>
+        <result property="teamName" column="teamName"/>
+        <result property="receiptTeamId" column="receiptTeamId"/>
+        <result property="receiptTeamName" column="receiptTeamName"/>
+        <result property="shopId" column="shopId"/>
+        <result property="shopName" column="shopName"/>
+        <result property="goodsName" column="goodsName"/>
+        <result property="goodsId" column="goodsId"/>
+        <result property="goodsImg" column="goodsImg"/>
+        <result property="orderRequire" column="orderRequire"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="commissionPrice" column="commissionPrice"/>
+        <result property="managerRequire" column="managerRequire"/>
+        <result property="teamToManagerRequire" column="teamToManagerRequire"/>
+        <result property="teamRequire" column="teamRequire"/>
+        <result property="executeMethod" column="executeMethod"/>
+        <result property="status" column="status"/>
+        <result property="question" column="question"/>
+        <result property="questionId" column="questionId"/>
+        <result property="orderTrack" column="orderTrack"/>
+        <result property="orderRebate" column="orderRebate"/>
+        <result property="totalNumber" column="totalNumber"/>
+        <result property="totalUnitPrice" column="totalUnitPrice"/>
+        <result property="totalCommissionPrice" column="totalCommissionPrice"/>
+        <result property="groupClassifys" column="groupClassifys"/>
+        <result property="goShopWay" column="goShopWay"/>
+        <result property="teamRemark" column="teamRemark"/>
+        <result property="managerRemark" column="managerRemark"/>
+        <result property="executeMethodRemark" column="executeMethodRemark"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <association property="tbTransactionQuestion" javaType="TbTransactionQuestion"
+                     resultMap="TbTransactionQuestionResult"/>
+        <collection property="tbTransactionKeyWords" javaType="java.util.List" resultMap="TbTransactionKeyWordsResult"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionQuestionResult"
+               type="net.hongkuang.ditui.project.busi.tbTransactionTemplate.domain.TbTransactionQuestion">
+        <id property="id" column="ttqQuestionId"/>
+        <result property="mainVideo" column="mainVideo"/>
+        <result property="mainBrowse" column="mainBrowse"/>
+        <result property="detailVideo" column="detailVideo"/>
+        <result property="detailBrowse" column="detailBrowse"/>
+        <result property="evaluateBrowse" column="evaluateBrowse"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionKeyWordsResult"
+               type="net.hongkuang.ditui.project.busi.tbTransactionTemplate.domain.TbTransactionKeyWords">
+        <id property="id" column="tbTransactionKeyWordsId"/>
+        <result property="templateId" column="templateId"/>
+        <result property="name" column="tbKeyWordsName"/>
+        <result property="totalNumber" column="keywordsTotalNumber"/>
+        <result property="appNumber" column="appNumber"/>
+        <result property="pcNumber" column="pcNumber"/>
+        <result property="collectionNumber" column="collectionNumber"/>
+        <result property="cartNumber" column="cartNumber"/>
+        <result property="collectionCartNumber" column="collectionCartNumber"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select tt.id as id, tt.template_name as templateName, tt.manager_id as managerId, tt.manager_user_name as
+        managerUserName, tt.platform as platform, tt.team_id as teamId, tt.team_name as teamName, tt.receipt_team_id as
+        receiptTeamId, tt.receipt_team_name as receiptTeamName, tt.shop_id as shopId, tt.shop_name as
+        shopName,tt.goods_id as goodsId,tt.execute_method_remark as executeMethodRemark,
+        tt.goods_name as goodsName, tt.goods_img as goodsImg, tt.order_require as orderRequire, tt.unit_price as
+        unitPrice, tt.commission_price as commissionPrice, tt.manager_require as managerRequire,
+        tt.team_to_manager_require as teamToManagerRequire,
+        tt.team_require as teamRequire, tt.execute_method as executeMethod, tt.status as status, tt.question as
+        question, tt.question_id as questionId, tt.order_track as orderTrack, tt.order_rebate as orderRebate,
+        tt.total_number as totalNumber,
+        tt.total_unit_price as totalUnitPrice, tt.total_commission_price as totalCommissionPrice, tt.group_classifys as
+        groupClassifys, tt.go_shop_way as goShopWay, tt.team_remark as teamRemark, tt.manager_remark as managerRemark,
+        tt.create_time as createTime, tt.update_time as updateTime, tkw.id as tbTransactionKeyWordsId, tkw.template_id
+        as templateId, tkw.name as tbKeyWordsName, tkw.total_number as keywordsTotalNumber,
+        tkw.app_number as appNumber, tkw.pc_number as pcNumber, tkw.collection_number as collectionNumber,
+        tkw.cart_number as cartNumber, tkw.collection_cart_number as collectionCartNumber,
+        ttq.id as ttqQuestionId,ttq.main_video as mainVideo,ttq.main_browse as mainBrowse,ttq.detail_video as
+        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse
+        from busi_tb_transaction_template tt
+        left join busi_tb_transaction_key_words tkw on tkw.template_id = tt.id
+        left join busi_tb_transaction_question ttq on ttq.id = tt.question_id
+    </sql>
+
+    <select id="selectTbTransactionTemplateList" resultMap="TbTransactionTemplateResult">
+        <include refid="selectUserVo"/>
+        <where>
+            <if test="goodsName != null and goodsName != ''">
+                AND tt.goods_name like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="id != null  and id != ''">
+                AND tt.id = #{id}
+            </if>
+            <if test="templateName != null  and templateName != ''">
+                AND tt.template_name like concat('%', #{templateName}, '%')
+            </if>
+            <if test="managerId != null  and managerId != ''">
+                AND tt.manager_id = #{managerId}
+            </if>
+            <if test="managerUserName != null  and managerUserName != ''">
+                AND tt.manager_user_name like concat('%', #{managerUserName}, '%')
+            </if>
+            <if test="teamId != null  and teamId != ''">
+                AND ((tt.team_id = #{teamId} and tt.receipt_team_id is null) OR (tt.team_id != #{teamId} and tt.receipt_team_id = #{teamId}))
+            </if>
+            <if test="shopId != null  and shopId != ''">
+                AND tt.shop_id = #{shopId}
+            </if>
+            <if test="orTeamRemark == 0">
+                AND tt.team_remark = ""
+            </if>
+            <if test="orTeamRemark == 1">
+                AND tt.team_remark != ""
+            </if>
+            <if test="orManagerRemark == 0">
+                AND tt.manager_remark = ""
+            </if>
+            <if test="orManagerRemark == 1">
+                AND tt.manager_remark != ""
+            </if>
+            <if test="shopName != null  and shopName != ''">
+                AND tt.shop_name like concat('%', #{shopName}, '%')
+            </if>
+            <if test="status != null">
+                AND tt.status = #{status}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND tt.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND tt.create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTbTransactionTemplateById" resultMap="TbTransactionTemplateResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND tt.id = #{id}
+        </where>
+    </select>
+
+    <insert id="saveTbTransactionTemplate" parameterType="TbTransactionTemplate" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into busi_tb_transaction_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateName != null  and templateName != ''  ">template_name,</if>
+            <if test="managerId != null  and managerId != ''  ">manager_id,</if>
+            <if test="managerUserName != null  and managerUserName != ''  ">manager_user_name,</if>
+            <if test="platform != null  and platform != ''  ">platform,</if>
+            <if test="teamId != null  and teamId != ''  ">team_id,</if>
+            <if test="teamName != null  and teamName != ''  ">team_name,</if>
+            <if test="shopId != null  and shopId != ''  ">shop_id,</if>
+            <if test="shopName != null  and shopName != ''  ">shop_name,</if>
+            <if test="goodsName != null  and goodsName != ''  ">goods_name,</if>
+            <if test="goodsId != null  and goodsId != ''  ">goods_id,</if>
+            <if test="goodsImg != null  and goodsImg != ''  ">goods_img,</if>
+            <if test="orderRequire != null  and orderRequire != ''  ">order_require,</if>
+            <if test="unitPrice != null  and unitPrice != ''  ">unit_price,</if>
+            <if test="commissionPrice != null  and commissionPrice != ''  ">commission_price,</if>
+            <if test="managerRequire != null  and managerRequire != ''  ">manager_require,</if>
+            <if test="teamToManagerRequire != null  and teamToManagerRequire != ''  ">team_to_manager_require,</if>
+            <if test="teamRequire != null  and teamRequire != ''  ">team_require,</if>
+            <if test="executeMethod != null  and executeMethod != ''  ">execute_method,</if>
+            <if test="executeMethodRemark != null  and executeMethodRemark != ''  ">execute_method_remark,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            <if test="question != null  and question != ''  ">question,</if>
+            <if test="questionId != null  and questionId != ''  ">question_id,</if>
+            <if test="orderTrack != null  and orderTrack != ''  ">order_track,</if>
+            <if test="orderRebate != null  and orderRebate != ''  ">order_rebate,</if>
+            <if test="totalNumber != null  and totalNumber != ''  ">total_number,</if>
+            <if test="totalUnitPrice != null  and totalUnitPrice != ''  ">total_unit_price,</if>
+            <if test="totalCommissionPrice != null  and totalCommissionPrice != ''  ">total_commission_price,</if>
+            <if test="groupClassifys != null  and groupClassifys != ''  ">group_classifys,</if>
+            <if test="goShopWay != null  and goShopWay != ''  ">go_shop_way,</if>
+            <if test="teamRemark != null  and teamRemark != ''  ">team_remark,</if>
+            <if test="managerRemark != null  and managerRemark != ''  ">manager_remark,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateName != null  and templateName != ''  ">#{templateName},</if>
+            <if test="managerId != null  and managerId != ''  ">#{managerId},</if>
+            <if test="managerUserName != null  and managerUserName != ''  ">#{managerUserName},</if>
+            <if test="platform != null  and platform != ''  ">#{platform},</if>
+            <if test="teamId != null  and teamId != ''  ">#{teamId},</if>
+            <if test="teamName != null  and teamName != ''  ">#{teamName},</if>
+            <if test="shopId != null  and shopId != ''  ">#{shopId},</if>
+            <if test="shopName != null  and shopName != ''  ">#{shopName},</if>
+            <if test="goodsName != null  and goodsName != ''  ">#{goodsName},</if>
+            <if test="goodsId != null  and goodsId != ''  ">#{goodsId},</if>
+            <if test="goodsImg != null  and goodsImg != ''  ">#{goodsImg},</if>
+            <if test="orderRequire != null  and orderRequire != ''  ">#{orderRequire},</if>
+            <if test="unitPrice != null  and unitPrice != ''  ">#{unitPrice},</if>
+            <if test="commissionPrice != null  and commissionPrice != ''  ">#{commissionPrice},</if>
+            <if test="managerRequire != null  and managerRequire != ''  ">#{managerRequire},</if>
+            <if test="teamToManagerRequire != null  and teamToManagerRequire != ''  ">#{teamToManagerRequire},</if>
+            <if test="teamRequire != null  and teamRequire != ''  ">#{teamRequire},</if>
+            <if test="executeMethod != null  and executeMethod != ''  ">#{executeMethod},</if>
+            <if test="executeMethodRemark != null  and executeMethodRemark != ''  ">#{executeMethodRemark},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            <if test="question != null  and question != ''  ">#{question},</if>
+            <if test="questionId != null  and questionId != ''  ">#{questionId},</if>
+            <if test="orderTrack != null  and orderTrack != ''  ">#{orderTrack},</if>
+            <if test="orderRebate != null  and orderRebate != ''  ">#{orderRebate},</if>
+            <if test="totalNumber != null  and totalNumber != ''  ">#{totalNumber},</if>
+            <if test="totalUnitPrice != null  and totalUnitPrice != ''  ">#{totalUnitPrice},</if>
+            <if test="totalCommissionPrice != null  and totalCommissionPrice != ''  ">#{totalCommissionPrice},</if>
+            <if test="groupClassifys != null  and groupClassifys != ''  ">#{groupClassifys},</if>
+            <if test="goShopWay != null  and goShopWay != ''  ">#{goShopWay},</if>
+            <if test="teamRemark != null  and teamRemark != ''  ">#{teamRemark},</if>
+            <if test="managerRemark != null  and managerRemark != ''  ">#{managerRemark},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+
+    <update id="updateTbTransactionTemplate" parameterType="TbTransactionTemplate">
+        update busi_tb_transaction_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateName != null  and templateName != ''  ">template_name = #{templateName},</if>
+            <if test="managerId != null  and managerId != ''  ">manager_id = #{managerId},</if>
+            <if test="managerUserName != null  and managerUserName != ''  ">manager_user_name = #{managerUserName},</if>
+            <if test="teamId != null  and teamId != ''  ">team_id = #{teamId},</if>
+            <if test="teamName != null  and teamName != ''  ">team_name = #{teamName},</if>
+            <if test="shopId != null  and shopId != ''  ">shop_id = #{shopId},</if>
+            <if test="shopName != null  and shopName != ''  ">shop_name = #{shopName},</if>
+            <if test="goodsName != null  and goodsName != ''  ">goods_name = #{goodsName},</if>
+            <if test="goodsId != null  and goodsId != ''  ">goods_id = #{goodsId},</if>
+            <if test="goodsImg != null  and goodsImg != ''  ">goods_img = #{goodsImg},</if>
+            <if test="orderRequire != null  and orderRequire != ''  ">order_require = #{orderRequire},</if>
+            <if test="unitPrice != null  and unitPrice != ''  ">unit_price = #{unitPrice},</if>
+            <if test="commissionPrice != null  and commissionPrice != ''  ">commission_price = #{commissionPrice},</if>
+            <if test="managerRequire != null  and managerRequire != ''  ">manager_require = #{managerRequire},</if>
+            <if test="teamToManagerRequire != null  and teamToManagerRequire != ''  ">team_to_manager_require = #{teamToManagerRequire},</if>
+            <if test="teamRequire != null  and teamRequire != ''  ">team_require = #{teamRequire},</if>
+            <if test="executeMethod != null  and executeMethod != ''  ">execute_method = #{executeMethod},</if>
+            <if test="executeMethodRemark != null  and executeMethodRemark != ''  ">execute_method_remark = #{executeMethodRemark},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+            <if test="question != null  and question != ''  ">question = #{question},</if>
+            <if test="questionId != null">question_id = #{questionId},</if>
+            <if test="orderTrack != null  and orderTrack != ''  ">order_track = #{orderTrack},</if>
+            <if test="orderRebate != null  and orderRebate != ''  ">order_rebate = #{orderRebate},</if>
+            <if test="totalNumber != null  and totalNumber != ''  ">total_number = #{totalNumber},</if>
+            <if test="totalUnitPrice != null  and totalUnitPrice != ''  ">total_unit_price = #{totalUnitPrice},</if>
+            <if test="totalCommissionPrice != null  and totalCommissionPrice != ''  ">total_commission_price = #{totalCommissionPrice},</if>
+            <if test="groupClassifys != null  and groupClassifys != ''  ">group_classifys = #{groupClassifys},</if>
+            <if test="goShopWay != null  and goShopWay != ''  ">go_shop_way = #{goShopWay},</if>
+            <if test="teamRemark != null  and teamRemark != ''  ">team_remark = #{teamRemark},</if>
+            <if test="managerRemark != null  and managerRemark != ''  ">manager_remark = #{managerRemark},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTbTransactionTemplateByIds" parameterType="Long">
+        delete from busi_tb_transaction_template where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateTbTransactionTemplateStatus">
+        update busi_tb_transaction_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null  ">status = #{param2},</if>
+        </trim>
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="checkTemplateNameUnique" resultType="int">
+        select count(1) from busi_tb_transaction_template where template_name=#{templateName} and manager_id =
+        #{managerId}
+    </select>
+
+    <select id="getTbTransactionTemplateKeyWordsTotal" resultType="int">
+        select sum(total_number) from busi_tb_transaction_key_words
+        where template_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getTbTransactionTemplateNoGroupClassifys" resultType="int">
+        select count(id) from busi_tb_transaction_template
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and execute_method = 3
+        and group_classifys is null
+    </select>
+
+    <update id="distributionTeam">
+        update busi_tb_transaction_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="receiptTeamId != null  ">receipt_team_id = #{receiptTeamId},</if>
+            <if test="receiptTeamName != null  ">receipt_team_name = #{receiptTeamName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateTbTransactionTemplateRemark" parameterType="TbTransactionTemplate">
+        update busi_tb_transaction_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamRemark != null">team_remark = #{teamRemark},</if>
+            <if test="managerRemark != null">manager_remark = #{managerRemark},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+</mapper>

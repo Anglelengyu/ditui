@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.realTimeSetting.mapper.RealTimeSettingMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.realTimeSetting.domain.RealTimeSetting"
+               id="RealTimeSettingResult">
+        <result property="id" column="id"/>
+        <result property="realTimeId" column="real_time_id"/>
+        <result property="taskNum" column="task_num"/>
+        <result property="startTimeNode" column="start_time_node"/>
+        <result property="stopTimeNode" column="stop_time_node"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="taskDate" column="task_date"/>
+    </resultMap>
+
+    <sql id="selectRealTimeSettingVo">
+        select id, real_time_id, task_num, start_time_node, stop_time_node, status, create_time, update_time, create_by,
+        update_by,task_date from busi_real_time_setting
+    </sql>
+
+    <select id="selectRealTimeSettingList"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeSetting.domain.RealTimeSetting"
+            resultMap="RealTimeSettingResult">
+        <include refid="selectRealTimeSettingVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="realTimeId != null  and realTimeId != '' ">and real_time_id = #{realTimeId}</if>
+            <if test="taskNum != null ">and task_num = #{taskNum}</if>
+            <if test="startTimeNode != null  and startTimeNode != '' ">and start_time_node = #{startTimeNode}</if>
+            <if test="stopTimeNode != null  and stopTimeNode != '' ">and stop_time_node = #{stopTimeNode}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+        </where>
+    </select>
+
+    <select id="selectRealTimeSettingById" parameterType="Long" resultMap="RealTimeSettingResult">
+        <include refid="selectRealTimeSettingVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRealTimeSetting"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeSetting.domain.RealTimeSetting">
+        insert into busi_real_time_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="realTimeId != null  and realTimeId != ''  ">real_time_id,</if>
+            <if test="taskNum != null  ">task_num,</if>
+            <if test="tastDate != null  ">task_date,</if>
+            <if test="startTimeNode != null  and startTimeNode != ''  ">start_time_node,</if>
+            <if test="stopTimeNode != null  and stopTimeNode != ''  ">stop_time_node,</if>
+            <if test="status != null  ">status,</if>
+            create_time,
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="realTimeId != null  and realTimeId != ''  ">#{realTimeId},</if>
+            <if test="taskNum != null  ">#{taskNum},</if>
+            <if test="taskDate != null  ">#{taskDate},</if>
+            <if test="startTimeNode != null  and startTimeNode != ''  ">#{startTimeNode},</if>
+            <if test="stopTimeNode != null  and stopTimeNode != ''  ">#{stopTimeNode},</if>
+            <if test="status != null  ">#{status},</if>
+            sysdate(),
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertRealTimeSettingBatch"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeSetting.domain.RealTimeSetting">
+        insert into busi_real_time_setting(
+        real_time_id,
+        task_num,
+        task_date,
+        start_time_node,
+        stop_time_node,
+        status,
+        create_time,
+        create_by
+        )
+        values
+        <foreach collection="list" item="setting" separator=",">
+            (
+            #{setting.realTimeId},
+            #{setting.taskNum},
+            #{setting.taskDate},
+            #{setting.startTimeNode},
+            #{setting.stopTimeNode},
+            #{setting.status},
+            sysdate(),
+            #{setting.createBy}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateRealTimeSetting"
+            parameterType="net.hongkuang.ditui.project.busi.realTimeSetting.domain.RealTimeSetting">
+        update busi_real_time_setting
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskNum != null  ">task_num = #{taskNum},</if>
+            <if test="startTimeNode != null  and startTimeNode != ''  ">start_time_node = #{startTimeNode},</if>
+            <if test="stopTimeNode != null  and stopTimeNode != ''  ">stop_time_node = #{stopTimeNode},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRealTimeSettingById" parameterType="Long">
+        delete from busi_real_time_setting where id = #{id}
+    </delete>
+    <delete id="deleteRealTimeSettingByIds" parameterType="String">
+        delete from busi_real_time_setting where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByTaskDate" parameterType="string" resultMap="RealTimeSettingResult">
+        <include refid="selectRealTimeSettingVo"/>
+        where task_date = #{taskDate}
+        order by start_time_node asc ,
+        stop_time_node asc
+    </select>
+
+    <delete id="deleteByTaskDate" parameterType="string">
+        delete from busi_real_time_setting where task_date = #{taskDate}
+    </delete>
+
+    <select id="selectByTaskDateForApi" resultType="net.hongkuang.ditui.project.api.dto.RealTimeRespVo">
+        select start_time_node startTimeNode,stop_time_node stopTimeNode,task_date taskDate,IF(start_time_node =
+        #{startTime} AND stop_time_node = #{stopTime},true,false) grabFlag from busi_real_time_setting
+        where task_date = #{taskDate}
+        order by start_time_node asc ,
+        stop_time_node asc
+    </select>
+
+    <select id="countByTaskDate" parameterType="string" resultType="int">
+        select count(1) from busi_real_time_setting where task_date = #{taskDate}
+    </select>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.recommend.mapper.RecommendManagerMapper">
+
+
+    <resultMap type="RecommendManager" id="RecommendManagerResult">
+        <id property="id" column="id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="name" column="name"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <collection property="managers" javaType="java.util.List" resultMap="ManagerResult"/>
+    </resultMap>
+
+    <resultMap id="ManagerResult" type="net.hongkuang.ditui.project.busi.manager.domain.Manager">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+    </resultMap>
+
+
+    <sql id="selectUserVo">
+        select m.id,m.team_id,m.name,m.remark,m.manager_ids,m.create_time,m.update_time,u.user_id,u.user_name
+        from busi_recommend_manager m
+        left join busi_recommend_middle_manager rmm on m.id = rmm.recommend_manager_id
+        left join sys_user u on u.user_id = rmm.manager_id
+    </sql>
+
+    <select id="selectRecommendManagerList" resultMap="RecommendManagerResult">
+        <include refid="selectUserVo"/>
+        <where>
+            <if test="name != null and name != ''">
+                AND m.name like concat('%', #{name}, '%')
+            </if>
+            <if test="teamId != null and teamId != ''">
+                AND m.team_id = #{teamId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectRecommendManagerById" parameterType="Long" resultMap="RecommendManagerResult">
+        <include refid="selectUserVo"/>
+        where m.id = #{id}
+    </select>
+
+    <insert id="insertRecommendManager"
+            parameterType="net.hongkuang.ditui.project.busi.recommend.domain.RecommendManager" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into busi_recommend_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name,</if>
+            <if test="teamId != null  and teamId != ''  ">team_id,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">#{name},</if>
+            <if test="teamId != null  and teamId != ''  ">#{teamId},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <insert id="insertRecommendMiddleManager"
+            parameterType="net.hongkuang.ditui.project.busi.recommend.domain.RecommendMiddleManager"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into busi_recommend_middle_manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recommendManagerId != null  and recommendManagerId != ''  ">recommend_manager_id,</if>
+            <if test="managerId != null  and managerId != ''  ">manager_id,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recommendManagerId != null  and recommendManagerId != ''  ">#{recommendManagerId},</if>
+            <if test="managerId != null  and managerId != ''  ">#{managerId},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateRecommendManager"
+            parameterType="net.hongkuang.ditui.project.busi.recommend.domain.RecommendManager">
+        update busi_recommend_manager
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="managerIds != null  and managerIds != ''  ">manager_ids = #{managerIds},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = sysdate(),
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRecommendMiddleManagerByIds" parameterType="Long">
+        delete from busi_recommend_middle_manager where recommend_manager_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRecommendManagerByIds" parameterType="Long">
+        delete from busi_recommend_manager where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

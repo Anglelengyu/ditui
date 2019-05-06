@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-user-add">
+        <input id="orderIds" name="orderIds" type="hidden"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label " style="color: red;">注：团队和员工都可以看到该内容。</label>
+            <div class="col-sm-6">
+                <textarea rows="6" name="questionOrderRemark" placeholder="请描述一下该订单有什么问题" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript">
+    var selectOrderIds = parent.$("#orderIds").val();
+    $("#orderIds").val(selectOrderIds);
+
+    $('.ui.fluid.dropdown').dropdown({});
+
+    var prefix = ctx + "busi/tbTransactionQuestionOrder";
+    $("#form-user-add").validate({
+        rules: {}
+    });
+
+    function submitHandler() {
+        $.operate.save(prefix + "/transferQuestionOrder", $('#form-user-add').serialize());
+    }
+</script>
+</body>
+
+</html>

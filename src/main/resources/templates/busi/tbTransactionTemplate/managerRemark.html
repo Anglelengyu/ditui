@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-user-add" th:object="${tbTransactionTemplate}">
+        <input id="id" name="id" type="hidden" th:value="*{id}"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">备注：</label>
+            <div class="col-sm-6">
+                <textarea rows="9" name="managerRemark" th:text="*{managerRemark}" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:include="include :: footer"></div>
+<script type="text/javascript">
+
+    $('.ui.fluid.dropdown').dropdown({});
+
+    var prefix = ctx + "busi/tbTransactionTemplate";
+    $("#form-user-add").validate({
+        rules: {}
+    });
+
+    function submitHandler() {
+        $.operate.save(prefix + "/editRemark", $('#form-user-add').serialize());
+    }
+</script>
+</body>
+
+</html>

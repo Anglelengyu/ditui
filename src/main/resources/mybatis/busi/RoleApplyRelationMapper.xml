@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.roleApplyRelation.mapper.RoleApplyRelationMapper">
+
+
+    <resultMap type="RoleApplyRelation" id="RoleApplyRelationResult">
+        <id property="id" column="id"/>
+        <result property="activeApplyId" column="activeApplyId"/>
+        <result property="passiveApplyId" column="passiveApplyId"/>
+        <result property="activeApplyApplicant" column="activeApplyApplicant"/>
+        <result property="passiveApplyApplicant" column="passiveApplyApplicant"/>
+        <result property="status" column="status"/>
+        <result property="activeApplyDelFlag" column="activeApplyDelFlag"/>
+        <result property="passiveApplyDelFlag" column="passiveApplyDelFlag"/>
+        <result property="activeApplyUserName" column="activeApplyUserName"/>
+        <result property="passiveApplyUserName" column="passiveApplyUserName"/>
+        <result property="applyRemark" column="applyRemark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="UserRoleApplyRelation" id="UserRoleApplyRelationResult">
+        <id property="userId" column="userId"/>
+        <result property="userName" column="userName"/>
+        <result property="userNum" column="userNum"/>
+        <result property="userType" column="userType"/>
+        <result property="userTypeName" column="userTypeName"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select ar.id, ar.activeApply_id as activeApplyId, ar.passiveApply_id as passiveApplyId, ar.activeApply_applicant
+        as activeApplyApplicant, ar.passiveApply_applicant as passiveApplyApplicant, ar.status, ar.activeApply_delFlag
+        as activeApplyDelFlag,
+        ar.passiveApply_delFlag as passiveApplyDelFlag, ar.apply_remark as applyRemark, ar.activeApply_user_name as
+        activeApplyUserName, ar.passiveApply_user_name as passiveApplyUserName, ar.create_time as createTime,
+        ar.update_time as updateTime
+        from busi_role_apply_relation ar
+    </sql>
+
+    <select id="selectRoleApplyRelationList" resultMap="RoleApplyRelationResult">
+        <include refid="selectUserVo"/>
+        <where>
+            <if test="name != null and name != ''">
+                and (ar.activeApply_user_name like CONCAT('%', #{name},'%') or ar.passiveApply_user_name like
+                CONCAT('%', #{name},'%'))
+            </if>
+            <if test="activeApplyId != null and activeApplyId != ''">
+                AND ar.activeApply_id = #{activeApplyId}
+            </if>
+            <if test="passiveApplyId != null and passiveApplyId != ''">
+                AND ar.passiveApply_id = #{passiveApplyId}
+            </if>
+            <if test="status != null and status != ''">
+                AND ar.status = #{status}
+            </if>
+            <if test="activeApplyApplicant != null and activeApplyApplicant != ''">
+                AND ar.activeApplyApplicant = #{activeApply_applicant}
+            </if>
+            <if test="passiveApplyApplicant != null and passiveApplyApplicant != ''">
+                AND ar.passiveApply_applicant = #{passiveApplyApplicant}
+            </if>
+            <if test="activeApplyDelFlag != null and activeApplyDelFlag != ''">
+                AND ar.activeApply_delFlag = #{activeApplyDelFlag}
+            </if>
+            <if test="passiveApplyDelFlag != null and passiveApplyDelFlag != ''">
+                AND ar.passiveApply_delFlag = #{passiveApplyDelFlag}
+            </if>
+            <if test="applyRemark != null and applyRemark != ''">
+                AND ar.apply_remark = #{applyRemark}
+            </if>
+            <if test="activeApplyUserName != null and activeApplyUserName != ''">
+                AND ar.activeApply_user_name = #{activeApplyUserName}
+            </if>
+            <if test="passiveApplyUserName != null and passiveApplyUserName != ''">
+                AND ar.passiveApply_user_name = #{passiveApplyUserName}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND ar.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND ar.create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveRoleApplyRelation" parameterType="RoleApplyRelation" useGeneratedKeys="true" keyProperty="id">
+        insert into busi_role_apply_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activeApplyId != null  and activeApplyId != ''  ">activeApply_id,</if>
+            <if test="passiveApplyId != null  and passiveApplyId != ''  ">passiveApply_id,</if>
+            <if test="activeApplyApplicant != null  and activeApplyApplicant != ''  ">activeApply_applicant,</if>
+            <if test="passiveApplyApplicant != null  and passiveApplyApplicant != ''  ">passiveApply_applicant,</if>
+            <if test="activeApplyDelFlag != null  and activeApplyDelFlag != ''  ">activeApply_delFlag,</if>
+            <if test="passiveApplyDelFlag != null  and passiveApplyDelFlag != ''  ">passiveApply_delFlag,</if>
+            <if test="activeApplyUserName != null  and activeApplyUserName != ''  ">activeApply_user_name,</if>
+            <if test="passiveApplyUserName != null  and passiveApplyUserName != ''  ">passiveApply_user_name,</if>
+            <if test="applyRemark != null  and applyRemark != ''  ">apply_remark,</if>
+            <if test="status != null  and status != ''  ">status,</if>
+            create_time,
+            update_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activeApplyId != null  and activeApplyId != ''  ">#{activeApplyId},</if>
+            <if test="passiveApplyId != null  and passiveApplyId != ''  ">#{passiveApplyId},</if>
+            <if test="activeApplyApplicant != null  and activeApplyApplicant != ''  ">#{activeApplyApplicant},</if>
+            <if test="passiveApplyApplicant != null  and passiveApplyApplicant != ''  ">#{passiveApplyApplicant},</if>
+            <if test="activeApplyDelFlag != null  and activeApplyDelFlag != ''  ">#{activeApplyDelFlag},</if>
+            <if test="passiveApplyDelFlag != null  and passiveApplyDelFlag != ''  ">#{passiveApplyDelFlag},</if>
+            <if test="activeApplyUserName != null  and activeApplyUserName != ''  ">#{activeApplyUserName},</if>
+            <if test="passiveApplyUserName != null  and passiveApplyUserName != ''  ">#{passiveApplyUserName},</if>
+            <if test="applyRemark != null  and applyRemark != ''  ">#{applyRemark},</if>
+            <if test="status != null  and status != ''  ">#{status},</if>
+            sysdate(),
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="handle">
+        update busi_role_apply_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null  ">status = #{param2},</if>
+            update_time = sysdate()
+        </trim>
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectRoleApplyRelationById" resultMap="RoleApplyRelationResult">
+        <include refid="selectUserVo"/>
+        <where>
+            AND ar.id = #{id}
+        </where>
+    </select>
+
+    <select id="selectUserRoleApplyRelationByUserNum" resultMap="UserRoleApplyRelationResult">
+        (select su.user_id as userId, su.user_name as userName, su.user_num as userNum, 1 as userType, '掌柜' as
+        userTypeName from sys_user su
+        inner join sys_user_role ur on su.user_id = ur.user_id
+        inner join sys_role r on r.role_id = ur.role_id
+        where su.user_num = #{userNum}
+        and r.role_key='shop_manager'
+        )
+        UNION
+        (select su.user_id as userId, su.user_name as userName, su.user_num as userNum, 2 as userType, '团队' as
+        userTypeName from sys_user su
+        inner join busi_team bt on bt.user_id = su.user_id
+        where su.user_num = #{userNum}
+        )
+        UNION
+        (select su.user_id as userId, su.user_name as userName, su.user_num as userNum, 3 as userType, '员工' as
+        userTypeName from sys_user su
+        inner join busi_employee be on be.user_id = su.user_id
+        where su.user_num = #{userNum}
+        )
+    </select>
+
+    <update id="deleteDelFlagById">
+        update busi_role_apply_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activeApplyDelFlag != null and activeApplyDelFlag != '' ">activeApply_delFlag =
+                #{activeApplyDelFlag},
+            </if>
+            <if test="passiveApplyDelFlag != null and passiveApplyDelFlag != ''">passiveApply_delFlag =
+                #{passiveApplyDelFlag},
+            </if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>红框联盟管理系统</title>
+    <meta name="keywords" content="红框,红框联盟">
+    <meta name="description" content="红框联盟地推系统">
+    <link th:href="@{css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{css/style.css}" rel="stylesheet"/>
+    <link th:href="@{css/login.min.css?v=1.2}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=3.1.0}" rel="stylesheet"/>
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html"/>
+    <![endif]-->
+    <link rel="shortcut icon" th:href="@{favicon.ico}"/>
+    <style type="text/css">label.error {
+        position: inherit;
+    }</style>
+    <script>
+        if (window.top !== window.self) {
+            window.top.location = window.location
+        }
+        ;
+    </script>
+</head>
+
+<body class="signin">
+
+<div class="signinpanel">
+    <div class="row">
+        <!--<div class="col-sm-7">-->
+        <!--<div class="signin-info">-->
+        <!--<div class="logopanel m-b">-->
+        <!--&lt;!&ndash;<h1><img alt="红框联盟" src="../static/ruoyi.png" th:src="@{/ruoyi.png}"></h1>&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="m-b"></div>-->
+        <!--<h4>欢迎使用 <strong>后台管理系统</strong></h4>-->
+        <!--</div>-->
+        <!--</div>-->
+        <div class="col-sm-12" style="top: 190px;">
+            <form id="signupForm" style="padding-top: 5px;padding-bottom: 17px;">
+
+
+                <div class="row">
+                    <div class="col-xs-3">
+                        <input type="text" name="username" class="form-control uname" style="height: 42px;width: 177px;"
+                               placeholder="用户名"/>
+                    </div>
+                    <div class="col-xs-3">
+                        <input type="password" name="password" class="form-control pword"
+                               style="height: 42px;width: 177px;" placeholder="密码"/>
+                    </div>
+                    <div class="col-xs-2">
+                        <input type="text" name="validateCode" style="margin-top: 15px;height: 42px;width: 120px;"
+                               class="form-control code" placeholder="验证码" maxlength="5">
+                    </div>
+                    <div class="col-xs-2" align="left">
+                        <a href="javascript:void(0);" title="点击更换验证码">
+                            <img th:src="@{captcha/captchaImage(type=${captchaType})}" class="imgcode"
+                                 style="height: 42px;width:118px;margin-top: 15px;"/>
+                        </a>
+                    </div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-success btn-block" id="btnSubmit"
+                                style="margin-left: 0px; height: 44px;width:100px;margin-top: 14px;background-color: #c7cbc6;;border-color: #31363c;"
+                                data-loading="正在验证登录，请稍后...">登录
+                        </button>
+                    </div>
+                </div>
+                <!--<div class="checkbox-custom">-->
+                <!--<input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">记住我</label>-->
+                <!--</div>-->
+
+
+            </form>
+        </div>
+    </div>
+    <!--<div class="signup-footer">-->
+    <!--<div class="pull-left">-->
+    <!--&copy; 2018 All Rights Reserved. RuoYi <br>-->
+    <!--<a href="http://www.hongkuang.net/" target="_blank" rel="nofollow">川ICP备18046899号</a><br>-->
+    <!--</div>-->
+    <!--</div>-->
+</div>
+<script th:inline="javascript"> var ctx = [[@{
+    /}]]; var captchaType = [[${captchaType}]]; </script>
+<!-- 全局js -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<!-- 验证插件 -->
+<script th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=3.1.0}"></script>
+<script th:src="@{/ruoyi/login.js?v=1.0.1}"></script>
+</body>
+</html>

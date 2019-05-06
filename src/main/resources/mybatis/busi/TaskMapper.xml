@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.task.mapper.TaskMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.task.domain.Task" id="TaskResult">
+        <result property="id" column="id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="saleId" column="sale_id"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="taskCommission" column="task_commission"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="taskStatus" column="task_status"/>
+        <result property="taskCorpus" column="task_corpus"/>
+        <result property="completionTime" column="completion_time"/>
+        <result property="lng" column="lng"/>
+        <result property="lat" column="lat"/>
+        <result property="allotType" column="allot_type"/>
+        <result property="realTimeStart" column="real_time_start"/>
+        <result property="realTimeEnd" column="real_time_end"/>
+    </resultMap>
+
+    <resultMap type="net.hongkuang.ditui.project.busi.order.dto.OrderExtendInfo" id="ExtendResult">
+        <result property="taskId" column="task_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="saleId" column="sale_id"/>
+        <result property="taskCompletionTime" column="completion_time"></result>
+    </resultMap>
+
+    <sql id="selectTaskVo">
+        select id, task_id, order_num, task_commission, create_time, update_time, status, ext1, ext2, create_by,
+        update_by,task_corpus,completion_time,lng,lat,sale_id, allot_type, real_time_start, real_time_end,task_status
+        from busi_task
+    </sql>
+
+    <select id="selectTaskList" parameterType="net.hongkuang.ditui.project.busi.task.domain.SearchTask"
+            resultType="net.hongkuang.ditui.project.busi.task.domain.TaskVo">
+        SELECT task.id, task.task_id taskId,task.task_status taskStatus, task.order_num orderNum, task.task_commission
+        taskCommission, task.create_time createTime,task.status,
+        task.update_time updateTime, group_concat(bo.category) category, group_concat(bo.goods_name) goodsName,
+        group_concat(bo.order_img) orderImg, group_concat(bo.unit_price) unitPrice
+        , group_concat(bo.commission) commission,task.task_corpus taskCorpus, completion_time completionTime
+        , task.sale_id, task.allot_type as allotType, task.real_time_start as realTimeStart, task.real_time_end as
+        realTimeEnd,
+        sale.`name` saleName,
+        sale.area
+        FROM busi_task task
+        INNER JOIN busi_task_order ot ON task.task_id = ot.task_id
+        INNER JOIN busi_order bo ON bo.order_id = ot.order_id
+        LEFT JOIN busi_salesman sale ON sale.sale_id = task.sale_id
+        where task.status = #{status}
+        <if test="taskId != null  and taskId != ''  ">and task.task_id like concat('%',#{taskId},'%')</if>
+        <if test="orderNum != null  and orderNum != ''  ">and task.order_num = #{orderNum}</if>
+        <if test="goodsName != null  and goodsName != ''  ">and bo.goods_name like concat('%',#{goodsName},'%')</if>
+        <if test="taskStatus != null  and taskStatus != ''  ">and task.task_status like concat('%',#{taskStatus },'%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and completion_time >= #{startTime}
+        </if>
+        <if test="endTime != null  and endTime != ''">
+            and completion_time &lt;= #{endTime}
+        </if>
+        <if test="saleName != null  and saleName != ''  ">and sale.`name` like concat(#{saleName},'%')</if>
+        group by task.task_id
+    </select>
+
+    <select id="selectTaskById" parameterType="Long" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTask" parameterType="net.hongkuang.ditui.project.busi.task.domain.Task">
+        insert into busi_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="saleId != null and saleId != ''">sale_id,</if>
+            <if test="orderNum != null  ">order_num,</if>
+            <if test="taskCommission != null  ">task_commission,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="saleId != null  and saleId != ''  ">#{saleId},</if>
+            <if test="orderNum != null  ">#{orderNum},</if>
+            <if test="taskCommission != null  ">#{taskCommission},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTask" parameterType="Task">
+        update busi_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id = #{saleId},</if>
+            <if test="orderNum != null  ">order_num = #{orderNum},</if>
+            <if test="taskCommission != null  ">task_commission = #{taskCommission},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="taskCorpus != null">task_corpus = #{taskCorpus}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskById" parameterType="Long">
+        delete from busi_task where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskByIds" parameterType="String">
+        delete from busi_task where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTaskByTaskIds" parameterType="String">
+        delete from busi_task where task_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsert">
+        insert into busi_task(id, task_id, order_num, task_commission, task_corpus, create_time, update_time, status,
+        ext1, ext2, create_by, update_by)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+            #{item.taskId},
+            #{item.orderNum},
+            #{item.taskCommission},
+            #{item.taskCorpus},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.ext1},
+            #{item.ext2},
+            #{item.createBy},
+            #{item.updateBy})
+        </foreach>
+    </insert>
+
+    <update id="updateBatchTaskStatusAllot" parameterType="string">
+        update busi_task set status = 2,allot_type = 2 where task_id in
+        <foreach item="taskId" collection="list" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <select id="selectAllocTaskList" parameterType="map" resultMap="TaskResult">
+        select DISTINCT bt.task_id from busi_order bo
+        inner join busi_task_order bto on bto.order_id = bo.order_id
+        inner join busi_task bt on bto.task_id = bt.task_id
+        where bt.`status` = #{status} and bo.goods_name in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        order by FIELD(bo.goods_name,
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+    <update id="updateBatchTaskStatusByIds">
+        update busi_task set task_status = #{status}
+        <if test="saleId != null and saleId != ''">
+            , sale_id = #{saleId}
+        </if>
+        where task_id in
+        <foreach item="taskId" collection="list" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+        and task_status = #{preStatus}
+    </update>
+
+    <update id="updateBatchStatusByIds">
+        update busi_task set status = #{status}
+        <if test="allotType != null">
+            , allot_type = #{allotType}
+        </if>
+        <if test="realTimeStart != null and realTimeStart != ''">
+            , real_time_start = #{realTimeStart}
+        </if>
+        <if test="realTimeEnd != null and realTimeEnd != ''">
+            , real_time_end = #{realTimeEnd}
+        </if>
+        where task_id in
+        <foreach item="taskId" collection="list" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+        and status = #{preStatus}
+    </update>
+
+    <update id="updateAllTaskStatus">
+        update busi_task set status = #{status} where status = #{preStatus}
+        <if test="list !=null and list.size() > 0">
+            and task_id in
+            <foreach item="taskId" collection="list" open="(" separator="," close=")">
+                #{taskId}
+            </foreach>
+        </if>
+    </update>
+    <select id="selectTaskByOrderIdList" resultMap="ExtendResult">
+        select bt.task_id, bto.order_id, bt.completion_time from busi_task bt
+        inner join busi_task_order bto on bt.task_id = bto.task_id
+        left join busi_sale_task bst on bst.task_id = bt.task_id
+        where bto.order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectTaskByOrderId" resultMap="TaskResult" parameterType="string">
+        select bt.id, bt.task_id, bt.order_num, bt.task_commission, bt.create_time, bt.update_time, bt.status, bt.ext1,
+        bt.ext2, bt.create_by, bt.update_by,bt.task_corpus,bt.completion_time,bt.lng,bt.lat from busi_task
+        bt inner join busi_task_order bto on bt.task_id = bto.task_id and bto.order_id=#{orderId}
+    </select>
+
+    <update id="updateTaskByTaskIds" parameterType="string">
+        update busi_task set task_status = 1 where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <select id="getFirstTask" resultMap="TaskResult">
+        select task_id from busi_task where sale_id = #{saleId} and task_status = #{taskStatus} limit 1
+    </select>
+
+    <select id="selectTaskByTaskId" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <select id="selectTaskList2" parameterType="net.hongkuang.ditui.project.busi.task.domain.SearchTask"
+            resultMap="TaskResult">
+        SELECT task.*
+        FROM busi_task task
+        INNER JOIN busi_task_order ot ON task.task_id = ot.task_id
+        INNER JOIN busi_order bo ON bo.order_id = ot.order_id
+        <where>
+            <if test="taskId != null  and taskId != ''  ">and task.task_id like concat('%',#{taskId},'%')</if>
+            <if test="orderNum != null  and orderNum != ''  ">and task.order_num = #{orderNum}</if>
+            <if test="buyerNick != null and buyerNick != ''">and buyer_nick like concat('%',#{buyerNick},'%')</if>
+            <if test="taskStatus != null  and taskStatus != ''  ">and task.task_status = #{taskStatus}</if>
+            <if test="saleId != null and saleId != ''">and task.sale_id = #{saleId}</if>
+            <if test="startTime != null and startTime != ''">
+                and task.craete_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and task.craete_time &lt;= #{endTime}
+            </if>
+        </where>
+        group by task.task_id
+    </select>
+
+    <select id="checkTaskStatusBySaleId" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        where sale_id = #{saleId}
+        AND task_status =#{status}
+    </select>
+
+    <update id="updateTaskStatusByTaskId" parameterType="net.hongkuang.ditui.project.api.dto.TaskSubmitReqVo">
+        update busi_task set task_status = #{taskStatus},lng=#{lng},lat=#{lat},completion_time=sysdate() where task_id =
+        #{taskId}
+    </update>
+
+    <select id="selectTaskByIds" resultMap="TaskResult">
+        <include refid="selectTaskVo"/>
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

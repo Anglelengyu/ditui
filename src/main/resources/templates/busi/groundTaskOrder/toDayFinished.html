@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <input type="hidden" class="time-input" id="referStartTime" th:value="${referStartTime}" name="referStartTime"/>
+                    <input type="hidden" class="time-input" id="referEndTime" th:value="${referEndTime}" name="referEndTime"/>
+                    <input id="status" name="status" th:value="2" type="hidden">
+                    <ul>
+                        <li>
+                            订单ID：<input type="text" name="id" placeholder="请输入订单ID"/>
+                        </li>
+                        <li>
+                            电商平台：<input type="text" name="platform" placeholder="请选择平台"/>
+                        </li>
+                        <li>
+                            团队昵称：<input type="text" name="teamName" placeholder="请输入团队昵称"/>
+                        </li>
+                        <li>
+                            掌柜昵称：<input type="text" name="managerUserName" placeholder="请输入掌柜昵称"/>
+                        </li>
+                        <li>
+                            店铺名称：<input type="text" name="shopName" placeholder="请输入店铺名称"/>
+                        </li>
+                        <li>
+                            商品简称：<input type="text" name="goodsName" placeholder="请输入商品简称"/>
+                        </li>
+                        <li>
+                            关键词：<input type="text" name="keyWordName" placeholder="请输入关键词"/>
+                        </li>
+                        <li>
+                            团队备注：<select name="orTeamRemark" style="width: 100px;">
+                            <option value="">所有</option>
+                            <option th:value="0">未备注</option>
+                            <option th:value="1">已备注</option>
+                        </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                        <li>
+                            <label>当前页面总本金： <span id="unitPriceTotal" style="line-height: 34px;">0.00</span></label>
+                        </li>
+                        <li>
+                            <label>当前页面总佣金： <span id="commissionPriceTotal" style="line-height: 34px;">0.00</span></label>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-danger btn-del disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="busi:groundTaskOrder:unFinished:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-primary btn-edit disabled" onclick="$.operate.export()"
+               shiro:hasPermission="busi:groundTaskOrder:unFinished:export">
+                <i class="fa fa-edit"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+        <input id="selectOrderIds" type="hidden"/>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('busi:groundTaskOrder:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('busi:groundTaskOrder:unFinished:remove')}]];
+    var prefix = ctx + "busi/groundTaskOrder";
+    var datas = [[${@dict.getType('order_status')}]];
+    var role = [[${@userSubject.getLoginUserRoles()}]];
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            genTaskUrl: prefix + "/gen",
+            modalName: "订单信息",
+            params: {"status": $("#status").val(), "referStartTime": $("#referStartTime").val(), "referEndTime": $("#referEndTime").val()},
+            search: false,
+            loadSuccess: function (data) {
+                var unitPriceTotal = 0;
+                var commissionPriceTotal = 0;
+                var rows = data.rows;
+                for (var i = 0, j = rows.length; i < j; i++) {
+                    unitPriceTotal += rows[i].unitPrice;
+                    commissionPriceTotal += rows[i].commissionPrice;
+                }
+                $("#unitPriceTotal").html(($.unit.fen2yuan(unitPriceTotal)));
+                $("#commissionPriceTotal").html(($.unit.fen2yuan(commissionPriceTotal)));
+            },
+            showExport: false,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '订单ID',
+                    visible: true
+                },
+                {
+                    field: 'platform',
+                    title: '电商平台',
+                    visible: true
+                },
+                {
+                    field: 'teamName',
+                    title: '团队昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.receiptTeamId!=null){
+                            return row.receiptTeamName;
+                        }else{
+                            return row.teamName;
+                        }
+                    }
+                },
+                {
+                    visible: role.indexOf("team") != -1 ? true : false,
+                    field: 'managerUserName',
+                    title: '掌柜昵称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.receiptTeamId!=null){
+                            return row.teamName;
+                        }else{
+                            return row.managerUserName;
+                        }
+                    }
+                },
+                {
+                    field: 'shopName',
+                    title: '店铺名称',
+                    sortable: true
+                },
+                {
+                    field: 'goodsName',
+                    title: '商品简称',
+                    sortable: true,
+                    width: 200
+                },
+                {
+                    field: 'keyWordName',
+                    title: '关键词'
+                },
+                {
+                    field: 'unitPrice',
+                    title: '商品本金',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(value);
+                    }
+                },
+                {
+                    field: 'commissionPrice',
+                    title: '商品佣金',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.unit.fen2yuan(value);
+                    }
+                },
+                {
+                    field: 'goodsImg',
+                    title: '商品主图',
+                    formatter: function (value, row, index) {
+                        return $.image.preview(value);
+                    }
+                },
+                {
+                    field: 'allotType,realTimeStart',
+                    title: '分配方式',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (row.allotType == 1) {
+                            return row.realTimeStart + "~" + row.realTimeEnd;
+                        }
+                        if (row.allotType == 2) {
+                            return "储备任务";
+                        }
+                        return "手动分配"
+                    }
+                },
+                {
+                    field: role.indexOf("team") != -1 ? 'teamRemark' : 'managerRemark',
+                    title: role.indexOf("team") != -1 ? '团队备注' : '掌柜备注',
+                    formatter: function (value, row, index) {
+                        return '<a href="#" onclick="showRemark(\'' + row.id + '\')" class="showKeyWords" orderTemplateId="' + value + '">查看备注</a>';
+                    }
+                },
+                {
+                    field: 'status',
+                    title: '订单状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="showDetail(\'' + row.orderId + '\')"><i class="fa fa-edit"></i>查看</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true
+                }]
+        };
+        $.table.init(options);
+    });
+
+    var showDetail = function (id) {
+        var url = prefix + '/showDetails/' + id;
+        var index = layer.open({
+            type: 2,
+            area: ['900px', ($(window).height() - 50) + 'px'],
+            //不固定
+            maxmin: true,
+            shade: 0.3,
+            title: '查看订单任务详情',
+            content: url,
+            // 弹层外区域关闭
+            shadeClose: true
+        });
+        layer.full(index);
+    }
+
+    var distributionTeam = function () {
+        var rows = $.common.isEmpty($.table._option.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns($.table._option.uniqueId);
+        console.log(rows);
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        } else if (rows.length > 1) {
+            $.modal.alertWarning("分配给合作团队一次只能选择一个订单");
+            return;
+        } else {
+            $.ajax({
+                cache: true,
+                type: "GET",
+                url: prefix + "/judgeIsDistribution/" + rows[0],
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    if (data.code != 0) {
+                        $.modal.alertWarning("该订单是别人分给您的，您不能再分配给其他团队");
+                        return;
+                    }
+                    var url = prefix + '/distributionTeam/' + rows[0];
+                    $.modal.open("请确认是否要将选中订单分配给合作团队？", url, "600", "320");
+                }
+            });
+        }
+    };
+
+    var showRemark = function (id) {
+        var me = $(this);
+        var url = prefix + '/showRemark/' + id;
+        $.modal.open("", url, '600', '350');
+    };
+    $("input[type=text]").keypress(function (e) {
+        if (e.keyCode == 13) {
+            $.table.search();
+        }
+    });
+
+</script>
+</body>
+</html>

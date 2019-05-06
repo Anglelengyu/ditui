@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.saleOrder.mapper.SaleOrderMapper">
+
+    <resultMap type="net.hongkuang.ditui.project.busi.saleOrder.domain.SaleOrder" id="SaleOrderResult">
+        <result property="id" column="id"/>
+        <result property="saleOrderId" column="sale_order_id"/>
+        <result property="saleId" column="sale_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+    </resultMap>
+
+    <sql id="selectSaleOrderVo">
+        select id, sale_order_id, sale_id, order_id, create_time, update_time, status, ext1, ext2 from busi_sale_order
+    </sql>
+
+    <select id="selectSaleOrderList" parameterType="net.hongkuang.ditui.project.busi.saleOrder.domain.SaleOrder"
+            resultMap="SaleOrderResult">
+        <include refid="selectSaleOrderVo"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="saleOrderId != null  and saleOrderId != '' ">and sale_order_id = #{saleOrderId}</if>
+            <if test="saleId != null  and saleId != '' ">and sale_id = #{saleId}</if>
+            <if test="orderId != null  and orderId != '' ">and order_id = #{orderId}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+        </where>
+    </select>
+
+    <select id="selectSaleOrderById" parameterType="Long" resultMap="SaleOrderResult">
+        <include refid="selectSaleOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSaleOrder" parameterType="net.hongkuang.ditui.project.busi.saleOrder.domain.SaleOrder">
+        insert into busi_sale_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="saleOrderId != null  and saleOrderId != ''  ">sale_order_id,</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id,</if>
+            <if test="orderId != null  and orderId != ''  ">order_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="saleOrderId != null  and saleOrderId != ''  ">#{saleOrderId},</if>
+            <if test="saleId != null  and saleId != ''  ">#{saleId},</if>
+            <if test="orderId != null  and orderId != ''  ">#{orderId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSaleOrder" parameterType="net.hongkuang.ditui.project.busi.saleOrder.domain.SaleOrder">
+        update busi_sale_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="saleOrderId != null  and saleOrderId != ''  ">sale_order_id = #{saleOrderId},</if>
+            <if test="saleId != null  and saleId != ''  ">sale_id = #{saleId},</if>
+            <if test="orderId != null  and orderId != ''  ">order_id = #{orderId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSaleOrderById" parameterType="Long">
+        delete from busi_sale_order where id = #{id}
+    </delete>
+
+    <delete id="deleteSaleOrderByIds" parameterType="String">
+        delete from busi_sale_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateSaleOrderStatusByTaskId" parameterType="string">
+        UPDATE busi_sale_order bso
+        INNER JOIN busi_task_order bto ON bto.order_id = bso.order_id
+        SET bso.status = 1
+        WHERE bto.task_id IN
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </update>
+
+    <insert id="batchInsert">
+        insert into busi_sale_order(sale_order_id, sale_id, order_id, create_time, update_time, status, ext1, ext2)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.saleOrderId},
+            #{item.saleId},
+            #{item.orderId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.ext1},
+            #{item.ext2}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteSaleOrderByOrderIdList">
+        delete from busi_sale_order where order_id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.manager.mapper.ManagerMapper">
+
+
+    <resultMap type="Manager" id="ManagerResult">
+        <id property="userId" column="user_id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+
+    <resultMap id="RoleResult" type="net.hongkuang.ditui.project.system.role.domain.Role">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleKey" column="role_key"/>
+        <result property="roleSort" column="role_sort"/>
+        <result property="dataScope" column="data_scope"/>
+        <result property="status" column="role_status"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select u.user_id, u.login_name, u.user_name,u.sex, u.avatar, u.password, u.salt, u.status, u.del_flag,
+        u.login_ip, u.login_date, u.create_time, u.remark,
+        r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        left join busi_manager_middle_team t on u.user_id = t.manager_id
+    </sql>
+
+    <sql id="selectUserVoCount">
+        select count(t.id)
+        from sys_user u
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        left join busi_manager_middle_team t on u.user_id = t.manager_id
+    </sql>
+
+    <select id="selectManagerList" resultMap="ManagerResult">
+        <include refid="selectUserVo"/>
+        <where>
+            <if test="loginName != null and loginName != ''">
+                AND u.login_name like concat('%', #{loginName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status = #{status}
+            </if>
+            <if test="phonenumber != null and phonenumber != ''">
+                AND u.phonenumber like concat('%', #{phonenumber}, '%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND u.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND u.create_time &lt;= #{endTime}
+            </if>
+            <if test="teamId != null  and teamId != ''">
+                AND t.team_id = #{teamId}
+            </if>
+            <if test="recommend != null  and recommend != ''">
+                AND t.recommend = #{recommend}
+            </if>
+            AND r.role_key='shop_manager'
+        </where>
+    </select>
+
+    <select id="selectManagerByUserId" resultMap="ManagerResult">
+        <include refid="selectUserVo"/>
+        where u.user_id = #{userId}
+    </select>
+
+    <select id="selectManagerByUserNum" resultMap="ManagerResult">
+        <include refid="selectUserVo"/>
+        where u.user_num = #{userNum} AND r.role_key='shop_manager'
+    </select>
+
+    <insert id="insertManagerMiddleTeam" parameterType="ManagerMiddleTeam">
+        insert into busi_manager_middle_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="managerId != null  and managerId != ''  ">manager_id,</if>
+            <if test="teamId != null  and teamId != ''  ">team_id,</if>
+            <if test="recommend != null  and recommend != ''  ">recommend,</if>
+            create_time,
+            update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="managerId != null  and managerId != ''  ">#{managerId},</if>
+            <if test="teamId != null  and teamId != ''  ">#{teamId},</if>
+            <if test="recommend != null  and recommend != ''  ">#{recommend},</if>
+            sysdate(),
+            sysdate(),
+        </trim>
+    </insert>
+
+    <delete id="deleteManagerMiddleTeam" parameterType="Long">
+        delete from busi_manager_middle_team
+        where team_id = #{teamId}
+        and manager_id = #{managerId}
+    </delete>
+
+    <select id="selectCountManagerMiddleTeamById" resultType="Integer">
+        <include refid="selectUserVoCount"/>
+        <where>
+            AND t.manager_id = #{managerId}
+            AND t.team_id = #{teamId}
+        </where>
+    </select>
+
+    <select id="selectManagerByTeamId" resultMap="ManagerResult">
+        <include refid="selectUserVo"/>
+        where t.team_id = #{teamId}
+    </select>
+
+</mapper>

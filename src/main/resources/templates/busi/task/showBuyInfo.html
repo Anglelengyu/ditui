@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-task-edit" th:object="${task}">
+
+        <fieldset>
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><strong>买家：</strong></label>
+                <label class="control-label col-sm-1" id="taskId"></label>
+                <label class="col-sm-3 control-label"><strong>买家信誉：</strong></label>
+                <label class="control-label col-sm-1" id="orderNum"></label>
+                <label class="col-sm-3 control-label"><strong>商家信誉：</strong></label>
+                <label class="control-label col-sm-1" id="taskCorpus"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><strong>性别：</strong></label>
+                <label class="control-label col-sm-1" id="taskId"></label>
+                <label class="col-sm-3 control-label"><strong>收到好评率：</strong></label>
+                <label class="control-label col-sm-1" id="orderNum"></label>
+                <label class="col-sm-3 control-label"><strong>注册日期：</strong></label>
+                <label class="control-label col-sm-1" id="taskCorpus"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><strong>淘龄：</strong></label>
+                <label class="control-label col-sm-1" id="taskId"></label>
+                <label class="col-sm-3 control-label"><strong>买家总周平均：</strong></label>
+                <label class="control-label col-sm-1" id="orderNum"></label>
+                <label class="col-sm-3 control-label"><strong>查询时间：</strong></label>
+                <label class="control-label col-sm-1" id="taskCorpus"></label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label"><strong>实名认证：</strong></label>
+                <label class="control-label col-sm-1" id="taskId"></label>
+            </div>
+        </fieldset>
+        <label><strong>创客用户被打标情况：</strong></label>
+        <table class="table tableNoBottomHight">
+            <thead>
+            <tr class="herderBlack">
+                <th>打标类型</th>
+                <th data-tooltip="没有实质证据证明对方是坏人，只是合作不愉快，请用吐嘈功能吧，当然，请别涉及隐私，否则可能会被剥夺举报权！">吐槽<i
+                        class="question circle outline icon"></i></th>
+                <th data-tooltip="拿完了商家的返款就恶意退款跑了！">兔子<i class="question circle outline icon"></i></th>
+                <th data-tooltip="用各种方式威胁你给钱！">蜜狗<i class="question circle outline icon"></i></th>
+                <th data-tooltip="用各种方式骗你钱了！">狐狸<i class="question circle outline icon"></i></th>
+                <th data-tooltip="用工商，发票，字体，商标，假货各种方式来坑你钱了！">鳄鱼<i class="question circle outline icon"></i></th>
+                <th data-tooltip="接完了单给了你差评进行要挟！">野狗<i class="question circle outline icon"></i></th>
+                <th data-tooltip="用了淘客链接来拍你的单！">老鼠<i class="question circle outline icon"></i></th>
+                <th data-tooltip="被稽查系统判定虚假交易过导致商家单品降权的帐号，下面的数字为创客用户数，实际降权的店铺数是大于等于显示出来的数字的！">降权处置<i
+                        class="question circle outline icon"></i></th>
+                <th data-tooltip="显示数量是这个号代表被淘宝服务市场第三方应用（比如**店长，*牛，旺店**，爱**易等）拦截过的号，可能是差评，敲诈，骗子类的一些恶人，云黑名单来自于第三方应用海量的黑号数据库！">
+                    云黑名单<i class="question circle outline icon"></i></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="tbodyCenter">
+                <td>打标次数</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            </tbody>
+        </table>
+        <label><strong>该用户近一周查询商家数：<label class="colorRed"><strong>0</strong></label>， 上一周查询商家数：<label class="colorRed"><strong>0</strong></label></strong></label>
+
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script th:src="@{http://api.map.baidu.com/api?v=2.0&ak=u9xfZAnV2IQZbv7s6tGrXdrq}"></script>
+<script th:inline="javascript">
+    var taskId = [[${task.taskId}]];
+
+    var imgLabel = new Array();
+    var textLabel = new Array();
+    var previewImgs = new Array();
+    var prefix = ctx + "busi/task";
+
+    var previewJson = {
+        "title": "任务编号：" + taskId,
+        "id": taskId,
+        "start": 0
+    };
+    previewJson.data = previewImgs;
+    $("#imgArea").html(imgLabel.join(" "));
+    $("#textArea").html(textLabel.join(" "));
+
+    $(document).on("click", ".preview", function () {
+        var me = $(this);
+        previewJson.start = me.attr("index");
+        layer.photos({
+            photos: previewJson
+            , anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        });
+    })
+    $("#taskId").text(taskId);
+    $("#orderNum").text([[${task.orderNum}]]);
+    $("#taskCorpus").text($.unit.fen2yuan([[${task.taskCorpus}]]));
+    $("#taskCommission").text($.unit.fen2yuan([[${task.taskCommission}]]));
+    var tableJson = {
+        "title": "任务编号：" + taskId,
+        "id": taskId,
+        "start": 0
+    };
+
+
+</script>
+</body>
+</html>
