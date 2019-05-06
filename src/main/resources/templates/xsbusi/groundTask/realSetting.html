@@ -1,0 +1,443 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<style>
+    .time-input, .time-picker-input {
+        border-radius: 4px;
+        width: 200px;
+    }
+    .col-sm-2{
+        width: 19.4%;
+    }
+    .middle{
+        text-align: center;
+        width: 1%;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+    .unFinishNum{
+        width: 17%;
+    }
+    .addNum{
+        width: 14%;
+    }
+    .todayNum{
+        width: 14%;
+    }
+</style>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-task-edit">
+        <!--<input th:value="${taskDate}" id="hideTaskDate" type="hidden">-->
+        <input id="taskIds" name="taskIds" type="hidden"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" style="text-align: left;">放单时间设置：</label>
+            <div class="col-sm-8">
+                <input id="taskDate" name="taskDate" th:value="${taskDate}" class="time-input form-control"
+                       click="changeTaskDate()" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2">
+            </div>
+            <label class="col-sm-2 control-label" style="margin-left: 17px;">今日放单总单量：</label>
+            <div class="col-sm-1" style="width: 0px;margin-left:12px;">
+                <label id="todayNumTotal" name="todayNumTotal" class="control-label" style="width: 50px;">0</label>
+            </div>
+            <label class="col-sm-2 control-label" style="text-align: left;margin-left: 10px;">未完成总单量：</label>
+            <div class="col-sm-1" style="width: 0px;margin-left:7px;">
+                <label id="systemResidualTotal" name="systemResidualTotal" class="control-label" style="width: 50px;">0</label>
+            </div>
+            <label class="col-sm-2 control-label" style="text-align: left;width: 18%; ">未分总单量：</label>
+            <div class="col-sm-1" style="width: 0px">
+                <label id="undividedTotal" name="undividedTotal" class="control-label" style="width: 50px;">0</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id1" name="id1" type="hidden">
+                <input id="s1" name="s1" readonly="true"  class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t1" name="t1" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum1" name="todayNum1" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum1" name="unFinishNum1" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum1" name="taskNum1" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id2" name="id2" type="hidden">
+                <input id="s2" name="s2"readonly="true"  class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t2" name="t2" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum2" name="todayNum2" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum2" name="unFinishNum2" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum2" name="taskNum2" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id3" name="id3" type="hidden">
+                <input id="s3" name="s3" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t3" name="t3" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum3" name="todayNum3" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum3" name="unFinishNum3" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum3" name="taskNum3" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id4" name="id4" type="hidden">
+                <input id="s4" name="s4" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t4" name="t4" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum4" name="todayNum4" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum4" name="unFinishNum4" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum4" name="taskNum4" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id5" name="id5" type="hidden">
+                <input id="s5" name="s5" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t5" name="t5" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum5" name="todayNum5" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum5" name="unFinishNum5" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum5" name="taskNum5" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id6" name="id6" type="hidden">
+                <input id="s6" name="s6" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t6" name="t6" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum6" name="todayNum6" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum6" name="unFinishNum6" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum6" name="taskNum6" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id7" name="id7" type="hidden">
+                <input id="s7" name="s7" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t7" name="t7" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum7" name="todayNum7" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum7" name="unFinishNum7" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum7" name="taskNum7" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="id8" name="id8" type="hidden">
+                <input id="s8" name="s8" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-1 control-label middle">~</label>
+            <div class="col-sm-2" style="width: 13%;">
+                <input id="t8" name="r8" readonly="true" class="form-control" type="text">
+            </div>
+            <label class="col-sm-2 control-label todayNum">今日放单：</label>
+            <div class="col-sm-1">
+                <input id="todayNum8" name="todayNum8" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label unFinishNum">未完成单量：</label>
+            <div class="col-sm-1">
+                <input id="unFinishNum8" name="unFinishNum8" readonly="true" class="form-control" style="width: 50px;" type="text">
+            </div>
+            <label class="col-sm-2 control-label addNum">新增单量：</label>
+            <div class="col-sm-1">
+                <input id="taskNum8" name="taskNum8" onchange="inputChange(this)" class="form-control" style="width: 50px;" type="text">
+            </div>
+        </div>
+        <div style="width: 68.666667%;float: left;">
+            <div>
+                <label class="control-label" style="text-align: left;width:28%"><input id="checkQuestion" type="checkbox"/>锁定接单时间</label>
+            </div>
+            <div>
+                <label class="control-label" style="color: red;">注：锁定后，只有到了当前时段才可以接单，建议不要锁定接单时间。</label>
+            </div>
+        </div>
+        <div style="width: 29%;float: left">
+            <div>
+                <label class="col-sm-9 control-label">新增总单量：</label>
+                <div class="col-sm-1">
+                    <label id="taskNumTotal" name="taskNumTotal" class="control-label" style="width: 50px;">0</label>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    var prefix = ctx + "busi/groundTask/waitDistribution";
+    var undividedTotal = [[${undividedTotal}]];
+
+    var selectTaskIds = parent.$("#taskIds").val();
+    var taskIdsNum = selectTaskIds.split(",").length;
+    $("#taskIds").val(selectTaskIds);
+
+    $("#undividedTotal").text(taskIdsNum);
+    $("#form-task-edit").validate({
+        rules: {
+            s1: "required",
+            s2: "required",
+            s3: "required",
+            s4: "required",
+            s5: "required",
+            s6: "required",
+            s7: "required",
+            s8: "required",
+            t1: "required",
+            t2: "required",
+            t3: "required",
+            t4: "required",
+            t5: "required",
+            t6: "required",
+            t7: "required",
+            t8: "required",
+            taskNum1: {
+                min: 0,
+                digits: true
+            },
+            taskNum2: {
+                min: 0,
+                digits: true
+            },
+            taskNum3: {
+                min: 0,
+                digits: true
+            },
+            taskNum4: {
+                min: 0,
+                digits: true
+            },
+            taskNum5: {
+                min: 0,
+                digits: true
+            },
+            taskNum6: {
+                min: 0,
+                digits: true
+            },
+            taskNum7: {
+                min: 0,
+                digits: true
+            },
+            taskNum8: {
+                min: 0,
+                digits: true
+            }
+        }
+    });
+
+    $(function () {
+        var timeSetting = [[${timeSetting}]];
+        var realTimeGroundTaskVoList = [[${realTimeGroundTaskVoList}]];
+        var realTimeGroundTaskVoUnFinishList = [[${realTimeGroundTaskVoUnFinishList}]];
+        if (timeSetting.length == 0) {
+            timeSetting.push({"id": "", "startTimeNode": "08:00", stopTimeNode: "09:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "10:00", stopTimeNode: "11:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "12:00", stopTimeNode: "13:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "14:00", stopTimeNode: "15:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "16:00", stopTimeNode: "17:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "18:00", stopTimeNode: "19:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "20:00", stopTimeNode: "21:59", "taskNum": "0"});
+            timeSetting.push({"id": "", "startTimeNode": "22:00", stopTimeNode: "23:59", "taskNum": "0"});
+        }
+        for (var i = 1; i < 9; i++) {
+            var setting = timeSetting[i - 1];
+            $("#s" + i).val(setting.startTimeNode);
+            $("#t" + i).val(setting.stopTimeNode);
+            $("#id" + i).val(setting.id);
+            $("#taskNum" + i).val(0);
+            $("#todayNum" + i).val(0);
+            $("#unFinishNum" + i).val(0);
+        }
+        inputChange();
+
+        var todayNumTotal = 0;
+        for (var i = 1; i < 9; i++) {
+            for(var j = 1; j<= realTimeGroundTaskVoList.length; j++){
+                var startTime = realTimeGroundTaskVoList[j-1].startTime;
+                var stopTime = realTimeGroundTaskVoList[j-1].stopTime;
+                var todayNum = Number(realTimeGroundTaskVoList[j-1].todayNum);
+                if($("#s" + i).val() == startTime && $("#t" + i).val() == stopTime){
+                    $("#todayNum" + i).val(todayNum);
+                    todayNumTotal = todayNumTotal + todayNum;
+                }
+            }
+        }
+        $("#todayNumTotal").text(todayNumTotal);
+
+        var systemResidualTotal = 0;
+        for (var i = 1; i < 9; i++) {
+            for(var j = 1; j<= realTimeGroundTaskVoUnFinishList.length; j++){
+                var startTime = realTimeGroundTaskVoUnFinishList[j-1].startTime;
+                var stopTime = realTimeGroundTaskVoUnFinishList[j-1].stopTime;
+                var unFinishNum = Number(realTimeGroundTaskVoUnFinishList[j-1].unFinishNum);
+                if($("#s" + i).val() == startTime && $("#t" + i).val() == stopTime){
+                    $("#unFinishNum" + i).val(unFinishNum);
+                    systemResidualTotal = systemResidualTotal + unFinishNum;
+                }
+            }
+        }
+
+        $("#systemResidualTotal").text(systemResidualTotal);
+    });
+
+    function inputChange(obj) {
+        var total = 0;
+        for (var i = 1; i < 9; i++) {
+            total += Number($("#taskNum" + i).val());
+        }
+        if(total>taskIdsNum){
+            $.modal.alertWarning("新增总单量不能超过未分总量");
+            $(obj).val(0);
+            total = 0;
+            for (var i = 1; i < 9; i++) {
+                total += Number($("#taskNum" + i).val());
+            }
+        }
+        $("#taskNumTotal").text(total);
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            addOrEditRealSetting();
+        }
+    }
+
+    var addOrEditRealSetting = function () {
+        $.modal.loading("正在分配中，请稍后...");
+        var array = new Array();
+        for (var i = 1; i < 9; i++) {
+            var obj = {};
+            obj["s"] = $("#s" + i).val();
+            obj["t"] = $("#t" + i).val();
+            obj["id"] = $("#id" + i).val();
+            obj["taskNum"] = $("#taskNum" + i).val();
+            array.push(obj);
+        }
+        var data = {
+            settings: array,
+            taskDate: $("#taskDate").val(),
+            ids: selectTaskIds
+        };
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/addOrEditRealSetting",
+            data: JSON.stringify(data),
+            async: false,
+            contentType: "application/json",
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                $.operate.saveSuccess(data);
+            }
+        });
+
+    }
+
+    function onSelectDate(value, date) {
+        location.href = "/busi/groundTask/waitDistribution/realSetting?taskDate=" + value;
+    }
+
+    // log.info($("#hideTaskDate").val())
+    //
+    //     layui.use('laydate', function(){
+    //         var laydate = layui.laydate;
+    //
+    //         laydate.render({
+    //             elem: '#taskDate',
+    //             format: 'yyyy-MM-dd',
+    //             value : $("#hideTaskDate").val()
+    //         });
+    //     });
+</script>
+</body>
+</html>
