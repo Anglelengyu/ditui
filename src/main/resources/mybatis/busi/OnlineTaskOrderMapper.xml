@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hongkuang.ditui.project.busi.onlineTaskOrder.mapper.OnlineTaskOrderMapper">
+
+    <resultMap type="OnlineTaskOrder" id="OnlineTaskOrderResult">
+        <result property="id" column="id"/>
+        <result property="taskOrderId" column="task_order_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="ext1" column="ext1"/>
+        <result property="ext2" column="ext2"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <resultMap type="OnlineTaskOrderVo" id="OnlineTaskOrderVoResult">
+        <result property="id" column="id"/>
+        <result property="orderId" column="orderId"/>
+        <result property="managerId" column="managerId"/>
+        <result property="managerUserName" column="managerUserName"/>
+        <result property="platform" column="platform"/>
+        <result property="teamId" column="teamId"/>
+        <result property="teamName" column="teamName"/>
+        <result property="receiptTeamId" column="receiptTeamId"/>
+        <result property="receiptTeamName" column="receiptTeamName"/>
+        <result property="shopId" column="shopId"/>
+        <result property="shopName" column="shopName"/>
+        <result property="goodsName" column="goodsName"/>
+        <result property="goodsId" column="goodsId"/>
+        <result property="goodsImg" column="goodsImg"/>
+        <result property="keyWordName" column="keyWordName"/>
+        <result property="hasApp" column="hasApp"/>
+        <result property="hasPc" column="hasPc"/>
+        <result property="hasCollection" column="hasCollection"/>
+        <result property="hasCart" column="hasCart"/>
+        <result property="hasCollectionCart" column="hasCollectionCart"/>
+        <result property="orderRequire" column="orderRequire"/>
+        <result property="unitPrice" column="unitPrice"/>
+        <result property="unitPriceYuan" column="unitPriceYuan"/>
+        <result property="commissionPrice" column="commissionPrice"/>
+        <result property="commissionPriceYuan" column="commissionPriceYuan"/>
+        <result property="managerRequire" column="managerRequire"/>
+        <result property="teamToManagerRequire" column="teamToManagerRequire"/>
+        <result property="teamRequire" column="teamRequire"/>
+        <result property="executeMethod" column="executeMethod"/>
+        <result property="status" column="status"/>
+        <result property="question" column="question"/>
+        <result property="questionId" column="questionId"/>
+        <result property="orderTrack" column="orderTrack"/>
+        <result property="orderRebate" column="orderRebate"/>
+        <result property="groupClassifys" column="groupClassifys"/>
+        <result property="goShopWay" column="goShopWay"/>
+        <result property="settlementWay" column="settlementWay"/>
+        <result property="teamRemark" column="teamRemark"/>
+        <result property="managerRemark" column="managerRemark"/>
+        <result property="allocatStatus" column="allocatStatus"/>
+        <result property="payment" column="payment"/>
+        <result property="paymentYuan" column="paymentYuan"/>
+        <result property="orderNo" column="orderNo"/>
+        <result property="buyerNick" column="buyerNick"/>
+        <result property="createBy" column="createBy"/>
+        <result property="updateBy" column="updateBy"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="taskId" column="taskId"/>
+        <result property="realTimeStart" column="realTimeStart"/>
+        <result property="realTimeEnd" column="realTimeEnd"/>
+        <result property="allotType" column="allotType"/>
+        <result property="employeeName" column="employeeName"/>
+        <result property="employeeArea" column="employeeArea"/>
+        <result property="employeeCommissionPrice" column="employeeCommissionPrice"/>
+        <association property="tbTransactionQuestion" javaType="TbTransactionQuestion"
+                     resultMap="TbTransactionQuestionResult"/>
+        <association property="tbTransactionBuyerRequire" javaType="TbTransactionBuyerRequire"
+                     resultMap="TbTransactionBuyerRequireResult"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionQuestionResult"
+               type="net.hongkuang.ditui.project.busi.tbTransactionTemplate.domain.TbTransactionQuestion">
+        <id property="id" column="ttqQuestionId"/>
+        <result property="mainVideo" column="mainVideo"/>
+        <result property="mainBrowse" column="mainBrowse"/>
+        <result property="detailVideo" column="detailVideo"/>
+        <result property="detailBrowse" column="detailBrowse"/>
+        <result property="evaluateBrowse" column="evaluateBrowse"/>
+    </resultMap>
+
+    <resultMap id="TbTransactionBuyerRequireResult"
+               type="net.hongkuang.ditui.project.busi.order.domain.TbTransactionBuyerRequire">
+        <id property="id" column="ttbrRequireId"/>
+        <result property="sex" column="ttbrSex"/>
+        <result property="age" column="ttbrAge"/>
+        <result property="creditRating" column="ttbrCreditRating"/>
+        <result property="category" column="ttbrCategory"/>
+        <result property="monthlySalesQuota" column="ttbrMonthlySalesQuota"/>
+        <result property="naughtyValue" column="ttbrNaughtyValue"/>
+        <result property="region" column="ttbrRegion"/>
+    </resultMap>
+
+    <sql id="selectOnlineTaskOrder">
+        select id, task_order_id, task_id, order_id, create_time, update_time, status, ext1, ext2, create_by, update_by
+        from busi_online_task_order
+    </sql>
+
+    <sql id="selectOnlineTaskOrderVo">
+        select tto.id as id, tto.order_id as orderId, tto.manager_id as managerId, tto.manager_user_name as
+        managerUserName, tto.platform as platform, tto.team_id as teamId, tto.team_name as teamName,
+        tto.receipt_team_id as receiptTeamId, tto.receipt_team_name as receiptTeamName, tto.shop_id as shopId,
+        tto.shop_name as shopName, tto.goods_name as goodsName, tto.goods_id as goodsId,
+        tto.goods_img as goodsImg, tto.key_word_name as keyWordName, tto.has_app as hasApp, tto.has_pc as hasPc,
+        tto.has_collection as hasCollection, tto.has_cart as hasCart, tto.has_collection_cart as hasCollectionCart,
+        tto.order_require as orderRequire, tto.unit_price as unitPrice, tto.unit_price_yuan as unitPriceYuan,
+        tto.commission_price as commissionPrice, tto.commission_price_yuan as commissionPriceYuan,
+        tto.manager_require as managerRequire,tto.team_to_manager_require as teamToManagerRequire,tto.team_require as teamRequire, tto.execute_method as executeMethod, tto.status as status, tto.question
+        as question, tto.question_id as questionId, tto.order_track as orderTrack, tto.order_rebate as orderRebate,
+        tto.group_classifys as groupClassifys, tto.go_shop_way as goShopWay, tto.settlement_way as settlementWay,
+        tto.team_remark as teamRemark, tto.manager_remark as managerRemark, tto.allocat_status as allocatStatus,
+        tto.payment as payment, tto.payment_yuan as paymentYuan, tto.order_no as orderNo, tto.buyer_nick as buyerNick,
+        tto.create_by as createBy, tto.update_by as updateBy, tto.create_time as createTime, tto.update_time as
+        updateTime,
+        ttbr.id as ttbrRequireId, ttbr.sex as ttbrSex, ttbr.age as ttbrAge, ttbr.credit_rating as ttbrCreditRating,
+        ttbr.category as ttbrCategory, ttbr.monthly_sales_quota as ttbrMonthlySalesQuota, ttbr.naughty_value as
+        ttbrNaughtyValue, ttbr.region as ttbrRegion,
+        ttq.id as ttqQuestionId, ttq.main_video as mainVideo, ttq.main_browse as mainBrowse, ttq.detail_video as
+        detailVideo, ttq.detail_browse as detailBrowse, ttq.evaluate_browse as evaluateBrowse,
+        bgt.real_time_start realTimeStart,bgt.real_time_end realTimeEnd,bgt.allot_type allotType,
+        su.user_name as employeeName,su.area as employeeArea,be.commission_price as employeeCommissionPrice
+        from busi_tb_transaction_order tto
+        left join busi_tb_transaction_buyer_require ttbr on ttbr.id = tto.buyer_require_id
+        left join busi_tb_transaction_question ttq on ttq.id = tto.question_id
+        left join busi_online_employee_order bgeo on bgeo.order_id = tto.order_id
+        left join busi_employee be on be.employee_id = bgeo.employee_id
+        left join sys_user su on su.user_id = be.user_id
+        INNER JOIN busi_online_task_order bgto ON tto.order_id = bgto.order_id
+        INNER JOIN busi_online_task bgt ON bgt.task_id = bgto.task_id
+    </sql>
+
+    <select id="selectOnlineTaskOrderList" parameterType="OnlineTaskOrder" resultMap="OnlineTaskOrderResult">
+        <include refid="selectOnlineTaskOrder"/>
+        <where>
+            <if test="id != null ">and id = #{id}</if>
+            <if test="taskOrderId != null  and taskOrderId != '' ">and task_order_id = #{taskOrderId}</if>
+            <if test="taskId != null  and taskId != '' ">and task_id = #{taskId}</if>
+            <if test="orderId != null  and orderId != '' ">and order_id = #{orderId}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="ext1 != null  and ext1 != '' ">and ext1 = #{ext1}</if>
+            <if test="ext2 != null  and ext2 != '' ">and ext2 = #{ext2}</if>
+            <if test="createBy != null  and createBy != '' ">and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != '' ">and update_by = #{updateBy}</if>
+        </where>
+    </select>
+
+    <select id="selectOnlineTaskOrderById" parameterType="Long" resultMap="OnlineTaskOrderResult">
+        <include refid="selectOnlineTaskOrder"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertOnlineTaskOrder" parameterType="OnlineTaskOrder">
+        insert into busi_online_task_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="taskOrderId != null  and taskOrderId != ''  ">task_order_id,</if>
+            <if test="taskId != null  and taskId != ''  ">task_id,</if>
+            <if test="orderId != null  and orderId != ''  ">order_id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="status != null  ">status,</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1,</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2,</if>
+            <if test="createBy != null  and createBy != ''  ">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{id},</if>
+            <if test="taskOrderId != null  and taskOrderId != ''  ">#{taskOrderId},</if>
+            <if test="taskId != null  and taskId != ''  ">#{taskId},</if>
+            <if test="orderId != null  and orderId != ''  ">#{orderId},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="updateTime != null  ">#{updateTime},</if>
+            <if test="status != null  ">#{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">#{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">#{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOnlineTaskOrder" parameterType="OnlineTaskOrder">
+        update busi_online_task_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskOrderId != null  and taskOrderId != ''  ">task_order_id = #{taskOrderId},</if>
+            <if test="taskId != null  and taskId != ''  ">task_id = #{taskId},</if>
+            <if test="orderId != null  and orderId != ''  ">order_id = #{orderId},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="status != null  ">status = #{status},</if>
+            <if test="ext1 != null  and ext1 != ''  ">ext1 = #{ext1},</if>
+            <if test="ext2 != null  and ext2 != ''  ">ext2 = #{ext2},</if>
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOnlineTaskOrderById" parameterType="String">
+        delete from busi_online_task_order where order_id = #{id}
+    </delete>
+
+    <select id="selectOnlineTaskOrderByOrderId" resultMap="OnlineTaskOrderResult">
+        select * from busi_online_task_order where order_id = #{orderId}
+    </select>
+
+    <insert id="batchInsert">
+        insert into busi_online_task_order(id, task_order_id, task_id, order_id, create_time, update_time, status, ext1, ext2,
+        create_by, update_by)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+            #{item.taskOrderId},
+            #{item.taskId},
+            #{item.orderId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.status},
+            #{item.ext1},
+            #{item.ext2},
+            #{item.createBy},
+            #{item.updateBy})
+        </foreach>
+    </insert>
+
+    <select id="selectOnlineTaskOrderIdByTaskId" resultType="string">
+        select order_id from busi_online_task_order where task_id = #{taskId}
+    </select>
+
+    <select id="selectOnlineTaskOrderIdByTaskIds" resultType="string">
+        select order_id from busi_online_task_order where task_id in
+        <foreach collection="ids" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteOnlineTaskOrderByOrderIdList">
+        delete from busi_online_task_order where order_id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="selectOnlineTaskOrderVoByTaskIds" resultMap="OnlineTaskOrderVoResult">
+        <include refid="selectOnlineTaskOrderVo"/>
+        <where>
+            <choose>
+                <when test="questionOrderId != null and questionOrderId !=''">
+                    AND tto.question_order_id = #{questionOrderId}
+                </when>
+                <otherwise>
+                    AND (tto.question_order_id is null or tto.question_order_id = 0 )
+                </otherwise>
+            </choose>
+            <if test="goodsName != null and goodsName != ''">
+                AND tto.goods_name like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="id != null  and id != ''">
+                AND tto.id = #{id}
+            </if>
+            <if test="teamName != null  and teamName != ''">
+                AND tto.team_name like concat('%', #{teamName}, '%')
+            </if>
+            <if test="managerId != null  and managerId != ''">
+                AND tto.manager_id = #{managerId}
+            </if>
+            <if test="managerUserName != null  and managerUserName != ''">
+                AND tto.manager_user_name like concat('%', #{managerUserName}, '%')
+            </if>
+            <if test="teamId != null  and teamId != ''">
+                AND ((tto.team_id = #{teamId} and tto.receipt_team_id is null) OR (tto.team_id != #{teamId} and tto.receipt_team_id = #{teamId}))
+            </if>
+            <if test="shopId != null  and shopId != ''">
+                AND tto.shop_id = #{shopId}
+            </if>
+            <if test="goShopWay == 1">
+                AND tto.has_pc = 1
+            </if>
+            <if test="goShopWay == 2">
+                AND tto.has_app = 1
+            </if>
+            <if test="orTeamRemark == 0">
+                AND (tto.team_remark = "" or tto.team_remark is null)
+            </if>
+            <if test="orTeamRemark == 1">
+                AND tto.team_remark != ""
+            </if>
+            <if test="orManagerRemark == 0">
+                AND (tto.manager_remark = "" or tto.manager_remark is null)
+            </if>
+            <if test="orManagerRemark == 1">
+                AND tto.manager_remark != ""
+            </if>
+            <if test="shopName != null  and shopName != ''">
+                AND tto.shop_name like concat('%', #{shopName}, '%')
+            </if>
+            <if test="status != null">
+                AND tto.status = #{status}
+            </if>
+            <if test="allocatStatus != null">
+                AND tto.allocat_status = #{allocatStatus}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND tto.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND tto.create_time &lt;= #{endTime}
+            </if>
+            <if test="referStartTime != null and referStartTime != ''">
+                AND tto.refer_time >= #{referStartTime}
+            </if>
+            <if test="referEndTime != null  and referEndTime != ''">
+                AND tto.refer_time &lt;= #{referEndTime}
+            </if>
+            <if test="employeeId != null  and employeeId != ''">
+                AND be.employee_id = #{employeeId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
